@@ -1,0 +1,222 @@
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Brand aliases */
+  --color-primary: #59BBAF;
+  --color-girl: #E0195B;
+  --color-third: #F8A41D;
+  --color-sec: #202A5A;
+
+  /* Ecosystem */
+  --ecosystem-light: #EEF8F7;
+  --ecosystem-light-hover: #E6F5F3;
+  --ecosystem-light-active: #CCEAE6;
+  --ecosystem-normal: #59BBAF;
+  --ecosystem-normal-hover: #50A89E;
+  --ecosystem-normal-active: #47968C;
+  --ecosystem-dark: #438C83;
+  --ecosystem-dark-hover: #357069;
+  --ecosystem-dark-active: #28544F;
+  --ecosystem-darker: #1F413D;
+
+  /* Male */
+  --male-light: #E9EAEF;
+  --male-light-hover: #DEDFE6;
+  --male-light-active: #BABDCC;
+  --male-normal: #202A5A;
+  --male-normal-hover: #1D2651;
+  --male-normal-active: #1A2248;
+  --male-dark: #182044;
+  --male-dark-hover: #131936;
+  --male-dark-active: #0E1328;
+  --male-darker: #0B0F1F;
+
+  /* Female */
+  --female-light: #FCE8EF;
+  --female-light-hover: #FADDE6;
+  --female-light-active: #F5B8CC;
+  --female-normal: #E0195B;
+  --female-normal-hover: #CA1752;
+  --female-normal-active: #B31449;
+  --female-dark: #A81344;
+  --female-dark-hover: #860F37;
+  --female-dark-active: #650B29;
+  --female-darker: #4E0920;
+
+  /* College */
+  --college-light: #FEF6E8;
+  --college-light-hover: #FEF1DD;
+  --college-light-active: #FDE3B9;
+  --college-normal: #F8A41D;
+  --college-normal-hover: #DF941A;
+  --college-normal-active: #C68317;
+  --college-dark: #BA7B16;
+  --college-dark-hover: #956211;
+  --college-dark-active: #704A0D;
+  --college-darker: #57390A;
+
+  /* Club */
+  --club-light: #F0EAF4;
+  --club-light-hover: #E8E0EE;
+  --club-light-active: #CFBEDD;
+  --club-normal: #652D90;
+  --club-normal-hover: #5B2982;
+  --club-normal-active: #512473;
+  --club-dark: #4C226C;
+  --club-dark-hover: #3D1B56;
+  --club-dark-active: #2D1441;
+  --club-darker: #231032;
+
+  /* Text & title (neutral) */
+  --text-light: #EAEAE9;
+  --text-light-hover: #DFDFDF;
+  --text-light-active: #BDBCBC;
+  --text-normal: #292827;
+  --text-normal-hover: #252423;
+  --text-normal-active: #21201F;
+  --text-dark: #1F1E1D;
+  --text-darker: #0E0E0E;
+
+  /* Accents */
+  --accent-green: #009966;
+  --accent-red: #C60036;
+  --accent-purple: #8A38F5;
+
+  /* Typography */
+  --font-family: "Vazirmatn", "IRANSansX", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: #F8F9FA;
+  color: var(--text-normal);
+  direction: rtl;
+  text-align: right;
+  min-height: 100vh;
+}
+
+/* Custom Rokad Brand Styling */
+.rokad-card {
+  background: #FFFFFF;
+  border: 1.5px solid #EAEAEA;
+  border-radius: 16px;
+  box-shadow: 2.75px 2.75px 0 #202A5A;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.rokad-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 3.5px 3.5px 0 #202A5A;
+}
+
+.rokad-card-primary {
+  background: #FFFFFF;
+  border: 1.5px solid #59BBAF;
+  border-radius: 16px;
+  box-shadow: 2.75px 2.75px 0 #59BBAF;
+  transition: all 0.2s ease;
+}
+
+.rokad-btn-primary {
+  background-color: #59BBAF;
+  color: #FFFFFF;
+  font-weight: 600;
+  border: 1.5px solid #438C83;
+  border-radius: 10px;
+  box-shadow: 2.5px 2.5px 0 #1F413D;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.rokad-btn-primary:hover {
+  background-color: #50A89E;
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 #1F413D;
+}
+
+.rokad-btn-primary:active {
+  transform: translate(1.5px, 1.5px);
+  box-shadow: 1px 1px 0 #1F413D;
+}
+
+.rokad-btn-sec {
+  background-color: #202A5A;
+  color: #FFFFFF;
+  font-weight: 600;
+  border: 1.5px solid #182044;
+  border-radius: 10px;
+  box-shadow: 2.5px 2.5px 0 #0B0F1F;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.rokad-btn-sec:hover {
+  background-color: #1D2651;
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 #0B0F1F;
+}
+
+.rokad-btn-sec:active {
+  transform: translate(1.5px, 1.5px);
+  box-shadow: 1px 1px 0 #0B0F1F;
+}
+
+.rokad-btn-outline {
+  background-color: #FFFFFF;
+  color: #292827;
+  font-weight: 500;
+  border: 1.5px solid #DFDFDF;
+  border-radius: 10px;
+  box-shadow: 2px 2px 0 #BDBCBC;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.rokad-btn-outline:hover {
+  background-color: #F8F9FA;
+  border-color: #292827;
+  box-shadow: 2.5px 2.5px 0 #292827;
+}
+
+.rokad-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F1F1F1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C4C4C4;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #A0A0A0;
+}
