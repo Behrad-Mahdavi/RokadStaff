@@ -5,7 +5,7 @@ import { getTehranDateString, generateLinkCode } from "../utils";
 
 export async function seedDatabase() {
   const db = getDb();
-  console.log("🌱 Starting seed...");
+  console.log("🌱 Starting database seeding on Neon Postgres...");
 
   try {
     // 1. Create Default Admin User
@@ -19,6 +19,8 @@ export async function seedDatabase() {
         role: "admin",
       });
       console.log("✅ Admin user created: admin@rokad.ir / admin123456");
+    } else {
+      console.log("ℹ️ Admin user already exists.");
     }
 
     // 2. Create Sample Employees if none exist
@@ -151,10 +153,22 @@ export async function seedDatabase() {
       ]);
 
       console.log("✅ Created sample daily reports & checklist items.");
+    } else {
+      console.log("ℹ️ Employees already exist in the database.");
     }
 
-    console.log("🎉 Seeding completed successfully!");
+    console.log("🎉 Database seeding completed successfully!");
   } catch (error) {
-    console.error("Seed error:", error);
+    console.error("❌ Seed error:", error);
   }
+}
+
+// Auto-run if executed directly
+if (require.main === module) {
+  seedDatabase()
+    .then(() => process.exit(0))
+    .catch((err) => {
+      console.error(err);
+      process.exit(1);
+    });
 }
