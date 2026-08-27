@@ -1,4 +1,4 @@
-import { Bot, Context, webhookCallback } from "grammy";
+import { Bot } from "grammy";
 import { getDb } from "../db/client";
 import {
   employees,
@@ -7,7 +7,7 @@ import {
   reportHistory,
   botMessageLog,
 } from "../db/schema";
-import { eq, and, gt, sql } from "drizzle-orm";
+import { eq, and, gt } from "drizzle-orm";
 import {
   parseReportMessage,
   buildReportConfirmationMessage,
@@ -21,12 +21,24 @@ import {
 const botToken = process.env.TELEGRAM_BOT_TOKEN || "";
 export const bot = new Bot(botToken || "dummy_token_for_build");
 
+let isInitialized = false;
+
+export async function initBotIfNeeded() {
+  if (!isInitialized && process.env.TELEGRAM_BOT_TOKEN) {
+    try {
+      await bot.init();
+      isInitialized = true;
+    } catch (err) {
+      console.warn("bot.init() failed, will retry on next update:", err);
+    }
+  }
+}
+
 // Helper to determine if current time is considered "late" based on WORK_END_HOUR
 export function isSubmissionLate(now: Date = new Date()): boolean {
   const endHourConfig = process.env.WORK_END_HOUR || "18:00";
   const [targetH, targetM] = endHourConfig.split(":").map((v) => parseInt(v, 10));
 
-  // Get current Tehran hour and minute
   const formatter = new Intl.DateTimeFormat("en-US", {
     timeZone: process.env.APP_TIMEZONE || "Asia/Tehran",
     hour: "numeric",
@@ -59,31 +71,29 @@ async function logRawUpdate(chatId: number | undefined, update: any, ok: boolean
 
 // /start & /help handler
 bot.command(["start", "help"], async (ctx) => {
-  const text = `🌿 *به سامانه گزارش‌دهی رُکاد‌استاف خوش آمدید*
+  const text = `🌿 به سامانه گزارش‌دهی رُکاد‌استاف خوش آمدید
 
 این ربات جهت ثبت چک‌لیست پایان روز همکاران رُکاد طراحی شده است.
 
-📌 *مراحل اتصال حساب کاربری:*
-۱. کد ۶ رقمی اتصال خود را از مدیر سیستم یا پنل دریافت کنید.
+📌 مراحل اتصال حساب کاربری:
+۱. کد ۶ رقمی اتصال خود را از مدیر سیستم دریافت کنید.
 ۲. دستور زیر را به همراه کد خود ارسال کنید:
-\`/link 123456\`
+/link 123456
 
-📝 *نحوه ارسال گزارش روزانه:*
+📝 نحوه ارسال گزارش روزانه:
 پس از اتصال، هر روز در پایان ساعت کاری گزارش خود را در قالب زیر بفرستید:
 
-\`\`\`
 /report
 1- طراحی صفحه اصلی - انجام شد
 2- بازبینی لاجیک وب‌هوک - ناقص مانده
 3- تست نهایی - لغو شد
-\`\`\`
 
-🏷 *وضعیت‌های مجاز:*
-• \`انجام شد\`
-• \`ناقص مانده\`
-• \`لغو شد\``;
+🏷 وضعیت‌های مجاز:
+• انجام شد
+• ناقص مانده
+• لغو شد`;
 
-  await ctx.reply(text, { parse_mode: "Markdown" });
+  await ctx.reply(text);
 });
 
 // /link handler
@@ -91,13 +101,16 @@ bot.command("link", async (ctx) => {
   const chatId = ctx.chat?.id;
   if (!chatId) return;
 
-  const rawArgs = ctx.match?.trim() || "";
-  const code = toEnglishDigits(rawArgs);
+  const rawText = ctx.message?.text || "";
+  // Extract arguments either from ctx.match or by parsing the message text
+  const matchArgs = ctx.match?.trim() || "";
+  const fallbackArgs = rawText.replace(/^\/link(@\w+)?\s*/i, "").trim();
+  const codeArg = matchArgs || fallbackArgs;
+  const code = toEnglishDigits(codeArg);
 
   if (!code || code.length !== 6) {
     await ctx.reply(
-      "⚠️ لطفاً کد ۶ رقمی اتصال را همراه با دستور بفرستید:\nمثال: `/link 123456`",
-      { parse_mode: "Markdown" }
+      "⚠️ لطفاً کد ۶ رقمی اتصال را همراه با دستور بفرستید:\nمثال: /link 123456"
     );
     return;
   }
@@ -105,7 +118,7 @@ bot.command("link", async (ctx) => {
   const db = getDb();
 
   try {
-    // 1. Check if this telegram_chat_id is already linked to another active employee
+    // 1. Check if this telegram_chat_id is already linked to another employee
     const existingChat = await db
       .select()
       .from(employees)
@@ -115,8 +128,7 @@ bot.command("link", async (ctx) => {
     if (existingChat.length > 0) {
       const emp = existingChat[0];
       await ctx.reply(
-        `⚠️ این اکانت تلگرام قبلاً به حساب کاربری *${emp.fullName}* متصل شده است.\nدر صورت نیاز به تغییر، با مدیر سیستم تماس بگیرید.`,
-        { parse_mode: "Markdown" }
+        `⚠️ این اکانت تلگرام قبلاً به حساب کاربری «${emp.fullName}» متصل شده است.\nدر صورت نیاز به تغییر، با مدیر سیستم تماس بگیرید.`
       );
       return;
     }
@@ -155,11 +167,12 @@ bot.command("link", async (ctx) => {
       .where(eq(employees.id, employee.id));
 
     await ctx.reply(
-      `🎉 *اتصال حساب با موفقیت انجام شد!*\n\nهمکار گرامی *${employee.fullName}* (${employee.department || "عمومی"} - ${employee.position || "همکار"})\nحساب تلگرام شما به سامانه رُکاد متصل گردید.\n\nاز امروز می‌توانید گزارش‌های روزانه خود را با دستور \`/report\` ارسال فرمایید.`,
-      { parse_mode: "Markdown" }
+      `🎉 اتصال حساب با موفقیت انجام شد!\n\nهمکار گرامی «${employee.fullName}» (${employee.department || "عمومی"} - ${employee.position || "همکار"})\nحساب تلگرام شما به سامانه رُکاد متصل گردید.\n\nاز امروز می‌توانید گزارش‌های روزانه خود را با دستور /report ارسال فرمایید.`
     );
+    await logRawUpdate(chatId, ctx.update, true);
   } catch (err: any) {
     console.error("Link error:", err);
+    await logRawUpdate(chatId, ctx.update, false, err.message);
     await ctx.reply("❌ در اتصال حساب کاربری خطایی رخ داد. لطفاً دقایقی بعد تلاش کنید.");
   }
 });
@@ -185,8 +198,7 @@ bot.on("message:text", async (ctx) => {
 
   if (employeeResult.length === 0) {
     await ctx.reply(
-      "⚠️ حساب تلگرام شما هنوز به هیچ کارمندی در رُکاد متصل نشده است!\n\nجهت اتصال، کد ۶ رقمی دریافتی از مدیر را بفرستید:\n`/link 123456`",
-      { parse_mode: "Markdown" }
+      "⚠️ حساب تلگرام شما هنوز به هیچ کارمندی در رُکاد متصل نشده است!\n\nجهت اتصال، کد ۶ رقمی دریافتی از مدیر را بفرستید:\n/link 123456"
     );
     return;
   }
@@ -201,8 +213,7 @@ bot.on("message:text", async (ctx) => {
   // Check if message is a report
   if (!text.toLowerCase().startsWith("/report")) {
     await ctx.reply(
-      `💡 برای ثبت گزارش روزانه، لطفاً پیام خود را با \`/report\` شروع کنید:\n\n\`\`\`\n/report\n1- تسک اول - انجام شد\n2- تسک دوم - ناقص مانده\n\`\`\``,
-      { parse_mode: "Markdown" }
+      `💡 برای ثبت گزارش روزانه، لطفاً پیام خود را با /report شروع کنید:\n\n/report\n1- تسک اول - انجام شد\n2- تسک دوم - ناقص مانده`
     );
     return;
   }
@@ -210,7 +221,7 @@ bot.on("message:text", async (ctx) => {
   // Parse report
   const parseResult = parseReportMessage(text);
   if (!parseResult.isValid) {
-    await ctx.reply(`❌ ${parseResult.error}`, { parse_mode: "Markdown" });
+    await ctx.reply(`❌ ${parseResult.error}`);
     await logRawUpdate(chatId, ctx.update, false, parseResult.error);
     return;
   }
@@ -299,7 +310,7 @@ bot.on("message:text", async (ctx) => {
       isEdit
     );
 
-    await ctx.reply(confirmation, { parse_mode: "Markdown" });
+    await ctx.reply(confirmation);
     await logRawUpdate(chatId, ctx.update, true);
   } catch (err: any) {
     console.error("Report processing error:", err);
