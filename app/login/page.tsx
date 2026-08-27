@@ -50,26 +50,26 @@ export default function LoginPage() {
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-ecosystem-dark text-white mx-auto flex items-center justify-center font-black text-3xl shadow-[3px_3px_0_#202A5A] mb-3">
             رُ
           </div>
-          <h1 className="text-2xl font-black text-sec tracking-tight">رُکاد‌استاف</h1>
-          <p className="text-sm text-ink-normal/60 mt-1">سامانه مدیریت و پایش گزارش کار روزانه</p>
+          <h1 className="text-2xl sm:text-3xl font-black text-sec tracking-tight">رُکاد‌استاف</h1>
+          <p className="text-sm sm:text-base text-ink-normal/60 mt-1 font-medium">سامانه مدیریت و پایش گزارش کار روزانه</p>
         </div>
 
         {/* Login Card */}
-        <div className="bg-white rounded-3xl p-8 border-2 border-[#EAEAEA] shadow-[4px_4px_0_#202A5A]">
-          <div className="flex items-center gap-2 mb-6 text-sm font-bold text-sec">
+        <div className="bg-white rounded-3xl p-6 sm:p-8 border-2 border-[#EAEAEA] shadow-[4px_4px_0_#202A5A]">
+          <div className="flex items-center gap-2 mb-6 text-base font-black text-sec">
             <ShieldCheck className="w-5 h-5 text-primary" />
             <span>ورود به پنل مدیریت</span>
           </div>
 
           {error && (
-            <div className="mb-5 p-3 rounded-xl bg-female-light text-female-darker border border-female-normal/30 text-xs font-semibold">
+            <div className="mb-5 p-3.5 rounded-xl bg-female-light text-female-darker border border-female-normal/30 text-xs sm:text-sm font-bold">
               {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-ink-normal/80 mb-1.5">
+              <label className="block text-xs sm:text-sm font-bold text-ink-normal/80 mb-1.5">
                 ایمیل سازمانی
               </label>
               <div className="relative">
@@ -80,14 +80,14 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@rokad.ir"
                   dir="ltr"
-                  className="w-full pl-3 pr-10 py-2.5 rounded-xl border-1.5 border-[#DFDFDF] focus:border-primary focus:outline-none text-sm transition-colors text-left bg-gray-50/50 focus:bg-white"
+                  className="w-full pl-3 pr-11 py-3 rounded-xl border-1.5 border-[#DFDFDF] focus:border-primary focus:outline-none text-sm sm:text-base transition-colors text-left bg-gray-50/50 focus:bg-white font-medium"
                 />
-                <Mail className="w-4 h-4 text-ink-normal/40 absolute right-3.5 top-3.5" />
+                <Mail className="w-5 h-5 text-ink-normal/40 absolute right-3.5 top-3.5" />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-ink-normal/80 mb-1.5">
+              <label className="block text-xs sm:text-sm font-bold text-ink-normal/80 mb-1.5">
                 رمز عبور
               </label>
               <div className="relative">
@@ -98,35 +98,35 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   dir="ltr"
-                  className="w-full pl-3 pr-10 py-2.5 rounded-xl border-1.5 border-[#DFDFDF] focus:border-primary focus:outline-none text-sm transition-colors text-left bg-gray-50/50 focus:bg-white"
+                  className="w-full pl-3 pr-11 py-3 rounded-xl border-1.5 border-[#DFDFDF] focus:border-primary focus:outline-none text-sm sm:text-base transition-colors text-left bg-gray-50/50 focus:bg-white font-medium"
                 />
-                <Lock className="w-4 h-4 text-ink-normal/40 absolute right-3.5 top-3.5" />
+                <Lock className="w-5 h-5 text-ink-normal/40 absolute right-3.5 top-3.5" />
               </div>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-2 rokad-btn-primary py-3 text-sm rounded-xl font-bold shadow-[2.5px_2.5px_0_#1F413D]"
+              className="w-full mt-3 rokad-btn-primary py-3.5 text-sm sm:text-base rounded-xl font-black shadow-[2.5px_2.5px_0_#1F413D]"
             >
               {loading ? (
                 <span>در حال ورود...</span>
               ) : (
                 <>
                   <span>ورود به سیستم</span>
-                  <ArrowLeft className="w-4 h-4" />
+                  <ArrowLeft className="w-5 h-5" />
                 </>
               )}
             </button>
           </form>
 
           {/* Quick Demo Helper */}
-          <div className="mt-6 pt-4 border-t border-gray-100 text-[11px] text-ink-normal/60 bg-ecosystem-light/50 p-3 rounded-xl border border-primary/20">
+          <div className="mt-6 pt-4 border-t border-gray-100 text-xs sm:text-sm text-ink-normal/70 bg-ecosystem-light/50 p-3.5 rounded-2xl border border-primary/20">
             <div className="font-bold text-ecosystem-darker mb-1 flex items-center gap-1">
-              <Sparkles className="w-3.5 h-3.5 text-primary" />
+              <Sparkles className="w-4 h-4 text-primary" />
               حساب پیش‌فرض سیستم:
             </div>
-            <div className="flex justify-between font-mono dir-ltr mt-1">
+            <div className="flex justify-between font-mono dir-ltr mt-1 font-bold text-sec">
               <span>admin@rokad.ir</span>
               <span>admin123456</span>
             </div>

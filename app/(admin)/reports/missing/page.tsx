@@ -3,16 +3,15 @@
 import React, { useEffect, useState } from "react";
 import {
   AlertTriangle,
-  Calendar,
-  ChevronRight,
-  ChevronLeft,
   Send,
-  Users,
+  Calendar,
   Search,
+  Bell,
   CheckCircle2,
-  AlertCircle,
-  Copy,
-  Check,
+  Clock,
+  Sparkles,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import {
   formatToJalali,
@@ -21,25 +20,25 @@ import {
 } from "@/lib/utils";
 
 export default function MissingReportsPage() {
-  const [missing, setMissing] = useState<any[]>([]);
+  const [missingList, setMissingList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [currentDate, setCurrentDate] = useState<string>(getTehranDateString());
+  const [selectedDate, setSelectedDate] = useState(getTehranDateString());
   const [selectedDept, setSelectedDept] = useState("all");
   const [search, setSearch] = useState("");
-  const [reminding, setReminding] = useState(false);
-  const [reminderResult, setReminderResult] = useState<string | null>(null);
+  const [sendingReminder, setSendingReminder] = useState(false);
+  const [notificationMsg, setNotificationMsg] = useState<string | null>(null);
 
   const fetchMissing = async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
-      params.append("date", currentDate);
+      if (selectedDate) params.append("date", selectedDate);
       if (selectedDept !== "all") params.append("department", selectedDept);
 
       const res = await fetch(`/api/reports/missing?${params.toString()}`);
       if (res.ok) {
         const data = await res.json();
-        setMissing(data.missingEmployees || []);
+        setMissingList(data.missingEmployees || []);
       }
     } catch (err) {
       console.error(err);
@@ -50,140 +49,100 @@ export default function MissingReportsPage() {
 
   useEffect(() => {
     fetchMissing();
-  }, [currentDate, selectedDept]);
+  }, [selectedDate, selectedDept]);
 
-  const handleDateChange = (days: number) => {
-    const parts = currentDate.split("-").map(Number);
-    const d = new Date(parts[0], parts[1] - 1, parts[2]);
-    d.setDate(d.getDate() + days);
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-    setCurrentDate(`${y}-${m}-${day}`);
-  };
+  const handleSendReminderAll = async () => {
+    if (!confirm("آیا می‌خواهید برای تمام کارمندان غایب که به تلگرام متصل هستند یادآوری ارسال کنید؟")) return;
 
-  const handleSendReminder = async () => {
-    setReminding(true);
-    setReminderResult(null);
+    setSendingReminder(true);
+    setNotificationMsg(null);
     try {
       const res = await fetch("/api/cron/reminder", { method: "POST" });
       const data = await res.json();
       if (res.ok) {
-        setReminderResult(`یادآوری با موفقیت برای ${data.sentCount} نفر از کارمندان متصل به تلگرام ارسال گردید.`);
+        setNotificationMsg(`پیام یادآوری با موفقیت برای ${toPersianDigits(data.sentCount)} نفر ارسال شد.`);
       } else {
-        setReminderResult(`خطا: ${data.error}`);
+        setNotificationMsg(`خطا: ${data.error}`);
       }
     } catch (err) {
-      setReminderResult("خطا در ارسال یادآوری");
+      setNotificationMsg("خطا در ارسال پیام‌ها.");
     } finally {
-      setReminding(false);
+      setSendingReminder(false);
     }
   };
 
-  const departments = Array.from(new Set(missing.map((m) => m.department).filter(Boolean)));
+  const filteredList = missingList.filter((emp) =>
+    emp.fullName.toLowerCase().includes(search.toLowerCase())
+  );
 
-  const filtered = search
-    ? missing.filter((m) => m.fullName.toLowerCase().includes(search.toLowerCase()))
-    : missing;
+  const changeDateByDays = (days: number) => {
+    const current = new Date(selectedDate);
+    current.setDate(current.getDate() + days);
+    setSelectedDate(getTehranDateString(current));
+  };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-300">
-      {/* Header & Date Navigation */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-300">
+      {/* Page Header Banner */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 bg-gradient-to-r from-college-light via-white to-female-light/30 p-6 sm:p-7 rounded-3xl border-2 border-college-normal/30 shadow-[3px_3px_0_#F8A41D]">
         <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-female-normal mb-1">
-            <AlertTriangle className="w-4 h-4" />
-            <span>پایش عدم ارسال گزارش</span>
+          <div className="flex items-center gap-2 text-sm font-black text-college-darker mb-1.5">
+            <AlertTriangle className="w-4 h-4 text-college-normal" />
+            <span>پایش عدم ثبت گزارش کار</span>
           </div>
-          <h1 className="text-2xl font-black text-sec">لیست غایبان در ثبت چک‌لیست</h1>
-          <p className="text-xs text-ink-normal/60 mt-1">
-            مشاهده کارکنانی که برای تاریخ انتخابی گزارش کاری ارسال نکرده‌اند
+          <h1 className="text-2xl sm:text-3xl font-black text-sec tracking-tight">لیست غایبان در ثبت گزارش</h1>
+          <p className="text-xs sm:text-sm text-ink-normal/70 mt-1 font-medium">
+            کارمندان فعالی که در تاریخ {formatToJalali(selectedDate)} چک‌لیست روزانه ثبت نکرده‌اند
           </p>
         </div>
 
-        {/* Date Selector Navigation */}
-        <div className="flex items-center gap-2 bg-white p-1.5 rounded-2xl border border-gray-200 shadow-[2px_2px_0_#202A5A]">
-          <button
-            onClick={() => handleDateChange(-1)}
-            title="روز قبل"
-            className="p-2 rounded-xl hover:bg-gray-100 text-gray-700 transition-colors"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-
-          <div className="flex items-center gap-2 px-3 py-1 bg-college-light rounded-xl font-bold text-xs text-college-darker border border-college-normal/30">
-            <Calendar className="w-3.5 h-3.5 text-college-normal" />
-            <span>{formatToJalali(currentDate, { showMonthName: true, includeDayName: true })}</span>
-          </div>
-
-          <button
-            onClick={() => handleDateChange(1)}
-            title="روز بعد"
-            className="p-2 rounded-xl hover:bg-gray-100 text-gray-700 transition-colors"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-
-          <button
-            onClick={() => setCurrentDate(getTehranDateString())}
-            className="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-gray-100 hover:bg-gray-200 text-sec transition-colors"
-          >
-            امروز
-          </button>
-        </div>
-      </div>
-
-      {/* Action Banner */}
-      <div className="p-5 bg-gradient-to-r from-college-light via-white to-female-light/30 rounded-2xl border border-college-normal/30 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-college-normal text-white flex items-center justify-center font-bold text-base">
-            {toPersianDigits(missing.length)}
-          </div>
-          <div>
-            <div className="text-xs font-bold text-sec">
-              تعداد {toPersianDigits(missing.length)} نفر هنوز گزارش این تاریخ را ارسال نکرده‌اند.
-            </div>
-            <div className="text-[11px] text-ink-normal/60 mt-0.5">
-              می‌توانید پیام یادآوری تلگرام را به صورت گروهی برای آن‌ها ارسال کنید.
-            </div>
-          </div>
-        </div>
-
         <button
-          onClick={handleSendReminder}
-          disabled={reminding || missing.length === 0}
-          className="rokad-btn-sec px-4 py-2.5 text-xs rounded-xl shadow-[2.5px_2.5px_0_#0B0F1F]"
+          onClick={handleSendReminderAll}
+          disabled={sendingReminder || missingList.length === 0}
+          className="rokad-btn-sec px-5 py-3 text-xs sm:text-sm rounded-xl font-bold self-start md:self-auto"
         >
-          <Send className="w-4 h-4 text-college-normal" />
-          <span>{reminding ? "در حال ارسال پیام..." : "ارسال یادآوری فوری به تلگرام"}</span>
+          <Bell className="w-4 h-4 text-primary" />
+          <span>{sendingReminder ? "در حال ارسال..." : "ارسال یادآوری به همه غایبان"}</span>
         </button>
       </div>
 
-      {reminderResult && (
-        <div className="p-4 rounded-xl bg-ecosystem-light border border-primary/30 text-xs font-bold text-ecosystem-darker flex items-center justify-between">
-          <span>{reminderResult}</span>
-          <button onClick={() => setReminderResult(null)} className="underline">بستن</button>
+      {notificationMsg && (
+        <div className="p-4 sm:p-5 rounded-2xl bg-ecosystem-light border border-primary/40 text-xs sm:text-sm font-bold text-ecosystem-darker flex items-center justify-between shadow-sm">
+          <span>🌿 {notificationMsg}</span>
+          <button onClick={() => setNotificationMsg(null)} className="text-xs font-black underline">بستن</button>
         </div>
       )}
 
       {/* Filter Bar */}
-      <div className="bg-white p-4 rounded-2xl border border-[#EAEAEA] shadow-sm flex flex-col md:flex-row items-center gap-3">
+      <div className="bg-white p-4 sm:p-5 rounded-3xl border border-[#EAEAEA] shadow-sm flex flex-col md:flex-row items-center gap-3">
+        {/* Search */}
         <div className="relative flex-1 w-full">
           <input
             type="text"
             placeholder="جستجوی نام کارمند..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-3 pr-10 py-2 rounded-xl border border-gray-200 text-xs focus:border-primary focus:outline-none bg-[#FAFAFA] focus:bg-white"
+            className="w-full pl-3 pr-11 py-2.5 rounded-xl border border-gray-200 text-xs sm:text-sm focus:border-primary focus:outline-none bg-[#FAFAFA] focus:bg-white font-medium"
           />
-          <Search className="w-4 h-4 text-gray-400 absolute right-3.5 top-2.5" />
+          <Search className="w-4 h-4 text-gray-400 absolute right-4 top-3.5" />
         </div>
 
+        {/* Date Selector */}
+        <div className="w-full md:w-44">
+          <input
+            type="date"
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+            className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-xs sm:text-sm bg-[#FAFAFA] focus:border-primary focus:outline-none font-bold text-sec font-mono"
+          />
+        </div>
+
+        {/* Department Filter */}
         <div className="w-full md:w-48">
           <select
             value={selectedDept}
             onChange={(e) => setSelectedDept(e.target.value)}
-            className="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs bg-[#FAFAFA] focus:border-primary focus:outline-none font-bold text-sec"
+            className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-xs sm:text-sm bg-[#FAFAFA] focus:border-primary focus:outline-none font-bold text-sec"
           >
             <option value="all">همه دپارتمان‌ها</option>
             <option value="پسرانه">پسرانه</option>
@@ -192,57 +151,67 @@ export default function MissingReportsPage() {
         </div>
       </div>
 
-      {/* Missing Employees Table */}
-      <div className="bg-white rounded-2xl border border-[#EAEAEA] shadow-[3px_3px_0_#202A5A] overflow-hidden">
+      {/* Missing Table */}
+      <div className="bg-white rounded-3xl border border-[#EAEAEA] shadow-[3px_3px_0_#202A5A] overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-right text-xs">
+          <table className="w-full text-right text-xs sm:text-sm">
             <thead className="bg-[#F8F9FA] border-b border-gray-200 text-ink-normal/70 font-bold">
               <tr>
-                <th className="py-3.5 px-4">نام و نام خانوادگی</th>
-                <th className="py-3.5 px-4">دپارتمان</th>
-                <th className="py-3.5 px-4">سمت شغلی</th>
-                <th className="py-3.5 px-4">وضعیت تلگرام</th>
-                <th className="py-3.5 px-4">وضعیت ارسال</th>
+                <th className="py-4 px-4 sm:px-6">نام کارمند</th>
+                <th className="py-4 px-4">دپارتمان</th>
+                <th className="py-4 px-4">سمت شغلی</th>
+                <th className="py-4 px-4">وضعیت اتصال تلگرام</th>
+                <th className="py-4 px-4 sm:px-6 text-center">امکان ارسال پیام</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {loading ? (
                 <tr>
-                  <td colSpan={5} className="text-center py-10 text-gray-400">
-                    در حال بارگذاری لیست غایبان...
+                  <td colSpan={5} className="text-center py-12 text-sm text-gray-400">
+                    در حال محاسبه لیست غایبان...
                   </td>
                 </tr>
-              ) : filtered.length === 0 ? (
+              ) : filteredList.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="text-center py-12">
-                    <CheckCircle2 className="w-10 h-10 text-primary mx-auto mb-2" />
-                    <div className="text-sm font-bold text-sec">عالی! همه کارکنان گزارش خود را ارسال کرده‌اند.</div>
-                    <div className="text-xs text-ink-normal/50 mt-1">هیچ غیبتی برای این تاریخ ثبت نشده است.</div>
+                  <td colSpan={5} className="text-center py-12 text-sm text-accent-green font-bold">
+                    🎉 آفرین! همه کارکنان در این تاریخ گزارش خود را ثبت کرده‌اند.
                   </td>
                 </tr>
               ) : (
-                filtered.map((emp) => (
+                filteredList.map((emp) => (
                   <tr key={emp.id} className="hover:bg-gray-50/70 transition-colors">
-                    <td className="py-3.5 px-4 font-bold text-sec">{emp.fullName}</td>
-                    <td className="py-3.5 px-4 text-ink-normal/70">{emp.department || "عمومی"}</td>
-                    <td className="py-3.5 px-4 text-ink-normal/60">{emp.position || "همکار"}</td>
-                    <td className="py-3.5 px-4">
+                    <td className="py-4 px-4 sm:px-6 font-black text-sm sm:text-base text-sec">
+                      {emp.fullName}
+                    </td>
+                    <td className="py-4 px-4 font-bold text-ink-normal/80">
+                      {emp.department || "پسرانه"}
+                    </td>
+                    <td className="py-4 px-4 text-ink-normal/60 font-medium">
+                      {emp.position || "همکار"}
+                    </td>
+                    <td className="py-4 px-4">
                       {emp.isLinked ? (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-ecosystem-light text-ecosystem-darker border border-primary/20 text-[11px] font-bold">
-                          <CheckCircle2 className="w-3 h-3 text-primary" />
-                          متصل
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-ecosystem-light text-ecosystem-darker border border-primary/30 font-bold text-xs">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                          متصل به ربات
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-college-light text-college-darker border border-college-normal/30 text-[11px] font-bold">
-                          <AlertCircle className="w-3 h-3 text-college-normal" />
-                          غیرمتصل (کد: {emp.linkCode || "ندارد"})
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-female-light text-female-darker border border-female-normal/30 font-bold text-xs">
+                          <AlertTriangle className="w-3.5 h-3.5 text-female-normal" />
+                          عدم اتصال تلگرام
                         </span>
                       )}
                     </td>
-                    <td className="py-3.5 px-4">
-                      <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-md bg-female-light text-female-darker border border-female-normal/20">
-                        عدم ثبت گزارش
-                      </span>
+                    <td className="py-4 px-4 sm:px-6 text-center">
+                      {emp.isLinked ? (
+                        <span className="text-xs sm:text-sm font-bold text-accent-green">
+                          ✓ دریافت‌کننده یادآوری خودکار
+                        </span>
+                      ) : (
+                        <span className="text-xs sm:text-sm text-female-normal font-bold">
+                          نیازمند صدور کد اتصال
+                        </span>
+                      )}
                     </td>
                   </tr>
                 ))

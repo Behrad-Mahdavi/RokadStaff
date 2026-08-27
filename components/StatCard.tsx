@@ -58,27 +58,27 @@ export default function StatCard({
   return (
     <div
       className={cn(
-        "bg-white rounded-2xl p-5 border transition-all duration-200 hover:-translate-y-1",
+        "bg-white rounded-2xl p-5 sm:p-6 border transition-all duration-200 hover:-translate-y-1",
         themeStyles.border,
         themeStyles.shadow
       )}
     >
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-bold text-ink-normal/60">{title}</span>
-        <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center", themeStyles.iconBg)}>
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-sm font-bold text-ink-normal/70 leading-snug">{title}</span>
+        <div className={cn("w-11 h-11 rounded-2xl flex items-center justify-center shrink-0", themeStyles.iconBg)}>
           <Icon className="w-5 h-5" />
         </div>
       </div>
 
-      <div className="mt-3 flex items-baseline justify-between">
-        <div className="text-2xl font-black text-ink-darker tracking-tight">{value}</div>
+      <div className="mt-4 flex items-baseline justify-between gap-2 flex-wrap">
+        <div className="text-2xl sm:text-3xl font-black text-ink-darker tracking-tight">{value}</div>
         {trend && (
           <span
             className={cn(
-              "text-xs font-bold px-2 py-0.5 rounded-md",
+              "text-xs font-black px-2.5 py-1 rounded-lg",
               trend.isPositive
-                ? "bg-accent-green/10 text-accent-green"
-                : "bg-accent-red/10 text-accent-red"
+                ? "bg-accent-green/15 text-accent-green"
+                : "bg-accent-red/15 text-accent-red"
             )}
           >
             {trend.value}
@@ -86,7 +86,7 @@ export default function StatCard({
         )}
       </div>
 
-      {subtitle && <div className="text-xs text-ink-normal/50 mt-1">{subtitle}</div>}
+      {subtitle && <div className="text-xs sm:text-sm text-ink-normal/60 mt-2 font-medium leading-relaxed">{subtitle}</div>}
     </div>
   );
 }

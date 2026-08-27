@@ -90,6 +90,16 @@
   --font-family: "Vazirmatn", "IRANSansX", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
+html {
+  font-size: 15px;
+}
+
+@media (min-width: 640px) {
+  html {
+    font-size: 16px;
+  }
+}
+
 body {
   font-family: var(--font-family);
   background-color: #F8F9FA;
@@ -97,13 +107,15 @@ body {
   direction: rtl;
   text-align: right;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Custom Rokad Brand Styling */
 .rokad-card {
   background: #FFFFFF;
   border: 1.5px solid #EAEAEA;
-  border-radius: 16px;
+  border-radius: 18px;
   box-shadow: 2.75px 2.75px 0 #202A5A;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -113,20 +125,12 @@ body {
   box-shadow: 3.5px 3.5px 0 #202A5A;
 }
 
-.rokad-card-primary {
-  background: #FFFFFF;
-  border: 1.5px solid #59BBAF;
-  border-radius: 16px;
-  box-shadow: 2.75px 2.75px 0 #59BBAF;
-  transition: all 0.2s ease;
-}
-
 .rokad-btn-primary {
   background-color: #59BBAF;
   color: #FFFFFF;
-  font-weight: 600;
+  font-weight: 700;
   border: 1.5px solid #438C83;
-  border-radius: 10px;
+  border-radius: 12px;
   box-shadow: 2.5px 2.5px 0 #1F413D;
   transition: all 0.15s ease;
   display: inline-flex;
@@ -149,9 +153,9 @@ body {
 .rokad-btn-sec {
   background-color: #202A5A;
   color: #FFFFFF;
-  font-weight: 600;
+  font-weight: 700;
   border: 1.5px solid #182044;
-  border-radius: 10px;
+  border-radius: 12px;
   box-shadow: 2.5px 2.5px 0 #0B0F1F;
   transition: all 0.15s ease;
   display: inline-flex;
@@ -174,9 +178,9 @@ body {
 .rokad-btn-outline {
   background-color: #FFFFFF;
   color: #292827;
-  font-weight: 500;
+  font-weight: 600;
   border: 1.5px solid #DFDFDF;
-  border-radius: 10px;
+  border-radius: 12px;
   box-shadow: 2px 2px 0 #BDBCBC;
   transition: all 0.15s ease;
   display: inline-flex;
@@ -194,11 +198,11 @@ body {
 .rokad-badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
+  gap: 6px;
+  padding: 5px 12px;
   border-radius: 9999px;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
   border: 1px solid transparent;
 }
 
@@ -214,7 +218,7 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background: #C4C4C4;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
