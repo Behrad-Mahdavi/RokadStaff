@@ -9,17 +9,24 @@ import {
   FileCheck2,
   AlertTriangle,
   Bot,
-  Layers,
+  BarChart3,
   ChevronLeft,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
   {
-    title: "داشبورد تحلیلی",
+    title: "داشبورد اصلی",
     href: "/dashboard",
     icon: LayoutDashboard,
     badge: null,
+  },
+  {
+    title: "آنالیتیکس و خروجی",
+    href: "/analytics",
+    icon: BarChart3,
+    badge: "جدید",
+    badgeColor: "bg-ecosystem-light text-ecosystem-darker border border-primary/30",
   },
   {
     title: "مدیریت کارکنان",
@@ -115,7 +122,7 @@ export default function Sidebar() {
         <div className="text-xs font-bold text-sec">اکوسیستم رُکاد</div>
         <div className="text-[11px] text-ink-normal/60 mt-0.5">اتصال تلگرام + هوش گزارش‌دهی</div>
         <div className="mt-2.5 pt-2 border-t border-primary/10 text-[10px] text-ink-normal/50">
-          نسخه ۱.۰.۰ — پایدار
+          نسخه ۱.۱.۰ — ماژول آنالیتیکس
         </div>
       </div>
     </aside>

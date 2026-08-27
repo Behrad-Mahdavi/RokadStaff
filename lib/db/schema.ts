@@ -91,6 +91,7 @@ export const adminUsers = pgTable("admin_users", {
   passwordHash: text("password_hash").notNull(),
   fullName: text("full_name").default("مدیر سیستم"),
   role: text("role").default("admin").notNull(), // 'admin' | 'supervisor'
+  assignedDepartment: text("assigned_department"), // For supervisors in Phase 2
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
@@ -103,6 +104,27 @@ export const botMessageLog = pgTable("bot_message_log", {
   errorMessage: text("error_message"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
+
+// 7. Daily Stats Table (Pre-Aggregation for fast reporting & analytics)
+export const dailyStats = pgTable(
+  "daily_stats",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    statDate: date("stat_date").notNull(),
+    department: text("department"), // NULL = All organization
+    activeEmployees: integer("active_employees").notNull(),
+    submittedCount: integer("submitted_count").notNull(),
+    onTimeCount: integer("on_time_count").notNull(),
+    lateCount: integer("late_count").notNull(),
+    totalTaskItems: integer("total_task_items").notNull(),
+    doneTaskItems: integer("done_task_items").notNull(),
+    computedAt: timestamp("computed_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => ({
+    statDateDeptUnique: unique("uniq_stat_date_dept").on(table.statDate, table.department),
+    statDateIdx: index("idx_daily_stats_date").on(table.statDate),
+  })
+);
 
 // Relations
 export const employeesRelations = relations(employees, ({ many }) => ({
@@ -142,3 +164,5 @@ export type NewReportItem = typeof reportItems.$inferInsert;
 export type ReportHistory = typeof reportHistory.$inferSelect;
 export type AdminUser = typeof adminUsers.$inferSelect;
 export type BotMessageLog = typeof botMessageLog.$inferSelect;
+export type DailyStat = typeof dailyStats.$inferSelect;
+export type NewDailyStat = typeof dailyStats.$inferInsert;
