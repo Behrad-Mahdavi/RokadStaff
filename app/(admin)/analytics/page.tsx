@@ -195,11 +195,8 @@ export default function AnalyticsPage() {
             className="px-3 py-2 rounded-xl border border-gray-200 text-xs bg-gray-50 focus:border-primary focus:outline-none font-bold text-sec"
           >
             <option value="all">تمام دپارتمان‌ها</option>
-            <option value="فنی و توسعه">فنی و توسعه</option>
-            <option value="طراحی محصول">طراحی محصول</option>
-            <option value="مارکتینگ">مارکتینگ</option>
-            <option value="پشتیبانی و عملیات">پشتیبانی و عملیات</option>
             <option value="پسرانه">پسرانه</option>
+            <option value="دخترانه">دخترانه</option>
           </select>
         </div>
       </div>

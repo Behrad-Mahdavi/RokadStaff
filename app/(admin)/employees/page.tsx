@@ -12,13 +12,12 @@ import {
   RefreshCw,
   Unlink,
   Edit2,
-  Trash2,
   Sparkles,
-  Phone,
-  Send,
 } from "lucide-react";
 import Modal from "@/components/Modal";
-import { toPersianDigits, formatToJalali } from "@/lib/utils";
+import { toPersianDigits } from "@/lib/utils";
+
+const DEPARTMENTS = ["پسرانه", "دخترانه"];
 
 export default function EmployeesPage() {
   const [employees, setEmployees] = useState<any[]>([]);
@@ -35,7 +34,7 @@ export default function EmployeesPage() {
 
   // Form states
   const [fullName, setFullName] = useState("");
-  const [department, setDepartment] = useState("");
+  const [department, setDepartment] = useState("پسرانه");
   const [position, setPosition] = useState("");
   const [formLoading, setFormLoading] = useState(false);
   const [createdCodeInfo, setCreatedCodeInfo] = useState<{ name: string; code: string } | null>(null);
@@ -87,7 +86,7 @@ export default function EmployeesPage() {
         });
         setIsCodeModalOpen(true);
         setFullName("");
-        setDepartment("");
+        setDepartment("پسرانه");
         setPosition("");
         fetchEmployees();
       } else {
@@ -183,9 +182,6 @@ export default function EmployeesPage() {
     setTimeout(() => setCopied(false), 2500);
   };
 
-  // Extract unique departments for filter dropdown
-  const departments = Array.from(new Set(employees.map((e) => e.department).filter(Boolean)));
-
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       {/* Page Header */}
@@ -225,10 +221,10 @@ export default function EmployeesPage() {
           <select
             value={selectedDept}
             onChange={(e) => setSelectedDept(e.target.value)}
-            className="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs bg-[#FAFAFA] focus:border-primary focus:outline-none"
+            className="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs bg-[#FAFAFA] focus:border-primary focus:outline-none font-bold text-sec"
           >
             <option value="all">همه دپارتمان‌ها</option>
-            {departments.map((d: any) => (
+            {DEPARTMENTS.map((d) => (
               <option key={d} value={d}>{d}</option>
             ))}
           </select>
@@ -239,7 +235,7 @@ export default function EmployeesPage() {
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
-            className="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs bg-[#FAFAFA] focus:border-primary focus:outline-none"
+            className="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs bg-[#FAFAFA] focus:border-primary focus:outline-none font-bold text-sec"
           >
             <option value="all">همه وضعیت‌ها</option>
             <option value="true">فعال</option>
@@ -282,7 +278,7 @@ export default function EmployeesPage() {
                       {emp.fullName}
                     </td>
                     <td className="py-3.5 px-4 text-ink-normal/70">
-                      <div>{emp.department || "عمومی"}</div>
+                      <div className="font-bold text-sec">{emp.department || "پسرانه"}</div>
                       <div className="text-[11px] text-ink-normal/50">{emp.position || "همکار"}</div>
                     </td>
                     <td className="py-3.5 px-4">
@@ -382,20 +378,22 @@ export default function EmployeesPage() {
               required
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              placeholder="مثال: سارا محمدی"
+              placeholder="مثال: علی رضایی"
               className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs focus:border-primary focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-sec mb-1">دپارتمان</label>
-            <input
-              type="text"
+            <label className="block text-xs font-bold text-sec mb-1">دپارتمان *</label>
+            <select
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
-              placeholder="مثال: فنی و توسعه"
-              className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs focus:border-primary focus:outline-none"
-            />
+              className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs focus:border-primary focus:outline-none font-bold text-sec bg-white"
+            >
+              {DEPARTMENTS.map((d) => (
+                <option key={d} value={d}>{d}</option>
+              ))}
+            </select>
           </div>
 
           <div>
@@ -404,7 +402,7 @@ export default function EmployeesPage() {
               type="text"
               value={position}
               onChange={(e) => setPosition(e.target.value)}
-              placeholder="مثال: توسعه‌دهنده فرانت‌اند"
+              placeholder="مثال: معاون، دبیر، مربی"
               className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs focus:border-primary focus:outline-none"
             />
           </div>
@@ -449,12 +447,15 @@ export default function EmployeesPage() {
 
             <div>
               <label className="block text-xs font-bold text-sec mb-1">دپارتمان</label>
-              <input
-                type="text"
-                value={selectedEmployee.department || ""}
+              <select
+                value={selectedEmployee.department || "پسرانه"}
                 onChange={(e) => setSelectedEmployee({ ...selectedEmployee, department: e.target.value })}
-                className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs focus:border-primary focus:outline-none"
-              />
+                className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs focus:border-primary focus:outline-none font-bold text-sec bg-white"
+              >
+                {DEPARTMENTS.map((d) => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
+              </select>
             </div>
 
             <div>

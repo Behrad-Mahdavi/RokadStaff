@@ -217,11 +217,10 @@ export default function ReportsPage() {
 
                   <div className="flex items-center gap-1.5">
                     <span
-                      className={`text-[11px] font-bold px-2.5 py-1 rounded-full border ${
-                        rep.status === "on_time"
+                      className={`text-[11px] font-bold px-2.5 py-1 rounded-full border ${rep.status === "on_time"
                           ? "bg-ecosystem-light text-ecosystem-darker border-primary/30"
                           : "bg-female-light text-female-darker border-female-normal/30"
-                      }`}
+                        }`}
                     >
                       {rep.status === "on_time" ? "به‌موقع" : "با تأخیر"}
                     </span>
@@ -259,19 +258,18 @@ export default function ReportsPage() {
                         <span className="truncate text-ink-normal/90">{item.description}</span>
                       </div>
                       <span
-                        className={`shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                          item.status === "done"
+                        className={`shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full ${item.status === "done"
                             ? "bg-ecosystem-light text-ecosystem-darker"
                             : item.status === "incomplete"
-                            ? "bg-college-light text-college-darker"
-                            : "bg-female-light text-female-darker"
-                        }`}
+                              ? "bg-college-light text-college-darker"
+                              : "bg-female-light text-female-darker"
+                          }`}
                       >
                         {item.status === "done"
                           ? "انجام شد"
                           : item.status === "incomplete"
-                          ? "ناقص مانده"
-                          : "لغو شد"}
+                            ? "ناقص مانده"
+                            : "لغو شد"}
                       </span>
                     </div>
                   ))}
@@ -353,19 +351,18 @@ export default function ReportsPage() {
                     </div>
 
                     <span
-                      className={`text-[11px] font-bold px-2.5 py-1 rounded-full ${
-                        item.status === "done"
+                      className={`text-[11px] font-bold px-2.5 py-1 rounded-full ${item.status === "done"
                           ? "bg-ecosystem-light text-ecosystem-darker border border-primary/30"
                           : item.status === "incomplete"
-                          ? "bg-college-light text-college-darker border border-college-normal/30"
-                          : "bg-female-light text-female-darker border border-female-normal/30"
-                      }`}
+                            ? "bg-college-light text-college-darker border border-college-normal/30"
+                            : "bg-female-light text-female-darker border border-female-normal/30"
+                        }`}
                     >
                       {item.status === "done"
                         ? "✅ انجام شد"
                         : item.status === "incomplete"
-                        ? "⏳ ناقص مانده"
-                        : "❌ لغو شد"}
+                          ? "⏳ ناقص مانده"
+                          : "❌ لغو شد"}
                     </span>
                   </div>
                 ))}

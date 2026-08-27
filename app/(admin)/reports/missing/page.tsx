@@ -183,12 +183,11 @@ export default function MissingReportsPage() {
           <select
             value={selectedDept}
             onChange={(e) => setSelectedDept(e.target.value)}
-            className="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs bg-[#FAFAFA] focus:border-primary focus:outline-none"
+            className="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs bg-[#FAFAFA] focus:border-primary focus:outline-none font-bold text-sec"
           >
             <option value="all">همه دپارتمان‌ها</option>
-            {departments.map((d: any) => (
-              <option key={d} value={d}>{d}</option>
-            ))}
+            <option value="پسرانه">پسرانه</option>
+            <option value="دخترانه">دخترانه</option>
           </select>
         </div>
       </div>
