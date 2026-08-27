@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { bot, initBotIfNeeded } from "@/lib/telegram/bot";
+import { bot, ensureBotInitialized } from "@/lib/telegram/bot";
 
 export async function POST(req: NextRequest) {
   const secretHeader = req.headers.get("x-telegram-bot-api-secret-token");
@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const update = await req.json();
-    await initBotIfNeeded();
+    await ensureBotInitialized();
     await bot.handleUpdate(update);
     return NextResponse.json({ ok: true });
   } catch (error: any) {

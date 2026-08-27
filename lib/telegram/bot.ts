@@ -21,17 +21,20 @@ import {
 const botToken = process.env.TELEGRAM_BOT_TOKEN || "";
 export const bot = new Bot(botToken || "dummy_token_for_build");
 
-let isInitialized = false;
+let initPromise: Promise<void> | null = null;
 
-export async function initBotIfNeeded() {
-  if (!isInitialized && process.env.TELEGRAM_BOT_TOKEN) {
-    try {
-      await bot.init();
-      isInitialized = true;
-    } catch (err) {
-      console.warn("bot.init() failed, will retry on next update:", err);
-    }
+export async function ensureBotInitialized() {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  if (!token || token === "dummy_token_for_build") {
+    throw new Error("TELEGRAM_BOT_TOKEN environment variable is missing on Vercel!");
   }
+  if (!initPromise) {
+    initPromise = bot.init().catch((err) => {
+      initPromise = null;
+      throw err;
+    });
+  }
+  await initPromise;
 }
 
 // Helper to determine if current time is considered "late" based on WORK_END_HOUR
@@ -102,7 +105,6 @@ bot.command("link", async (ctx) => {
   if (!chatId) return;
 
   const rawText = ctx.message?.text || "";
-  // Extract arguments either from ctx.match or by parsing the message text
   const matchArgs = ctx.match?.trim() || "";
   const fallbackArgs = rawText.replace(/^\/link(@\w+)?\s*/i, "").trim();
   const codeArg = matchArgs || fallbackArgs;
