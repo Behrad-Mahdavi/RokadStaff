@@ -25,10 +25,11 @@ export async function GET(req: NextRequest) {
   const userAgent = req.headers.get("user-agent");
 
   const origin =
+    process.env.APP_URL ||
     req.headers.get("origin") ||
     (req.headers.get("host")
       ? `https://${req.headers.get("host")}`
-      : "https://rokad-staff.vercel.app");
+      : "https://rotello-staff.vercel.app");
 
   // 1. If requested by Telegram/Crawler prefetcher, return 200 without consuming token
   if (isCrawler(userAgent)) {

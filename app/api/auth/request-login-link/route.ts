@@ -80,10 +80,11 @@ export async function POST(req: NextRequest) {
 
     // Detect base URL
     const origin =
+      process.env.APP_URL ||
       req.headers.get("origin") ||
       (req.headers.get("host")
         ? `https://${req.headers.get("host")}`
-        : "https://rokad-staff.vercel.app");
+        : "https://rotello-staff.vercel.app");
     const loginUrl = `${origin}/auth/verify?token=${token}`;
 
     // 4. Send Magic Link via Telegram bot
