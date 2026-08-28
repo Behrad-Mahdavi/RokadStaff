@@ -26,11 +26,17 @@ class TelegramNotificationService {
   /**
    * Send a direct message immediately (awaitable)
    */
-  async sendDirect(chatId: number, text: string, parseMode: "Markdown" | "HTML" = "Markdown"): Promise<boolean> {
+  async sendDirect(
+    chatId: number,
+    text: string,
+    parseMode: "Markdown" | "HTML" = "Markdown",
+    disablePreview: boolean = true
+  ): Promise<boolean> {
     try {
       await ensureBotInitialized();
       await bot.api.sendMessage(chatId, text, {
         parse_mode: parseMode,
+        link_preview_options: { is_disabled: disablePreview },
       });
       return true;
     } catch (err) {
@@ -51,6 +57,7 @@ class TelegramNotificationService {
         try {
           await bot.api.sendMessage(item.chatId, item.text, {
             parse_mode: item.parseMode || "Markdown",
+            link_preview_options: { is_disabled: true },
           });
         } catch (err) {
           console.error(`Error sending queued message to ${item.chatId}:`, err);
@@ -80,7 +87,7 @@ class TelegramNotificationService {
 ⏱ _این لینک اختصاصی است و به مدت ۱۰ دقیقه معتبر خواهد بود._
 🌿 _سامانه مدیریت پروژه رُکاد‌استاف_`;
 
-    return await this.sendDirect(chatId, text, "Markdown");
+    return await this.sendDirect(chatId, text, "Markdown", true);
   }
 
   /**
@@ -107,7 +114,7 @@ class TelegramNotificationService {
 
     text += `\n\nبرای مشاهده جزئیات و ثبت گزارش کار، به میز کار خود در وب مراجعه کنید.`;
 
-    return await this.sendDirect(chatId, text, "Markdown");
+    return await this.sendDirect(chatId, text, "Markdown", true);
   }
 }
 
