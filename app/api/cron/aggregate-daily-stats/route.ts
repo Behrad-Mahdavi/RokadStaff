@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { aggregateDailyStats } from "@/lib/reporting/aggregator";
+import { getSession } from "@/lib/auth/session";
 
 export async function POST(req: NextRequest) {
   return handleAggregation(req);
@@ -10,16 +11,26 @@ export async function GET(req: NextRequest) {
 }
 
 async function handleAggregation(req: NextRequest) {
+  const session = await getSession();
   const authHeader = req.headers.get("authorization");
   const cronHeader = req.headers.get("x-cron-secret");
   const expectedSecret = process.env.CRON_SECRET;
 
-  if (expectedSecret) {
+  let isAuthorized = false;
+  if (session) {
+    isAuthorized = true;
+  } else if (expectedSecret) {
     const isBearerValid = authHeader === `Bearer ${expectedSecret}`;
     const isHeaderValid = cronHeader === expectedSecret;
-    if (!isBearerValid && !isHeaderValid) {
-      return NextResponse.json({ error: "Unauthorized Cron invocation" }, { status: 401 });
+    if (isBearerValid || isHeaderValid) {
+      isAuthorized = true;
     }
+  } else {
+    isAuthorized = false;
+  }
+
+  if (!isAuthorized) {
+    return NextResponse.json({ error: "Unauthorized Cron invocation" }, { status: 401 });
   }
 
   try {

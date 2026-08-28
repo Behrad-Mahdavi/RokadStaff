@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/client";
 import { employees, dailyReports } from "@/lib/db/schema";
-import { eq, and, isNotNull, sql } from "drizzle-orm";
-import { bot } from "@/lib/telegram/bot";
+import { eq, and, isNotNull } from "drizzle-orm";
+import { bot, ensureBotInitialized } from "@/lib/telegram/bot";
 import { getTehranDateString, formatToJalali } from "@/lib/utils";
+import { getSession } from "@/lib/auth/session";
 
 // Delay helper to respect Telegram API rate limits (max ~30 msg/sec)
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -17,16 +18,28 @@ export async function POST(req: NextRequest) {
 }
 
 async function handleReminder(req: NextRequest) {
+  // Check either Admin Session (from UI click) OR Cron Secret (from Vercel Cron)
+  const session = await getSession();
   const authHeader = req.headers.get("authorization");
   const cronHeader = req.headers.get("x-cron-secret");
   const expectedSecret = process.env.CRON_SECRET;
 
-  if (expectedSecret) {
+  let isAuthorized = false;
+  if (session) {
+    isAuthorized = true;
+  } else if (expectedSecret) {
     const isBearerValid = authHeader === `Bearer ${expectedSecret}`;
     const isHeaderValid = cronHeader === expectedSecret;
-    if (!isBearerValid && !isHeaderValid) {
-      return NextResponse.json({ error: "Unauthorized Cron invocation" }, { status: 401 });
+    if (isBearerValid || isHeaderValid) {
+      isAuthorized = true;
     }
+  } else {
+    // If no CRON_SECRET configured and no session
+    isAuthorized = false;
+  }
+
+  if (!isAuthorized) {
+    return NextResponse.json({ error: "Unauthorized Cron invocation" }, { status: 401 });
   }
 
   const db = getDb();
@@ -34,6 +47,9 @@ async function handleReminder(req: NextRequest) {
   const jalaliToday = formatToJalali(new Date());
 
   try {
+    // Ensure bot is initialized for serverless environment
+    await ensureBotInitialized();
+
     // 1. Get all active employees who have a linked telegramChatId
     const activeLinkedEmployees = await db
       .select()
