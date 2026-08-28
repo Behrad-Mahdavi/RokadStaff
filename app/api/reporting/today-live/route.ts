@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/client";
-import { dailyReports, employees, reportItems } from "@/lib/db/schema";
-import { eq, inArray } from "drizzle-orm";
+import { dailyReports, employees } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 import { getSession } from "@/lib/auth/session";
 import { getTehranDateString } from "@/lib/utils";
 
@@ -51,31 +51,10 @@ export async function GET(req: NextRequest) {
     const submittedCount = filteredReports.length;
     const missingCount = Math.max(0, activeEmployees.length - submittedCount);
 
-    const reportIds = filteredReports.map((r: any) => r.id);
-    let totalTasks = 0;
-    let doneTasks = 0;
-    let incompleteTasks = 0;
-    let cancelledTasks = 0;
-
-    if (reportIds.length > 0) {
-      const items: any[] = await db
-        .select()
-        .from(reportItems)
-        .where(inArray(reportItems.reportId, reportIds));
-
-      totalTasks = items.length;
-      doneTasks = items.filter((i: any) => i.status === "done").length;
-      incompleteTasks = items.filter((i: any) => i.status === "incomplete").length;
-      cancelledTasks = items.filter((i: any) => i.status === "cancelled").length;
-    }
-
     const completionRate =
       activeEmployees.length > 0
         ? Math.round((submittedCount / activeEmployees.length) * 100)
         : 0;
-
-    const taskCompletionRate =
-      totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
 
     return NextResponse.json({
       todayDate: todayStr,
@@ -86,13 +65,6 @@ export async function GET(req: NextRequest) {
       onTimeCount,
       lateCount,
       completionRate,
-      tasks: {
-        total: totalTasks,
-        done: doneTasks,
-        incomplete: incompleteTasks,
-        cancelled: cancelledTasks,
-        completionRate: taskCompletionRate,
-      },
     });
   } catch (error: any) {
     console.error("Live reporting error:", error);

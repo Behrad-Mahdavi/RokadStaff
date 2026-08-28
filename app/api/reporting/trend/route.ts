@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
 
   try {
     const { searchParams } = new URL(req.url);
-    const metric = searchParams.get("metric") || "completionRate"; // completionRate | onTimeRate | taskCompletionRatio
+    const metric = searchParams.get("metric") || "completionRate"; // completionRate | onTimeRate
     const groupBy = searchParams.get("groupBy") || "day"; // day | week | month
 
     const defaultFrom = new Date();
@@ -44,15 +44,12 @@ export async function GET(req: NextRequest) {
       .where(and(...conditions))
       .orderBy(dailyStats.statDate);
 
-    // Map time-series data points
     const points = stats.map((s: any) => {
       let value = 0;
       if (metric === "completionRate") {
         value = s.activeEmployees > 0 ? Math.round((s.submittedCount / s.activeEmployees) * 100) : 0;
       } else if (metric === "onTimeRate") {
         value = s.submittedCount > 0 ? Math.round((s.onTimeCount / s.submittedCount) * 100) : 0;
-      } else if (metric === "taskCompletionRatio") {
-        value = s.totalTaskItems > 0 ? Math.round((s.doneTaskItems / s.totalTaskItems) * 100) : 0;
       }
 
       return {
@@ -63,8 +60,6 @@ export async function GET(req: NextRequest) {
         activeEmployees: s.activeEmployees,
         onTimeCount: s.onTimeCount,
         lateCount: s.lateCount,
-        totalTasks: s.totalTaskItems,
-        doneTasks: s.doneTaskItems,
       };
     });
 

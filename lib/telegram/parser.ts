@@ -1,40 +1,33 @@
 import { toEnglishDigits } from "../utils";
 
-export type TaskStatus = "done" | "incomplete" | "cancelled";
-
 export interface ParsedTaskItem {
   order: number;
   description: string;
-  status: TaskStatus;
-  statusFa: string;
 }
 
 export interface ParseResult {
   isValid: boolean;
   items: ParsedTaskItem[];
+  reportContent: string;
   error?: string;
-  errorLine?: number;
 }
-
-const STATUS_MAP: Record<string, TaskStatus> = {
-  "انجام شد": "done",
-  "ناقص مانده": "incomplete",
-  "لغو شد": "cancelled",
-};
 
 /**
  * Parses a raw Telegram /report message.
- * Format expected:
+ * Accepts any formatted checklist or free-text report after /report command.
+ * Examples supported:
  * /report
- * 1- شرح تسک اول - انجام شد
- * 2- شرح تسک دوم - ناقص مانده
- * 3- شرح تسک سوم - لغو شد
+ * 1- شرح تسک اول
+ * 2- شرح تسک دوم
+ *
+ * or simply any list of lines.
  */
 export function parseReportMessage(text: string): ParseResult {
   if (!text || typeof text !== "string") {
     return {
       isValid: false,
       items: [],
+      reportContent: "",
       error: "متن پیام خالی است.",
     };
   }
@@ -49,6 +42,7 @@ export function parseReportMessage(text: string): ParseResult {
     return {
       isValid: false,
       items: [],
+      reportContent: "",
       error: "متن پیام خالی است.",
     };
   }
@@ -59,71 +53,54 @@ export function parseReportMessage(text: string): ParseResult {
     return {
       isValid: false,
       items: [],
+      reportContent: "",
       error: "پیام باید با دستور /report شروع شود.",
     };
   }
 
-  const taskLines = lines.slice(1);
-  if (taskLines.length === 0) {
+  // If /report is on the same line as the first task (e.g. /report 1- انجام کارها)
+  let reportBodyLines = lines.slice(1);
+  const inlineContent = lines[0].replace(/^\/report(@\w+)?\s*/i, "").trim();
+  if (inlineContent.length > 0) {
+    reportBodyLines = [inlineContent, ...reportBodyLines];
+  }
+
+  if (reportBodyLines.length === 0) {
     return {
       isValid: false,
       items: [],
-      error: "گزارش شما شامل هیچ تسکی نیست! لطفاً حداقل یک مورد ثبت کنید.",
+      reportContent: "",
+      error: "متن گزارش خالی است! لطفاً شرح کارهای انجام‌شده امروز را بنویسید.",
     };
   }
 
-  // Regex pattern for each line:
-  // ^\s*(\d+)[-.]\s*(.+?)\s*-\s*(انجام شد|ناقص مانده|لغو شد)\s*$
-  // We allow English and Persian digits
-  const regex = /^\s*([\d\u06f0-\u06f9\u0660-\u0669]+)[-.]\s*(.+?)\s*[-–—]\s*(انجام شد|ناقص مانده|لغو شد)\s*$/;
-
   const items: ParsedTaskItem[] = [];
 
-  for (let i = 0; i < taskLines.length; i++) {
-    const rawLine = taskLines[i];
-    const lineNumber = i + 2; // 1-indexed including /report line
+  for (let i = 0; i < reportBodyLines.length; i++) {
+    const rawLine = reportBodyLines[i];
 
-    const match = rawLine.match(regex);
-    if (!match) {
-      return {
-        isValid: false,
-        items: [],
-        errorLine: lineNumber,
-        error: `خطای ساختاری در خط ${lineNumber}:\n«${rawLine}»\n\nالگوی مجاز:\nشماره - عنوان تسک - وضعیت (انجام شد / ناقص مانده / لغو شد)`,
-      };
+    // Check if line starts with a number like "1-", "1.", "1)"
+    const numMatch = rawLine.match(/^\s*([\d\u06f0-\u06f9\u0660-\u0669]+)[-.)]\s*(.+)$/);
+    if (numMatch) {
+      const order = parseInt(toEnglishDigits(numMatch[1]), 10) || i + 1;
+      const description = numMatch[2].trim();
+      items.push({ order, description });
+    } else {
+      // Plain text line or bullet
+      const cleanLine = rawLine.replace(/^[-*•▫️🔹]\s*/, "").trim();
+      items.push({ order: i + 1, description: cleanLine });
     }
-
-    const orderStr = toEnglishDigits(match[1]);
-    const order = parseInt(orderStr, 10);
-    const description = match[2].trim();
-    const statusFa = match[3].trim();
-    const status = STATUS_MAP[statusFa];
-
-    if (isNaN(order) || !description || !status) {
-      return {
-        isValid: false,
-        items: [],
-        errorLine: lineNumber,
-        error: `خطا در پارس مقادیر خط ${lineNumber}`,
-      };
-    }
-
-    items.push({
-      order,
-      description,
-      status,
-      statusFa,
-    });
   }
 
   return {
     isValid: true,
     items,
+    reportContent: reportBodyLines.join("\n"),
   };
 }
 
 /**
- * Builds a formatted Persian confirmation message for the employee
+ * Builds a formatted Persian confirmation message for the employee without task status breakdown.
  */
 export function buildReportConfirmationMessage(
   employeeName: string,
@@ -132,12 +109,6 @@ export function buildReportConfirmationMessage(
   isLate: boolean,
   isEdit: boolean
 ): string {
-  const statusEmojiMap: Record<TaskStatus, string> = {
-    done: "✅",
-    incomplete: "⏳",
-    cancelled: "❌",
-  };
-
   const lines: string[] = [];
   lines.push(`🌿 *رُکاد‌استاف | ثبت گزارش روزانه*`);
   lines.push(``);
@@ -145,31 +116,26 @@ export function buildReportConfirmationMessage(
   lines.push(
     isEdit
       ? `گزارش شما برای تاریخ *${reportDateJalali}* با موفقیت *ویرایش و جایگزین* شد.`
-      : `گزارش شما برای تاریخ *${reportDateJalali}* با موفقیت ثبت شد.`
+      : `گزارش شما برای تاریخ *${reportDateJalali}* با موفقیت ثبت گردید.`
   );
-  
+
   if (isLate) {
     lines.push(`⚠️ _وضعیت: ثبت با تأخیر (پس از ساعت کاری)_`);
   } else {
-    lines.push(`✨ _وضعیت: به‌موقع_`);
+    lines.push(`✨ _وضعیت: ثبت به‌موقع_`);
   }
 
   lines.push(``);
-  lines.push(`📋 *خلاصه چک‌لیست ثبت‌شده:*`);
-  
+  lines.push(`📋 *شرح گزارش ثبت‌شده:*`);
+
   items.forEach((item) => {
-    const emoji = statusEmojiMap[item.status] || "▫️";
-    lines.push(`${emoji} *${item.order}.* ${item.description} _(${item.statusFa})_`);
+    lines.push(`▫️ *${item.order}.* ${item.description}`);
   });
 
-  const doneCount = items.filter((i) => i.status === "done").length;
-  const incompleteCount = items.filter((i) => i.status === "incomplete").length;
-  const cancelledCount = items.filter((i) => i.status === "cancelled").length;
-
   lines.push(``);
-  lines.push(`📊 مجموع: *${items.length} تسک* | ${doneCount} انجام شده | ${incompleteCount} ناقص | ${cancelledCount} لغو شده`);
+  lines.push(`📊 مجموع موارد: *${items.length} مورد*`);
   lines.push(``);
-  lines.push(`💡 _نکته: تا پایان امروز می‌توانید با ارسال مجدد فرمت /report گزارش خود را اصلاح کنید._`);
+  lines.push(`💡 _نکته: تا پایان امروز می‌توانید با ارسال مجدد پیام /report گزارش خود را اصلاح نمایید._`);
 
   return lines.join("\n");
 }

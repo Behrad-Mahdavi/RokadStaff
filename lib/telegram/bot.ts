@@ -76,7 +76,7 @@ async function logRawUpdate(chatId: number | undefined, update: any, ok: boolean
 bot.command(["start", "help"], async (ctx) => {
   const text = `🌿 به سامانه گزارش‌دهی رُکاد‌استاف خوش آمدید
 
-این ربات جهت ثبت چک‌لیست پایان روز همکاران رُکاد طراحی شده است.
+این ربات جهت ثبت گزارش کار روزانه همکاران رُکاد طراحی شده است.
 
 📌 مراحل اتصال حساب کاربری:
 ۱. کد ۶ رقمی اتصال خود را از مدیر سیستم دریافت کنید.
@@ -84,17 +84,12 @@ bot.command(["start", "help"], async (ctx) => {
 /link 123456
 
 📝 نحوه ارسال گزارش روزانه:
-پس از اتصال، هر روز در پایان ساعت کاری گزارش خود را در قالب زیر بفرستید:
+پس از اتصال، هر روز در پایان ساعت کاری گزارش خود را ارسال فرمایید:
 
 /report
-1- طراحی صفحه اصلی - انجام شد
-2- بازبینی لاجیک وب‌هوک - ناقص مانده
-3- تست نهایی - لغو شد
-
-🏷 وضعیت‌های مجاز:
-• انجام شد
-• ناقص مانده
-• لغو شد`;
+1- طراحی صفحه اصلی
+2- بازبینی لاجیک وب‌هوک
+3- تست نهایی و هماهنگی`;
 
   await ctx.reply(text);
 });
@@ -297,7 +292,7 @@ bot.on("message:text", async (ctx) => {
       reportId,
       taskOrder: item.order,
       description: item.description,
-      status: item.status,
+      status: "submitted",
     }));
 
     await db.insert(reportItems).values(itemsToInsert);

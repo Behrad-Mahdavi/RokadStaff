@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/client";
-import { employees, dailyReports, reportItems } from "@/lib/db/schema";
-import { eq, desc, inArray } from "drizzle-orm";
+import { employees, dailyReports } from "@/lib/db/schema";
+import { eq, desc } from "drizzle-orm";
 import { getTehranDateString } from "@/lib/utils";
 import { getSession } from "@/lib/auth/session";
 
@@ -26,11 +26,13 @@ export async function GET(req: NextRequest) {
         id: dailyReports.id,
         employeeId: dailyReports.employeeId,
         reportDate: dailyReports.reportDate,
+        rawText: dailyReports.rawText,
         status: dailyReports.status,
         submittedAt: dailyReports.submittedAt,
         editedCount: dailyReports.editedCount,
         employeeFullName: employees.fullName,
         employeeDepartment: employees.department,
+        employeePosition: employees.position,
       })
       .from(dailyReports)
       .innerJoin(employees, eq(dailyReports.employeeId, employees.id))
@@ -46,32 +48,10 @@ export async function GET(req: NextRequest) {
         ? Math.round((submittedCount / activeEmployees.length) * 100)
         : 0;
 
-    // 3. Task breakdown for today
-    let totalTasksToday = 0;
-    let doneTasksToday = 0;
-    let incompleteTasksToday = 0;
-    let cancelledTasksToday = 0;
-
-    if (todayReports.length > 0) {
-      const todayReportIds = todayReports.map((r: any) => r.id);
-      const items: any[] = await db
-        .select()
-        .from(reportItems)
-        .where(inArray(reportItems.reportId, todayReportIds));
-
-      totalTasksToday = items.length;
-      doneTasksToday = items.filter((i: any) => i.status === "done").length;
-      incompleteTasksToday = items.filter((i: any) => i.status === "incomplete").length;
-      cancelledTasksToday = items.filter((i: any) => i.status === "cancelled").length;
-    }
-
-    const taskCompletionRate =
-      totalTasksToday > 0 ? Math.round((doneTasksToday / totalTasksToday) * 100) : 0;
-
-    // 4. Department breakdown
+    // 3. Department breakdown
     const departmentStats: Record<string, { total: number; submitted: number }> = {};
     activeEmployees.forEach((emp: any) => {
-      const dept = emp.department || "عمومی";
+      const dept = emp.department || "پسرانه";
       if (!departmentStats[dept]) {
         departmentStats[dept] = { total: 0, submitted: 0 };
       }
@@ -79,7 +59,7 @@ export async function GET(req: NextRequest) {
     });
 
     todayReports.forEach((rep: any) => {
-      const dept = rep.employeeDepartment || "عمومی";
+      const dept = rep.employeeDepartment || "پسرانه";
       if (departmentStats[dept]) {
         departmentStats[dept].submitted++;
       }
@@ -97,15 +77,8 @@ export async function GET(req: NextRequest) {
         todayLate: lateCount,
         participationRate,
       },
-      tasks: {
-        total: totalTasksToday,
-        done: doneTasksToday,
-        incomplete: incompleteTasksToday,
-        cancelled: cancelledTasksToday,
-        completionRate: taskCompletionRate,
-      },
       departments: departmentStats,
-      recentReports: todayReports.slice(0, 6),
+      recentReports: todayReports.slice(0, 10),
     });
   } catch (error: any) {
     console.error("Dashboard summary error:", error);

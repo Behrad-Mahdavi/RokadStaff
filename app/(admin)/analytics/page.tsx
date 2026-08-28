@@ -4,26 +4,18 @@ import React, { useEffect, useState } from "react";
 import {
   BarChart3,
   TrendingUp,
-  Download,
   Calendar,
-  Filter,
-  CheckCircle2,
   Clock,
   FileSpreadsheet,
   Flame,
   Users,
-  ShieldCheck,
-  ChevronLeft,
-  ChevronRight,
-  Sparkles,
   AlertCircle,
-  Eye,
+  FileText,
 } from "lucide-react";
 import StatCard from "@/components/StatCard";
 import Modal from "@/components/Modal";
 import {
   formatToJalali,
-  formatTehranTime,
   getTehranDateString,
   toPersianDigits,
 } from "@/lib/utils";
@@ -32,7 +24,7 @@ export default function AnalyticsPage() {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<any>(null);
   const [trendData, setTrendData] = useState<any[]>([]);
-  const [activeMetric, setActiveMetric] = useState<"completionRate" | "onTimeRate" | "taskCompletionRatio">("completionRate");
+  const [activeMetric, setActiveMetric] = useState<"completionRate" | "onTimeRate">("completionRate");
 
   // Date range presets
   const todayStr = getTehranDateString();
@@ -116,12 +108,10 @@ export default function AnalyticsPage() {
   const kpis = data?.kpis || {
     completionRate: 0,
     onTimeRate: 0,
-    taskCompletionRatio: 0,
     totalSubmitted: 0,
     totalMissing: 0,
-    totalTasks: 0,
-    totalDoneTasks: 0,
-    averageTasksPerReport: "0",
+    totalOnTime: 0,
+    totalLate: 0,
     activeEmployeeDays: 0,
   };
 
@@ -136,7 +126,7 @@ export default function AnalyticsPage() {
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-sec tracking-tight">تحلیل و گزارش‌گیری جامع عملکرد</h1>
           <p className="text-xs sm:text-sm text-ink-normal/70 mt-1 font-medium">
-            پایش هوشمند متریک‌های ثبت گزارش، نرخ تکمیل تسک‌ها و دریافت خروجی اکسل
+            پایش هوشمند متریک‌های ثبت گزارش کار، انضباط کاری و دریافت خروجی اکسل
           </p>
         </div>
 
@@ -205,7 +195,7 @@ export default function AnalyticsPage() {
       {/* KPI Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <StatCard
-          title="Completion Rate (نرخ ثبت گزارش)"
+          title="نرخ مشارکت (Completion Rate)"
           value={`٪${toPersianDigits(kpis.completionRate)}`}
           subtitle={`${toPersianDigits(kpis.totalSubmitted)} گزارش از ${toPersianDigits(kpis.activeEmployeeDays)} نفر-روز`}
           icon={TrendingUp}
@@ -213,7 +203,7 @@ export default function AnalyticsPage() {
         />
 
         <StatCard
-          title="On-Time Rate (نرخ به‌موقع بودن)"
+          title="نرخ به‌موقع بودن (On-Time Rate)"
           value={`٪${toPersianDigits(kpis.onTimeRate)}`}
           subtitle={`${toPersianDigits(kpis.totalOnTime || 0)} به‌موقع | ${toPersianDigits(kpis.totalLate || 0)} با تأخیر`}
           icon={Clock}
@@ -221,18 +211,18 @@ export default function AnalyticsPage() {
         />
 
         <StatCard
-          title="Task Completion Ratio (نرخ انجام تسک‌ها)"
-          value={`٪${toPersianDigits(kpis.taskCompletionRatio)}`}
-          subtitle={`${toPersianDigits(kpis.totalDoneTasks)} انجام شد از ${toPersianDigits(kpis.totalTasks)} تسک`}
-          icon={CheckCircle2}
+          title="مجموع گزارش‌های ثبت‌شده"
+          value={`${toPersianDigits(kpis.totalSubmitted)} گزارش`}
+          subtitle="کل چک‌لیست‌های دریافتی در این بازه"
+          icon={FileText}
           theme="college"
         />
 
         <StatCard
-          title="میانگین طول تسک‌ها (Guardrail)"
-          value={`${toPersianDigits(kpis.averageTasksPerReport)} تسک`}
-          subtitle="میانگین تعداد آیتم در هر چک‌لیست"
-          icon={ShieldCheck}
+          title="مجموع غیبت در گزارش"
+          value={`${toPersianDigits(kpis.totalMissing)} مورد`}
+          subtitle="موارد عدم ثبت در روزهای کاری بازه"
+          icon={AlertCircle}
           theme="club"
         />
       </div>
@@ -241,18 +231,17 @@ export default function AnalyticsPage() {
       <div className="bg-white rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] shadow-[3px_3px_0_#202A5A]">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
-            <h2 className="text-lg font-black text-sec">روند زمانی شاخص‌های عملکردی</h2>
+            <h2 className="text-lg font-black text-sec">روند زمانی شاخص‌های مشارکت و نظم</h2>
             <p className="text-xs sm:text-sm text-ink-normal/60 mt-0.5 font-medium">
-              نمودار مقایسه‌ای نوسانات نرخ در طول بازه زمانی انتخابی
+              نمودار مقایسه‌ای نوسانات نرخ ثبت گزارش در طول بازه زمانی انتخابی
             </p>
           </div>
 
           {/* Metric Toggle Tabs */}
           <div className="flex flex-wrap items-center gap-1.5 p-1 bg-gray-100 rounded-2xl">
             {[
-              { id: "completionRate", label: "نرخ ثبت گزارش" },
+              { id: "completionRate", label: "نرخ مشارکت گزارش" },
               { id: "onTimeRate", label: "نرخ به‌موقع بودن" },
-              { id: "taskCompletionRatio", label: "نرخ انجام تسک‌ها" },
             ].map((m: any) => (
               <button
                 key={m.id}
@@ -285,11 +274,7 @@ export default function AnalyticsPage() {
                   <div className="w-full max-w-[36px] h-36 bg-gray-100 rounded-t-xl relative flex items-end overflow-hidden">
                     <div
                       className={`w-full rounded-t-xl transition-all duration-500 ${
-                        activeMetric === "completionRate"
-                          ? "bg-primary"
-                          : activeMetric === "onTimeRate"
-                          ? "bg-sec"
-                          : "bg-third"
+                        activeMetric === "completionRate" ? "bg-primary" : "bg-sec"
                       }`}
                       style={{ height: `${Math.max(8, pt.value)}%` }}
                     />
@@ -315,7 +300,7 @@ export default function AnalyticsPage() {
           setSelectedEmployeeId(null);
           setEmployeeHistory(null);
         }}
-        title={`پروفایل تحلیلی ${employeeHistory?.employee?.fullName || ""}`}
+        title={`پروفایل عملکرد ${employeeHistory?.employee?.fullName || ""}`}
         maxWidth="lg"
       >
         {historyLoading ? (
@@ -343,23 +328,17 @@ export default function AnalyticsPage() {
             </div>
 
             {/* Performance Stats */}
-            <div className="grid grid-cols-3 gap-3 text-center">
+            <div className="grid grid-cols-2 gap-4 text-center">
               <div className="p-4 bg-gray-50 rounded-2xl border">
-                <div className="text-xs sm:text-sm text-ink-normal/60 font-medium">تعداد گزارش‌ها</div>
+                <div className="text-xs sm:text-sm text-ink-normal/60 font-medium">تعداد کل گزارش‌ها</div>
                 <div className="text-xl font-black text-sec mt-1">
                   {toPersianDigits(employeeHistory.summary.totalSubmitted)}
                 </div>
               </div>
               <div className="p-4 bg-gray-50 rounded-2xl border">
-                <div className="text-xs sm:text-sm text-ink-normal/60 font-medium">نرخ به‌موقع بودن</div>
+                <div className="text-xs sm:text-sm text-ink-normal/60 font-medium">درصد به‌موقع بودن</div>
                 <div className="text-xl font-black text-primary mt-1">
                   ٪{toPersianDigits(employeeHistory.summary.onTimeRate)}
-                </div>
-              </div>
-              <div className="p-4 bg-gray-50 rounded-2xl border">
-                <div className="text-xs sm:text-sm text-ink-normal/60 font-medium">نرخ انجام تسک‌ها</div>
-                <div className="text-xl font-black text-college-normal mt-1">
-                  ٪{toPersianDigits(employeeHistory.summary.taskCompletionRate)}
                 </div>
               </div>
             </div>
@@ -372,7 +351,7 @@ export default function AnalyticsPage() {
                   <div className="text-center py-6 text-sm text-gray-400">گزارشی در این بازه ثبت نشده است.</div>
                 ) : (
                   employeeHistory.reports.map((rep: any) => (
-                    <div key={rep.id} className="p-3.5 bg-white rounded-2xl border border-gray-200 text-xs sm:text-sm space-y-1.5">
+                    <div key={rep.id} className="p-4 bg-white rounded-2xl border border-gray-200 text-xs sm:text-sm space-y-2">
                       <div className="flex items-center justify-between">
                         <span className="font-bold text-sec">{rep.reportDateJalali}</span>
                         <span
@@ -385,9 +364,9 @@ export default function AnalyticsPage() {
                           {rep.status === "on_time" ? "به‌موقع" : "با تأخیر"}
                         </span>
                       </div>
-                      <div className="text-xs sm:text-sm text-ink-normal/70 font-medium">
-                        {toPersianDigits(rep.stats.done)} انجام شد از {toPersianDigits(rep.stats.total)} تسک (٪{toPersianDigits(rep.stats.rate)})
-                      </div>
+                      <p className="text-xs sm:text-sm text-ink-normal/80 line-clamp-2 leading-relaxed">
+                        {rep.rawText.replace(/^\/report\s*/i, "").trim()}
+                      </p>
                     </div>
                   ))
                 )}

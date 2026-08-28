@@ -41,30 +41,16 @@ export async function aggregateDailyStats(targetDate?: string) {
 
   const reportIds = dateReports.map((r: any) => r.id);
   let totalTasks = 0;
-  let doneTasks = 0;
-  const tasksByReportId: Record<string, { total: number; done: number }> = {};
 
   if (reportIds.length > 0) {
     const items: any[] = await db
       .select({
         reportId: reportItems.reportId,
-        status: reportItems.status,
       })
       .from(reportItems)
       .where(inArray(reportItems.reportId, reportIds));
 
     totalTasks = items.length;
-    doneTasks = items.filter((i: any) => i.status === "done").length;
-
-    for (const item of items) {
-      if (!tasksByReportId[item.reportId]) {
-        tasksByReportId[item.reportId] = { total: 0, done: 0 };
-      }
-      tasksByReportId[item.reportId].total++;
-      if (item.status === "done") {
-        tasksByReportId[item.reportId].done++;
-      }
-    }
   }
 
   // 3. Organization-wide aggregation (department = null)
@@ -90,31 +76,20 @@ export async function aggregateDailyStats(targetDate?: string) {
       onTimeCount: orgOnTimeCount,
       lateCount: orgLateCount,
       totalTaskItems: totalTasks,
-      doneTaskItems: doneTasks,
+      doneTaskItems: totalTasks,
     },
   ];
 
   // 4. Per-department aggregation
   const departments = Array.from(
-    new Set(activeEmployees.map((e: any) => e.department || "عمومی").filter(Boolean))
+    new Set(activeEmployees.map((e: any) => e.department || "پسرانه").filter(Boolean))
   );
 
   for (const dept of departments) {
-    const deptActive = activeEmployees.filter((e: any) => (e.department || "عمومی") === dept);
-    const deptReports = dateReports.filter((r: any) => (r.employeeDepartment || "عمومی") === dept);
+    const deptActive = activeEmployees.filter((e: any) => (e.department || "پسرانه") === dept);
+    const deptReports = dateReports.filter((r: any) => (r.employeeDepartment || "پسرانه") === dept);
     const deptOnTime = deptReports.filter((r: any) => r.status === "on_time").length;
     const deptLate = deptReports.filter((r: any) => r.status === "late").length;
-
-    let deptTotalTasks = 0;
-    let deptDoneTasks = 0;
-
-    for (const rep of deptReports) {
-      const repTaskStats = tasksByReportId[rep.id];
-      if (repTaskStats) {
-        deptTotalTasks += repTaskStats.total;
-        deptDoneTasks += repTaskStats.done;
-      }
-    }
 
     resultsToUpsert.push({
       statDate,
@@ -123,8 +98,8 @@ export async function aggregateDailyStats(targetDate?: string) {
       submittedCount: deptReports.length,
       onTimeCount: deptOnTime,
       lateCount: deptLate,
-      totalTaskItems: deptTotalTasks,
-      doneTaskItems: deptDoneTasks,
+      totalTaskItems: 0,
+      doneTaskItems: 0,
     });
   }
 

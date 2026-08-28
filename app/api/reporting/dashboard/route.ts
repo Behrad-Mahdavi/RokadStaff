@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/client";
-import { dailyStats, dailyReports, employees, reportItems } from "@/lib/db/schema";
-import { eq, and, gte, lte, isNull, inArray, desc } from "drizzle-orm";
+import { dailyStats, dailyReports, employees } from "@/lib/db/schema";
+import { eq, and, gte, lte, isNull } from "drizzle-orm";
 import { getSession } from "@/lib/auth/session";
 import { getTehranDateString } from "@/lib/utils";
 
@@ -15,13 +15,11 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const todayStr = getTehranDateString();
 
-    // Default to last 30 days if not provided
     const defaultFrom = new Date();
     defaultFrom.setDate(defaultFrom.getDate() - 30);
     const fromParam = searchParams.get("from") || getTehranDateString(defaultFrom);
     const toParam = searchParams.get("to") || todayStr;
 
-    // Role-based Access Scope (Section 7)
     let department = searchParams.get("department") || undefined;
     if (session.role === "supervisor" && (session as any).assignedDepartment) {
       department = (session as any).assignedDepartment;
@@ -47,12 +45,11 @@ export async function GET(req: NextRequest) {
       .where(and(...conditions))
       .orderBy(dailyStats.statDate);
 
-    // 2. Check if the range includes "today" (Live Query Trade-off from Section 4)
+    // 2. Check if the range includes "today"
     let todayIncluded = toParam >= todayStr && fromParam <= todayStr;
     let todayLiveStat: any = null;
 
     if (todayIncluded) {
-      // Fetch live data for today
       const allEmployees: any[] = await db.select().from(employees);
       let activeEmployees = allEmployees.filter((e: any) => e.isActive);
       if (department && department !== "all") {
@@ -75,23 +72,6 @@ export async function GET(req: NextRequest) {
         ? todayReports.filter((r: any) => r.employeeDepartment === department)
         : todayReports;
 
-      const reportIds = filteredReports.map((r: any) => r.id);
-      let totalTasksToday = 0;
-      let doneTasksToday = 0;
-
-      if (reportIds.length > 0) {
-        const items: any[] = await db
-          .select({
-            id: reportItems.id,
-            status: reportItems.status,
-          })
-          .from(reportItems)
-          .where(inArray(reportItems.reportId, reportIds));
-
-        totalTasksToday = items.length;
-        doneTasksToday = items.filter((i: any) => i.status === "done").length;
-      }
-
       todayLiveStat = {
         statDate: todayStr,
         department: department || null,
@@ -99,34 +79,27 @@ export async function GET(req: NextRequest) {
         submittedCount: filteredReports.length,
         onTimeCount: filteredReports.filter((r: any) => r.status === "on_time").length,
         lateCount: filteredReports.filter((r: any) => r.status === "late").length,
-        totalTaskItems: totalTasksToday,
-        doneTaskItems: doneTasksToday,
+        totalTaskItems: 0,
+        doneTaskItems: 0,
         isLiveToday: true,
       };
     }
 
-    // Merge historical stats + today's live stats
-    // Exclude any pre-existing record for today in historicalStats to prevent double counting
     const mergedStats = historicalStats.filter((s: any) => s.statDate !== todayStr);
     if (todayLiveStat) {
       mergedStats.push(todayLiveStat);
     }
 
-    // 3. Compute exact mathematical metrics (Section 3)
     let totalActiveEmployeesDays = 0;
     let totalSubmitted = 0;
     let totalOnTime = 0;
     let totalLate = 0;
-    let totalTasks = 0;
-    let totalDoneTasks = 0;
 
     for (const stat of mergedStats) {
       totalActiveEmployeesDays += stat.activeEmployees;
       totalSubmitted += stat.submittedCount;
       totalOnTime += stat.onTimeCount;
       totalLate += stat.lateCount;
-      totalTasks += stat.totalTaskItems;
-      totalDoneTasks += stat.doneTaskItems;
     }
 
     const completionRate =
@@ -137,27 +110,17 @@ export async function GET(req: NextRequest) {
     const onTimeRate =
       totalSubmitted > 0 ? Math.round((totalOnTime / totalSubmitted) * 100) : 0;
 
-    const taskCompletionRatio =
-      totalTasks > 0 ? Math.round((totalDoneTasks / totalTasks) * 100) : 0;
-
     const totalMissing = Math.max(0, totalActiveEmployeesDays - totalSubmitted);
-
-    const averageTasksPerReport =
-      totalSubmitted > 0 ? (totalTasks / totalSubmitted).toFixed(1) : "0";
 
     return NextResponse.json({
       period: { from: fromParam, to: toParam, department: department || "all" },
       kpis: {
         completionRate, // %
         onTimeRate, // %
-        taskCompletionRatio, // %
         totalSubmitted,
         totalMissing,
         totalOnTime,
         totalLate,
-        totalTasks,
-        totalDoneTasks,
-        averageTasksPerReport,
         activeEmployeeDays: totalActiveEmployeesDays,
       },
       dailyBreakdown: mergedStats,

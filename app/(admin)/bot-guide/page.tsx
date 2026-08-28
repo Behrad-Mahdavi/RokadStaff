@@ -4,11 +4,6 @@ import React, { useState } from "react";
 import {
   Bot,
   Terminal,
-  CheckCircle2,
-  AlertTriangle,
-  Play,
-  Copy,
-  Check,
   Sparkles,
   Info,
   ShieldCheck,
@@ -18,43 +13,31 @@ import { toPersianDigits } from "@/lib/utils";
 
 const SAMPLE_TEMPLATES = [
   {
-    title: "نمونه گزارش استاندارد (معتبر)",
+    title: "نمونه گزارش استاندارد شماره‌دار",
     text: `/report
-1- طراحی پروتوتایپ رابط کاربری - انجام شد
-2- کدنویسی اندپوینت‌های وب‌هوک تلگرام - انجام شد
-3- اتصال به پایگاه داده Neon - ناقص مانده`,
+1- طراحی پروتوتایپ رابط کاربری
+2- کدنویسی اندپوینت‌های تلگرام
+3- جلسه هماهنگی با تیم`,
   },
   {
-    title: "نمونه با وضعیت لغو شده (معتبر)",
+    title: "نمونه گزارش خطی ساده",
     text: `/report
-1- بررسی تسک‌های تیم مارکتینگ - انجام شد
-2- جلسه هفتگی همگام‌سازی - لغو شد
-3- رفع باگ‌های امنیتی سشن - انجام شد`,
+پیگیری قراردادهای جدید
+بررسی تسک‌های هفتگی
+پاسخ‌گویی به تیکت‌های پشتیبانی`,
   },
   {
-    title: "نمونه با خطای نگارشی در وضعیت (نامعتبر)",
+    title: "نمونه با بولت و علائم",
     text: `/report
-1- نگارش مستندات فنی پروژه - اوکی شد
-2- تست پرفورمنس کوئری‌ها - انجام شد`,
-  },
-  {
-    title: "نمونه بدون شماره ترتیب (نامعتبر)",
-    text: `/report
-پیاده‌سازی پنل مدیریت - انجام شد`,
+• آماده‌سازی بنرهای شبکه‌های اجتماعی
+• بارگذاری ویدیوهای آموزشی
+• تست عملکرد سرور`,
   },
 ];
 
 export default function BotGuidePage() {
   const [testText, setTestText] = useState(SAMPLE_TEMPLATES[0].text);
-  const [copied, setCopied] = useState<number | null>(null);
-
   const parseResult = parseReportMessage(testText);
-
-  const handleCopy = (text: string, idx: number) => {
-    navigator.clipboard.writeText(text);
-    setCopied(idx);
-    setTimeout(() => setCopied(null), 2000);
-  };
 
   return (
     <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-300">
@@ -66,7 +49,7 @@ export default function BotGuidePage() {
         </div>
         <h1 className="text-2xl sm:text-3xl font-black text-sec tracking-tight">راهنما و شبیه‌ساز ربات تلگرام</h1>
         <p className="text-xs sm:text-sm text-ink-normal/70 mt-1 font-medium">
-          بررسی قوانین پارس، الگوهای مجاز Regex و تست زنده پیام‌های ورودی
+          بررسی ساختار پیام‌ها و تست زنده پردازش گزارش‌های ورودی
         </p>
       </div>
 
@@ -119,14 +102,14 @@ export default function BotGuidePage() {
                   : "bg-female-light text-female-darker border border-female-normal/30"
               }`}
             >
-              {parseResult.isValid ? "✅ ساختار معتبر" : "❌ خطای اعتبارسنجی"}
+              {parseResult.isValid ? "✅ پیام معتبر" : "❌ خطای متن"}
             </span>
           </h2>
 
           {parseResult.isValid ? (
             <div className="space-y-4">
               <div className="text-xs sm:text-sm text-ink-normal/70 font-bold">
-                تعداد تسک‌های استخراج‌شده: {toPersianDigits(parseResult.items.length)} مورد
+                تعداد موارد استخراج‌شده: {toPersianDigits(parseResult.items.length)} بند
               </div>
               <div className="space-y-2.5 max-h-60 overflow-y-auto">
                 {parseResult.items.map((item, i) => (
@@ -140,27 +123,12 @@ export default function BotGuidePage() {
                       </span>
                       <span className="font-bold text-sec">{item.description}</span>
                     </div>
-                    <span
-                      className={`text-xs font-black px-2.5 py-0.5 rounded-full ${
-                        item.status === "done"
-                          ? "bg-ecosystem-light text-ecosystem-darker"
-                          : item.status === "incomplete"
-                          ? "bg-college-light text-college-darker"
-                          : "bg-female-light text-female-darker"
-                      }`}
-                    >
-                      {item.statusFa}
-                    </span>
                   </div>
                 ))}
               </div>
             </div>
           ) : (
             <div className="p-4 sm:p-5 bg-female-light/60 rounded-2xl border border-female-normal/30 text-xs sm:text-sm text-female-darker space-y-2">
-              <div className="font-black flex items-center gap-1.5">
-                <AlertTriangle className="w-4 h-4" />
-                <span>پیام خطای بازگشتی به کارمند:</span>
-              </div>
               <div className="whitespace-pre-wrap font-medium leading-relaxed">{parseResult.error}</div>
             </div>
           )}
@@ -178,8 +146,7 @@ export default function BotGuidePage() {
           <ol className="list-decimal list-inside space-y-2.5 text-xs sm:text-sm text-ink-normal/80 leading-relaxed font-medium">
             <li>مدیر در تب کارکنان، کارمند جدید را ثبت کرده و کد ۶ رقمی تصادفی صادر می‌کند.</li>
             <li>کارمند در تلگرام دستور <code className="bg-gray-100 px-1.5 py-0.5 rounded font-mono">/link [کد]</code> را ارسال می‌کند.</li>
-            <li>سیستم بررسی می‌کند که این اکانت تلگرام به کارمند دیگری وصل نباشد.</li>
-            <li>کد اتصال پس از مصرف باطل می‌شود و حساب به حالت متصل تغییر می‌یابد.</li>
+            <li>سیستم حساب تلگرام او را متصل کرده و پیام خوش‌آمدگویی ارسال می‌کند.</li>
           </ol>
         </div>
 
@@ -187,14 +154,13 @@ export default function BotGuidePage() {
         <div className="bg-white rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] shadow-[3px_3px_0_#202A5A]">
           <h3 className="text-base sm:text-lg font-black text-sec mb-3.5 flex items-center gap-2">
             <Info className="w-5 h-5 text-college-normal" />
-            <span>قوانین پارس گزارش (`/report`)</span>
+            <span>نحوه ارسال گزارش کار (`/report`)</span>
           </h3>
           <ul className="list-disc list-inside space-y-2.5 text-xs sm:text-sm text-ink-normal/80 leading-relaxed font-medium">
-            <li>خط اول حتماً باید <code className="bg-gray-100 px-1.5 py-0.5 rounded font-mono">/report</code> باشد.</li>
-            <li>هر خط باید فرمت: <code className="bg-gray-100 px-1.5 py-0.5 rounded font-mono">شماره- شرح تسک - وضعیت</code> باشد.</li>
-            <li>وضعیت‌ها فقط شامل: <b>انجام شد</b>، <b>ناقص مانده</b>، <b>لغو شد</b> می‌باشد.</li>
-            <li>پردازش اتمیک (Atomic) است؛ اگر یک خط غلط باشد کل گزارش رد می‌شود.</li>
-            <li>ارسال مجدد در همان روز، گزارش قبلی را جایگزین و در تاریخچه ثبت می‌کند.</li>
+            <li>پیام با دستور <code className="bg-gray-100 px-1.5 py-0.5 rounded font-mono">/report</code> شروع می‌شود.</li>
+            <li>کارمند شرح کارهای روزانه را در خطوط بعدی به صورت شماره‌دار یا ساده می‌نویسد.</li>
+            <li>هیچ نیازی به نوشتن وضعیت‌های پیچیده نیست.</li>
+            <li>ارسال مجدد در همان روز، گزارش قبلی را به‌روزرسانی و در تاریخچه نگهداری می‌کند.</li>
           </ul>
         </div>
       </div>

@@ -14,9 +14,6 @@ import {
   Sparkles,
   ChevronLeft,
   Calendar,
-  Check,
-  X,
-  Hourglass,
 } from "lucide-react";
 import Link from "next/link";
 import { formatToJalali, formatTehranTime, toPersianDigits } from "@/lib/utils";
@@ -88,14 +85,6 @@ export default function DashboardPage() {
     participationRate: 0,
   };
 
-  const tasks = data?.tasks || {
-    total: 0,
-    done: 0,
-    incomplete: 0,
-    cancelled: 0,
-    completionRate: 0,
-  };
-
   const departments = data?.departments || {};
   const recentReports = data?.recentReports || [];
 
@@ -110,7 +99,7 @@ export default function DashboardPage() {
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-sec tracking-tight">داشبورد مدیریت رُکاد‌استاف</h1>
           <p className="text-sm text-ink-normal/70 mt-1 font-medium">
-            وضعیت دریافت و پردازش چک‌لیست‌های پایان روز کارکنان در تاریخ {formatToJalali(new Date())}
+            وضعیت دریافت گزارش کار پایان روز کارکنان در تاریخ {formatToJalali(new Date())}
           </p>
         </div>
 
@@ -128,7 +117,7 @@ export default function DashboardPage() {
             className="rokad-btn-outline px-4 sm:px-5 py-3 text-sm rounded-xl font-bold"
           >
             <Send className="w-4 h-4 text-college-normal" />
-            <span>{cronTriggering ? "در حال ارسال..." : "ارسال یادآوری فوری"}</span>
+            <span>{cronTriggering ? "در حال ارسال..." : "ارسال یادآوری به غایبان"}</span>
           </button>
         </div>
       </div>
@@ -163,10 +152,10 @@ export default function DashboardPage() {
         />
 
         <StatCard
-          title="نرخ تکمیل تسک‌های امروز"
-          value={`٪${toPersianDigits(tasks.completionRate)}`}
-          subtitle={`${toPersianDigits(tasks.done)} تسک از ${toPersianDigits(tasks.total)} تسک انجام شد`}
-          icon={CheckCircle2}
+          title="غایبان در ثبت گزارش امروز"
+          value={`${toPersianDigits(overview.todayMissing)} نفر`}
+          subtitle="کارمندان فعالی که هنوز ثبت نکرده‌اند"
+          icon={AlertCircle}
           theme="college"
         />
 
@@ -179,97 +168,43 @@ export default function DashboardPage() {
         />
       </div>
 
-      {/* Two Column Layout: Tasks & Departments */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Task Breakdown Card */}
-        <div className="bg-white rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] shadow-[3px_3px_0_#202A5A] lg:col-span-1">
-          <h2 className="text-lg font-black text-sec mb-5 flex items-center justify-between">
-            <span>تفکیک تسک‌های امروز</span>
-            <span className="text-xs sm:text-sm text-ink-normal/60 font-semibold">
-              مجموع: {toPersianDigits(tasks.total)} تسک
-            </span>
-          </h2>
-
-          <div className="space-y-4">
-            <div className="p-4 rounded-2xl bg-ecosystem-light/80 border border-primary/30 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-primary text-white flex items-center justify-center font-bold">
-                  <Check className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-sm font-black text-sec">انجام شد</div>
-                  <div className="text-xs text-ink-normal/60 font-medium">تکمیل کامل وظیفه</div>
-                </div>
-              </div>
-              <div className="text-xl font-black text-primary">{toPersianDigits(tasks.done)}</div>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-college-light/80 border border-college-normal/30 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-college-normal text-white flex items-center justify-center font-bold">
-                  <Hourglass className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-sm font-black text-sec">ناقص مانده</div>
-                  <div className="text-xs text-ink-normal/60 font-medium">نیازمند ادامه در روز بعد</div>
-                </div>
-              </div>
-              <div className="text-xl font-black text-college-normal">{toPersianDigits(tasks.incomplete)}</div>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-female-light/80 border border-female-normal/30 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-female-normal text-white flex items-center justify-center font-bold">
-                  <X className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="text-sm font-black text-sec">لغو شد</div>
-                  <div className="text-xs text-ink-normal/60 font-medium">تسک منتفی شده</div>
-                </div>
-              </div>
-              <div className="text-xl font-black text-female-normal">{toPersianDigits(tasks.cancelled)}</div>
-            </div>
-          </div>
+      {/* Department Participation Card */}
+      <div className="bg-white rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] shadow-[3px_3px_0_#202A5A]">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-lg font-black text-sec">مشارکت ثبت گزارش به تفکیک دپارتمان</h2>
+          <Link
+            href="/reports"
+            className="text-sm font-bold text-primary hover:underline flex items-center gap-1"
+          >
+            <span>مشاهده همه گزارش‌ها</span>
+            <ChevronLeft className="w-4 h-4" />
+          </Link>
         </div>
 
-        {/* Department Participation Card */}
-        <div className="bg-white rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] shadow-[3px_3px_0_#202A5A] lg:col-span-2">
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="text-lg font-black text-sec">مشارکت به تفکیک دپارتمان</h2>
-            <Link
-              href="/reports"
-              className="text-sm font-bold text-primary hover:underline flex items-center gap-1"
-            >
-              <span>مشاهده همه گزارش‌ها</span>
-              <ChevronLeft className="w-4 h-4" />
-            </Link>
-          </div>
-
-          <div className="space-y-4">
-            {Object.keys(departments).length === 0 ? (
-              <div className="text-center py-10 text-sm text-ink-normal/50">داده‌ای یافت نشد.</div>
-            ) : (
-              Object.entries(departments).map(([dept, info]: any) => {
-                const percent = info.total > 0 ? Math.round((info.submitted / info.total) * 100) : 0;
-                return (
-                  <div key={dept} className="p-4 rounded-2xl border border-gray-100 hover:border-primary/40 transition-colors bg-[#FCFDFD]">
-                    <div className="flex items-center justify-between text-sm font-bold mb-2.5">
-                      <span className="text-sec font-black">{dept}</span>
-                      <span className="text-ink-normal/70">
-                        {toPersianDigits(info.submitted)} از {toPersianDigits(info.total)} نفر (٪{toPersianDigits(percent)})
-                      </span>
-                    </div>
-                    <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-primary to-ecosystem-dark rounded-full transition-all duration-500"
-                        style={{ width: `${percent}%` }}
-                      />
-                    </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {Object.keys(departments).length === 0 ? (
+            <div className="text-center py-10 text-sm text-ink-normal/50 col-span-2">داده‌ای یافت نشد.</div>
+          ) : (
+            Object.entries(departments).map(([dept, info]: any) => {
+              const percent = info.total > 0 ? Math.round((info.submitted / info.total) * 100) : 0;
+              return (
+                <div key={dept} className="p-5 rounded-2xl border border-gray-100 hover:border-primary/40 transition-colors bg-[#FCFDFD]">
+                  <div className="flex items-center justify-between text-sm font-bold mb-3">
+                    <span className="text-sec font-black text-base">{dept}</span>
+                    <span className="text-ink-normal/70">
+                      {toPersianDigits(info.submitted)} از {toPersianDigits(info.total)} نفر (٪{toPersianDigits(percent)})
+                    </span>
                   </div>
-                );
-              })
-            )}
-          </div>
+                  <div className="w-full h-3.5 bg-gray-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-primary to-ecosystem-dark rounded-full transition-all duration-500"
+                      style={{ width: `${percent}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
 
@@ -296,42 +231,48 @@ export default function DashboardPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {recentReports.map((report: any) => (
-              <div
-                key={report.id}
-                className="p-5 rounded-2xl border border-gray-200 hover:border-primary hover:shadow-md transition-all duration-200 flex flex-col justify-between bg-[#FCFDFD]"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-2.5">
-                    <span className="font-black text-base text-sec">{report.employeeFullName}</span>
-                    <span
-                      className={`text-xs font-black px-3 py-1 rounded-full border ${
-                        report.status === "on_time"
-                          ? "bg-ecosystem-light text-ecosystem-darker border-primary/30"
-                          : "bg-female-light text-female-darker border-female-normal/30"
-                      }`}
-                    >
-                      {report.status === "on_time" ? "به‌موقع" : "با تأخیر"}
-                    </span>
+            {recentReports.map((report: any) => {
+              const cleanText = report.rawText.replace(/^\/report\s*/i, "").trim();
+              return (
+                <div
+                  key={report.id}
+                  className="p-5 rounded-2xl border border-gray-200 hover:border-primary hover:shadow-md transition-all duration-200 flex flex-col justify-between bg-[#FCFDFD]"
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-2.5">
+                      <span className="font-black text-base text-sec">{report.employeeFullName}</span>
+                      <span
+                        className={`text-xs font-black px-3 py-1 rounded-full border ${
+                          report.status === "on_time"
+                            ? "bg-ecosystem-light text-ecosystem-darker border-primary/30"
+                            : "bg-female-light text-female-darker border-female-normal/30"
+                        }`}
+                      >
+                        {report.status === "on_time" ? "به‌موقع" : "با تأخیر"}
+                      </span>
+                    </div>
+                    <div className="text-xs sm:text-sm text-ink-normal/60 mb-3 font-medium">
+                      دپارتمان: {report.employeeDepartment || "پسرانه"}
+                    </div>
+                    <p className="text-xs sm:text-sm text-ink-normal/80 line-clamp-3 bg-white p-3 rounded-xl border border-gray-100 font-medium leading-relaxed">
+                      {cleanText}
+                    </p>
                   </div>
-                  <div className="text-xs sm:text-sm text-ink-normal/60 mb-3 font-medium">
-                    دپارتمان: {report.employeeDepartment || "پسرانه"}
-                  </div>
-                </div>
 
-                <div className="pt-3.5 border-t border-gray-100 flex items-center justify-between text-xs text-ink-normal/60 font-medium">
-                  <div className="flex items-center gap-1.5">
-                    <Clock className="w-4 h-4" />
-                    <span>ساعت ثبت: {formatTehranTime(report.submittedAt)}</span>
+                  <div className="pt-3.5 mt-3 border-t border-gray-100 flex items-center justify-between text-xs text-ink-normal/60 font-medium">
+                    <div className="flex items-center gap-1.5">
+                      <Clock className="w-4 h-4" />
+                      <span>ساعت ثبت: {formatTehranTime(report.submittedAt)}</span>
+                    </div>
+                    {report.editedCount > 0 && (
+                      <span className="text-xs bg-gray-100 text-ink-normal/80 px-2 py-0.5 rounded-md font-bold">
+                        {toPersianDigits(report.editedCount)} بار ویرایش
+                      </span>
+                    )}
                   </div>
-                  {report.editedCount > 0 && (
-                    <span className="text-xs bg-gray-100 text-ink-normal/80 px-2 py-0.5 rounded-md font-bold">
-                      {toPersianDigits(report.editedCount)} بار ویرایش
-                    </span>
-                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

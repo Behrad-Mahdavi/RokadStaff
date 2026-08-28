@@ -7,14 +7,10 @@ import {
   Calendar,
   Clock,
   Eye,
-  CheckCircle2,
-  Hourglass,
-  XCircle,
   Filter,
-  Layers,
   ChevronLeft,
   ChevronRight,
-  Sparkles,
+  FileText,
 } from "lucide-react";
 import Modal from "@/components/Modal";
 import {
@@ -74,7 +70,7 @@ export default function ReportsPage() {
         <div>
           <h1 className="text-2xl sm:text-3xl font-black text-sec tracking-tight">گزارش‌های روزانه کارکنان</h1>
           <p className="text-xs sm:text-sm text-ink-normal/70 mt-1 font-medium">
-            مشاهده، جستجو و بررسی چک‌لیست‌های ثبت‌شده از طریق تلگرام
+            مشاهده، جستجو و بررسی گزارش‌های ثبت‌شده از طریق تلگرام
           </p>
         </div>
 
@@ -113,7 +109,7 @@ export default function ReportsPage() {
         <div className="relative flex-1 w-full">
           <input
             type="text"
-            placeholder="جستجوی نام کارمند یا بخشی از تسک..."
+            placeholder="جستجوی نام کارمند یا متن گزارش..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-3 pr-11 py-2.5 rounded-xl border border-gray-200 text-xs sm:text-sm focus:border-primary focus:outline-none bg-[#FAFAFA] focus:bg-white font-medium"
@@ -158,7 +154,7 @@ export default function ReportsPage() {
         </div>
       </div>
 
-      {/* Reports Table / Card Container */}
+      {/* Reports Table */}
       <div className="bg-white rounded-3xl border border-[#EAEAEA] shadow-[3px_3px_0_#202A5A] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-right text-xs sm:text-sm">
@@ -168,8 +164,8 @@ export default function ReportsPage() {
                 <th className="py-4 px-4">دپارتمان</th>
                 <th className="py-4 px-4">ساعت ارسال</th>
                 <th className="py-4 px-4">وضعیت ارسال</th>
-                <th className="py-4 px-4">خلاصه پیشرفت تسک‌ها</th>
-                <th className="py-4 px-4 sm:px-6 text-center">جزئیات</th>
+                <th className="py-4 px-4">پیش‌نمایش گزارش</th>
+                <th className="py-4 px-4 sm:px-6 text-center">مشاهده کامل</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -186,65 +182,61 @@ export default function ReportsPage() {
                   </td>
                 </tr>
               ) : (
-                reports.map((report) => (
-                  <tr key={report.id} className="hover:bg-gray-50/70 transition-colors">
-                    <td className="py-4 px-4 sm:px-6 font-bold text-sec">
-                      <div className="font-black text-sm sm:text-base text-sec">{report.employeeFullName}</div>
-                      <div className="text-xs text-ink-normal/50 mt-0.5">{report.employeePosition || "همکار"}</div>
-                    </td>
-                    <td className="py-4 px-4 font-bold text-ink-normal/80">
-                      {report.employeeDepartment || "پسرانه"}
-                    </td>
-                    <td className="py-4 px-4 font-mono font-bold text-sec text-xs sm:text-sm">
-                      {formatTehranTime(report.submittedAt)}
-                    </td>
-                    <td className="py-4 px-4">
-                      <span
-                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-bold text-xs border ${
-                          report.status === "on_time"
-                            ? "bg-ecosystem-light text-ecosystem-darker border-primary/30"
-                            : "bg-female-light text-female-darker border-female-normal/30"
-                        }`}
-                      >
-                        <Clock className="w-3.5 h-3.5" />
-                        {report.status === "on_time" ? "به‌موقع" : "با تأخیر"}
-                      </span>
-                    </td>
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-2">
-                        <span className="font-black text-sec text-xs sm:text-sm">
-                          {toPersianDigits(report.stats.done)} از {toPersianDigits(report.stats.total)} تسک
+                reports.map((report) => {
+                  const cleanText = report.rawText.replace(/^\/report\s*/i, "").trim();
+                  return (
+                    <tr key={report.id} className="hover:bg-gray-50/70 transition-colors">
+                      <td className="py-4 px-4 sm:px-6 font-bold text-sec">
+                        <div className="font-black text-sm sm:text-base text-sec">{report.employeeFullName}</div>
+                        <div className="text-xs text-ink-normal/50 mt-0.5">{report.employeePosition || "همکار"}</div>
+                      </td>
+                      <td className="py-4 px-4 font-bold text-ink-normal/80">
+                        {report.employeeDepartment || "پسرانه"}
+                      </td>
+                      <td className="py-4 px-4 font-mono font-bold text-sec text-xs sm:text-sm">
+                        {formatTehranTime(report.submittedAt)}
+                      </td>
+                      <td className="py-4 px-4">
+                        <span
+                          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-bold text-xs border ${
+                            report.status === "on_time"
+                              ? "bg-ecosystem-light text-ecosystem-darker border-primary/30"
+                              : "bg-female-light text-female-darker border-female-normal/30"
+                          }`}
+                        >
+                          <Clock className="w-3.5 h-3.5" />
+                          {report.status === "on_time" ? "به‌موقع" : "با تأخیر"}
                         </span>
-                        <span className="text-xs text-ink-normal/60 font-bold bg-gray-100 px-2 py-0.5 rounded-md">
-                          (٪{toPersianDigits(report.stats.rate)})
-                        </span>
-                      </div>
-                    </td>
-                    <td className="py-4 px-4 sm:px-6 text-center">
-                      <button
-                        onClick={() => {
-                          setSelectedReport(report);
-                          setIsDetailModalOpen(true);
-                        }}
-                        className="rokad-btn-outline px-3.5 py-1.5 text-xs sm:text-sm rounded-xl font-bold"
-                      >
-                        <Eye className="w-4 h-4 text-primary" />
-                        <span>مشاهده چک‌لیست</span>
-                      </button>
-                    </td>
-                  </tr>
-                ))
+                      </td>
+                      <td className="py-4 px-4 max-w-xs truncate text-ink-normal/70 font-medium">
+                        {cleanText}
+                      </td>
+                      <td className="py-4 px-4 sm:px-6 text-center">
+                        <button
+                          onClick={() => {
+                            setSelectedReport(report);
+                            setIsDetailModalOpen(true);
+                          }}
+                          className="rokad-btn-outline px-3.5 py-1.5 text-xs sm:text-sm rounded-xl font-bold"
+                        >
+                          <Eye className="w-4 h-4 text-primary" />
+                          <span>مشاهده متن</span>
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
         </div>
       </div>
 
-      {/* Modal: View Report Checklist Details */}
+      {/* Modal: View Report Full Details */}
       <Modal
         isOpen={isDetailModalOpen}
         onClose={() => setIsDetailModalOpen(false)}
-        title={`چک‌لیست گزارش کار: ${selectedReport?.employeeFullName || ""}`}
+        title={`متن گزارش کار: ${selectedReport?.employeeFullName || ""}`}
         maxWidth="lg"
       >
         {selectedReport && (
@@ -272,53 +264,12 @@ export default function ReportsPage() {
               </div>
             </div>
 
-            {/* Checklist Items */}
-            <div className="space-y-3">
-              <h4 className="text-sm font-black text-sec">آیتم‌های چک‌لیست ({toPersianDigits(selectedReport.items.length)} مورد):</h4>
-              <div className="space-y-2.5 max-h-72 overflow-y-auto pr-1">
-                {selectedReport.items.map((item: any, idx: number) => {
-                  let statusBg = "bg-gray-50 border-gray-200";
-                  let statusIcon = <Hourglass className="w-4 h-4 text-college-normal" />;
-                  let statusLabel = "ناقص مانده";
-                  let statusColor = "text-college-darker";
-
-                  if (item.status === "done") {
-                    statusBg = "bg-ecosystem-light/60 border-primary/30";
-                    statusIcon = <CheckCircle2 className="w-4 h-4 text-primary" />;
-                    statusLabel = "انجام شد";
-                    statusColor = "text-ecosystem-darker";
-                  } else if (item.status === "cancelled") {
-                    statusBg = "bg-female-light/60 border-female-normal/30";
-                    statusIcon = <XCircle className="w-4 h-4 text-female-normal" />;
-                    statusLabel = "لغو شد";
-                    statusColor = "text-female-darker";
-                  }
-
-                  return (
-                    <div
-                      key={item.id || idx}
-                      className={`p-3.5 rounded-2xl border ${statusBg} flex items-start justify-between gap-3 text-xs sm:text-sm`}
-                    >
-                      <div className="flex items-start gap-2.5">
-                        <span className="font-black text-sec shrink-0 mt-0.5">{toPersianDigits(item.taskOrder)}-</span>
-                        <span className="font-bold text-ink-darker leading-relaxed">{item.description}</span>
-                      </div>
-                      <div className={`flex items-center gap-1.5 font-black text-xs shrink-0 ${statusColor}`}>
-                        {statusIcon}
-                        <span>{statusLabel}</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Raw Text Box */}
+            {/* Report Content Box */}
             <div>
-              <h4 className="text-xs font-bold text-ink-normal/60 mb-1.5">متن خام ارسال شده در تلگرام:</h4>
-              <pre className="p-3.5 bg-gray-50 rounded-2xl border border-gray-200 text-xs font-mono whitespace-pre-wrap text-ink-normal/80 max-h-36 overflow-y-auto">
-                {selectedReport.rawText}
-              </pre>
+              <h4 className="text-sm font-black text-sec mb-2">متن ارسال شده توسط همکار:</h4>
+              <div className="p-5 bg-gray-50 rounded-2xl border border-gray-200 text-xs sm:text-sm font-medium text-ink-darker leading-loose whitespace-pre-wrap max-h-96 overflow-y-auto">
+                {selectedReport.rawText.replace(/^\/report\s*/i, "").trim()}
+              </div>
             </div>
           </div>
         )}
