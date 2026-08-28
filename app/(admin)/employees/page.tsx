@@ -176,7 +176,7 @@ export default function EmployeesPage() {
 
   // Copy Telegram instructions to clipboard
   const handleCopyInvitation = (code: string, name: string) => {
-    const text = `سلام ${name} گرامی 🌿\nبه سامانه گزارش‌دهی رُکاد‌استاف خوش آمدید.\nلطفاً به ربات تلگرام پیام دهید و دستور زیر را ارسال کنید:\n\n/link ${code}\n\nسپس هر روز پایان ساعت کاری چک‌لیست خود را با دستور /report ثبت نمایید.`;
+    const text = `سلام ${name} گرامی 🌿\nبه سامانه گزارش‌دهی رُکاد‌استاف خوش آمدید.\nلطفاً به ربات تلگرام پیام دهید و دستور زیر را ارسال کنید:\n\n/link ${code}\n\nسپس هر روز پایان ساعت کاری گزارش کار خود را با دستور /report ثبت نمایید.`;
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);

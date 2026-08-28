@@ -210,7 +210,7 @@ bot.on("message:text", async (ctx) => {
   // Check if message is a report
   if (!text.toLowerCase().startsWith("/report")) {
     await ctx.reply(
-      `💡 برای ثبت گزارش روزانه، لطفاً پیام خود را با /report شروع کنید:\n\n/report\n1- تسک اول - انجام شد\n2- تسک دوم - ناقص مانده`
+      `💡 برای ثبت گزارش روزانه، لطفاً پیام خود را با /report شروع کنید:\n\n/report\n1- عنوان کار اول\n2- عنوان کار دوم`
     );
     return;
   }
