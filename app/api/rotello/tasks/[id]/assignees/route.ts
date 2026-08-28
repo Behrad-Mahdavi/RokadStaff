@@ -8,7 +8,7 @@ import {
   projects,
   projectMembers,
 } from "@/lib/db/schema";
-import { eq, and, inArray } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { getSession } from "@/lib/auth/session";
 import { notifyService } from "@/lib/telegram/notify";
 import { formatToJalali } from "@/lib/utils";
@@ -37,31 +37,6 @@ export async function POST(
     }
 
     const task = taskResult[0];
-
-    // Check permission (Manager, Admin, or Creator)
-    let isManager = session.role === "admin";
-    if (!isManager && session.employeeId) {
-      const membership = await db
-        .select()
-        .from(projectMembers)
-        .where(
-          and(
-            eq(projectMembers.projectId, task.projectId),
-            eq(projectMembers.employeeId, session.employeeId),
-            eq(projectMembers.role, "manager")
-          )
-        )
-        .limit(1);
-
-      isManager = membership.length > 0;
-    }
-
-    if (!isManager && task.createdBy !== session.employeeId) {
-      return NextResponse.json(
-        { error: "شما دسترسی ویرایش مجریان این تسک را ندارید." },
-        { status: 403 }
-      );
-    }
 
     const body = await req.json();
     const newAssigneeIds: string[] = Array.isArray(body.assigneeIds)
@@ -106,7 +81,7 @@ export async function POST(
       }
     }
 
-    // 3. Insert newly assigned
+    // 3. Insert newly assigned (and auto-add to project_members if not yet member)
     if (toAdd.length > 0) {
       const projInfo: any[] = await db
         .select({ name: projects.name })
@@ -119,6 +94,26 @@ export async function POST(
       const creatorName = session.fullName || "مدیر پروژه";
 
       for (const empId of toAdd) {
+        // Ensure employee is in project_members
+        const existingMember = await db
+          .select()
+          .from(projectMembers)
+          .where(
+            and(
+              eq(projectMembers.projectId, task.projectId),
+              eq(projectMembers.employeeId, empId)
+            )
+          )
+          .limit(1);
+
+        if (existingMember.length === 0) {
+          await db.insert(projectMembers).values({
+            projectId: task.projectId,
+            employeeId: empId,
+            role: "member",
+          });
+        }
+
         await db.insert(taskAssignees).values({
           taskId,
           employeeId: empId,

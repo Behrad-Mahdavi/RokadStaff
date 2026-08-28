@@ -52,6 +52,28 @@ export default function TaskModal({
   // Assignees
   const [selectedAssignees, setSelectedAssignees] = useState<string[]>([]);
   const [isAssigneeDropdownOpen, setIsAssigneeDropdownOpen] = useState(false);
+  const [organizationEmployees, setOrganizationEmployees] = useState<any[]>([]);
+
+  // Fetch all employees if not provided
+  useEffect(() => {
+    if (projectMembers && projectMembers.length > 0) {
+      setOrganizationEmployees(projectMembers);
+    }
+    fetch("/api/employees")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.employees && data.employees.length > 0) {
+          setOrganizationEmployees(
+            data.employees.map((e: any) => ({
+              employeeId: e.id,
+              fullName: e.fullName,
+              department: e.department,
+            }))
+          );
+        }
+      })
+      .catch(() => {});
+  }, [projectMembers]);
 
   // Checklists
   const [newChecklistTitle, setNewChecklistTitle] = useState("");
@@ -422,7 +444,7 @@ export default function TaskModal({
 
                   {isAssigneeDropdownOpen && (
                     <div className="absolute top-full right-0 left-0 mt-1 bg-white border border-gray-200 rounded-2xl shadow-lg p-3 z-30 max-h-48 overflow-y-auto space-y-1">
-                      {projectMembers.map((member: any) => {
+                      {organizationEmployees.map((member: any) => {
                         const isAssigned = selectedAssignees.includes(member.employeeId);
                         return (
                           <button

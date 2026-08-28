@@ -76,14 +76,25 @@ export async function GET(
       .innerJoin(employees, eq(projectMembers.employeeId, employees.id))
       .where(eq(projectMembers.projectId, projectId));
 
-    // 4. Fetch columns ordered by position
+    // 4. Fetch all active employees in organization (for easy 1-click assignment)
+    const allEmployees: any[] = await db
+      .select({
+        id: employees.id,
+        fullName: employees.fullName,
+        department: employees.department,
+        position: employees.position,
+      })
+      .from(employees)
+      .where(eq(employees.isActive, true));
+
+    // 5. Fetch columns ordered by position
     const columns: any[] = await db
       .select()
       .from(boardColumns)
       .where(eq(boardColumns.projectId, projectId))
       .orderBy(boardColumns.position);
 
-    // 5. Fetch all active tasks
+    // 6. Fetch all active tasks
     const activeTasks: any[] = await db
       .select({
         id: tasks.id,
@@ -105,7 +116,7 @@ export async function GET(
 
     const taskIds = activeTasks.map((t) => t.id);
 
-    // 6. Fetch assignees for tasks
+    // 7. Fetch assignees for tasks
     let assigneesByTaskId: Record<string, any[]> = {};
     if (taskIds.length > 0) {
       const allAssignees: any[] = await db
@@ -124,7 +135,7 @@ export async function GET(
       }
     }
 
-    // 7. Fetch checklist progress for tasks
+    // 8. Fetch checklist progress for tasks
     let checklistProgressByTaskId: Record<string, { total: number; done: number; rate: number }> = {};
     if (taskIds.length > 0) {
       const allChecklists: any[] = await db
@@ -144,7 +155,6 @@ export async function GET(
           .from(checklistItems)
           .where(inArray(checklistItems.checklistId, checklistIds));
 
-        // Map checklist to task
         const taskByChecklistId = new Map(allChecklists.map((c) => [c.id, c.taskId]));
 
         for (const item of allItems) {
@@ -158,7 +168,6 @@ export async function GET(
           }
         }
 
-        // Compute rate
         for (const tId of Object.keys(checklistProgressByTaskId)) {
           const p = checklistProgressByTaskId[tId];
           p.rate = p.total > 0 ? Math.round((p.done / p.total) * 100) : 0;
@@ -177,6 +186,7 @@ export async function GET(
       project,
       userRole,
       members,
+      allEmployees,
       columns,
       tasks: enhancedTasks,
     });
@@ -200,7 +210,6 @@ export async function PATCH(
   const db = getDb();
 
   try {
-    // Check permission (Manager or Admin)
     if (session.role !== "admin" && session.employeeId) {
       const membership = await db
         .select()
