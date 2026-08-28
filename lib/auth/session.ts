@@ -9,10 +9,13 @@ const JWT_SECRET = new TextEncoder().encode(
 const SESSION_COOKIE_NAME = "rokad_admin_session";
 
 export interface SessionPayload {
-  userId: string;
-  email: string;
-  role: string;
-  fullName?: string;
+  userId?: string; // For Admin Users
+  employeeId?: string; // For Employees/Members
+  email?: string;
+  role: string; // 'admin' | 'supervisor' | 'employee' | 'member'
+  fullName: string;
+  department?: string;
+  assignedDepartment?: string;
 }
 
 // Sign new JWT token
