@@ -1,136 +1,129 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Lock, Mail, ArrowLeft, Sparkles, ShieldCheck } from "lucide-react";
+import { Send, CheckCircle2, Sparkles, AlertCircle, ArrowLeft, ShieldCheck, Lock } from "lucide-react";
+import Link from "next/link";
 
-export default function LoginPage() {
-  const router = useRouter();
-  const [email, setEmail] = useState("admin@rokad.ir");
-  const [password, setPassword] = useState("admin123456");
+export default function MemberLoginPage() {
+  const [identifier, setIdentifier] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [statusMessage, setStatusMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleRequestMagicLink = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    if (!identifier.trim()) return;
+
     setLoading(true);
+    setStatusMessage(null);
 
     try {
-      const res = await fetch("/api/auth/login", {
+      const res = await fetch("/api/auth/request-login-link", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ identifier }),
       });
 
       const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || "ورود ناموفق بود.");
-      }
 
-      router.push("/dashboard");
-      router.refresh();
+      if (res.ok) {
+        setStatusMessage({
+          type: "success",
+          text: data.message || "لینک ورود مستقیم با موفقیت به ربات تلگرام شما ارسال شد.",
+        });
+      } else {
+        setStatusMessage({
+          type: "error",
+          text: data.error || "خطا در برقراری ارتباط. لطفاً مجدداً تلاش کنید.",
+        });
+      }
     } catch (err: any) {
-      setError(err.message);
+      setStatusMessage({
+        type: "error",
+        text: "خطای غیرمنتظره در سرور رخ داد.",
+      });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#EEF8F7] via-[#F8F9FA] to-[#FEF6E8] flex flex-col justify-center items-center p-4 relative overflow-hidden">
-      {/* Background Decor Shapes */}
-      <div className="absolute top-[-10%] right-[-5%] w-96 h-96 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-[-10%] left-[-5%] w-96 h-96 rounded-full bg-college-normal/10 blur-3xl pointer-events-none" />
-
-      {/* Main Container */}
-      <div className="w-full max-w-md">
-        {/* Brand Header */}
-        <div className="text-center mb-6">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-ecosystem-dark text-white mx-auto flex items-center justify-center font-black text-3xl shadow-[3px_3px_0_#202A5A] mb-3">
-            رُ
+    <div className="min-h-screen bg-[#F5F8F8] flex flex-col justify-center items-center p-4 sm:p-6 font-vazirmatn text-right" dir="rtl">
+      <div className="w-full max-w-md bg-white rounded-3xl p-7 sm:p-9 border-2 border-primary/20 shadow-[4px_4px_0_#59BBAF]">
+        {/* Header & Logo */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-ecosystem-light border border-primary/30 shadow-sm mb-4">
+            <Send className="w-8 h-8 text-primary" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-sec tracking-tight">رُکاد‌استاف</h1>
-          <p className="text-sm sm:text-base text-ink-normal/60 mt-1 font-medium">سامانه مدیریت و پایش گزارش کار روزانه</p>
+          <h1 className="text-2xl sm:text-3xl font-black text-sec tracking-tight">سامانه رُکاد‌استاف (Rotello)</h1>
+          <p className="text-xs sm:text-sm text-ink-normal/70 mt-1.5 font-medium">
+            ورود اختصاصی همکاران به میز کار از طریق ربات تلگرام
+          </p>
         </div>
 
-        {/* Login Card */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border-2 border-[#EAEAEA] shadow-[4px_4px_0_#202A5A]">
-          <div className="flex items-center gap-2 mb-6 text-base font-black text-sec">
-            <ShieldCheck className="w-5 h-5 text-primary" />
-            <span>ورود به پنل مدیریت</span>
+        {/* Feedback Alert */}
+        {statusMessage && (
+          <div
+            className={`mb-6 p-4 rounded-2xl border text-xs sm:text-sm font-bold flex items-start gap-3 ${
+              statusMessage.type === "success"
+                ? "bg-ecosystem-light border-primary/40 text-ecosystem-darker"
+                : "bg-female-light border-female-normal/40 text-female-darker"
+            }`}
+          >
+            {statusMessage.type === "success" ? (
+              <CheckCircle2 className="w-5 h-5 shrink-0 text-primary mt-0.5" />
+            ) : (
+              <AlertCircle className="w-5 h-5 shrink-0 text-female-normal mt-0.5" />
+            )}
+            <div className="leading-relaxed">{statusMessage.text}</div>
+          </div>
+        )}
+
+        {/* Magic Link Form */}
+        <form onSubmit={handleRequestMagicLink} className="space-y-5">
+          <div>
+            <label className="block text-xs sm:text-sm font-black text-sec mb-2">
+              نام و نام خانوادگی یا کد اتصال شما:
+            </label>
+            <input
+              type="text"
+              required
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
+              placeholder="مثال: بهراد مهدوی یا کد ۶ رقمی"
+              className="w-full px-4 py-3.5 rounded-2xl border border-gray-300 focus:border-primary focus:outline-none text-xs sm:text-sm font-bold bg-[#FAFAFA] focus:bg-white transition-colors"
+            />
           </div>
 
-          {error && (
-            <div className="mb-5 p-3.5 rounded-xl bg-female-light text-female-darker border border-female-normal/30 text-xs sm:text-sm font-bold">
-              {error}
-            </div>
-          )}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full rokad-btn-primary py-3.5 rounded-2xl text-xs sm:text-sm font-black flex items-center justify-center gap-2 shadow-[3px_3px_0_#1F413D]"
+          >
+            <Sparkles className="w-4 h-4" />
+            <span>{loading ? "در حال بررسی و ارسال..." : "دریافت لینک ورود در تلگرام"}</span>
+          </button>
+        </form>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-xs sm:text-sm font-bold text-ink-normal/80 mb-1.5">
-                ایمیل سازمانی
-              </label>
-              <div className="relative">
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@rokad.ir"
-                  dir="ltr"
-                  className="w-full pl-3 pr-11 py-3 rounded-xl border-1.5 border-[#DFDFDF] focus:border-primary focus:outline-none text-sm sm:text-base transition-colors text-left bg-gray-50/50 focus:bg-white font-medium"
-                />
-                <Mail className="w-5 h-5 text-ink-normal/40 absolute right-3.5 top-3.5" />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs sm:text-sm font-bold text-ink-normal/80 mb-1.5">
-                رمز عبور
-              </label>
-              <div className="relative">
-                <input
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  dir="ltr"
-                  className="w-full pl-3 pr-11 py-3 rounded-xl border-1.5 border-[#DFDFDF] focus:border-primary focus:outline-none text-sm sm:text-base transition-colors text-left bg-gray-50/50 focus:bg-white font-medium"
-                />
-                <Lock className="w-5 h-5 text-ink-normal/40 absolute right-3.5 top-3.5" />
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full mt-3 rokad-btn-primary py-3.5 text-sm sm:text-base rounded-xl font-black shadow-[2.5px_2.5px_0_#1F413D]"
-            >
-              {loading ? (
-                <span>در حال ورود...</span>
-              ) : (
-                <>
-                  <span>ورود به سیستم</span>
-                  <ArrowLeft className="w-5 h-5" />
-                </>
-              )}
-            </button>
-          </form>
-
-          {/* Quick Demo Helper */}
-          <div className="mt-6 pt-4 border-t border-gray-100 text-xs sm:text-sm text-ink-normal/70 bg-ecosystem-light/50 p-3.5 rounded-2xl border border-primary/20">
-            <div className="font-bold text-ecosystem-darker mb-1 flex items-center gap-1">
-              <Sparkles className="w-4 h-4 text-primary" />
-              حساب پیش‌فرض سیستم:
-            </div>
-            <div className="flex justify-between font-mono dir-ltr mt-1 font-bold text-sec">
-              <span>admin@rokad.ir</span>
-              <span>admin123456</span>
-            </div>
+        {/* How it works info */}
+        <div className="mt-8 pt-6 border-t border-gray-100 space-y-3">
+          <div className="flex items-center gap-2 text-xs font-black text-sec">
+            <ShieldCheck className="w-4 h-4 text-primary" />
+            <span>راهنمای ورود بدون رمز:</span>
           </div>
+          <p className="text-xs text-ink-normal/60 leading-relaxed font-medium">
+            با زدن دکمه بالا، یک لینک ورود یکبارمصرف (۱۰ دقیقه‌ای) به ربات تلگرام شما ارسال می‌شود. کافی است روی آن کلیک کنید تا مستقیماً وارد میز کار خود شوید.
+          </p>
+        </div>
+
+        {/* Dedicated Admin Login Link */}
+        <div className="mt-6 text-center pt-2">
+          <Link
+            href="/admin-login"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-ink-normal/50 hover:text-sec transition-colors"
+          >
+            <Lock className="w-3.5 h-3.5 text-ink-normal/40" />
+            <span>ورود مدیران و سرپرستان سیستم</span>
+          </Link>
         </div>
       </div>
     </div>

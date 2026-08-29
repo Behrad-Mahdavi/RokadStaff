@@ -16,7 +16,7 @@ const ADMIN_ONLY_PATHS = [
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Static files and public API routes pass through
+  // Static files and public endpoints pass through
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api/telegram") ||
@@ -24,6 +24,7 @@ export async function middleware(req: NextRequest) {
     pathname.startsWith("/auth/verify") ||
     pathname === "/login" ||
     pathname === "/login/member" ||
+    pathname === "/admin-login" ||
     pathname.includes(".")
   ) {
     return NextResponse.next();
@@ -31,14 +32,22 @@ export async function middleware(req: NextRequest) {
 
   const sessionToken = req.cookies.get("rokad_admin_session")?.value;
 
-  // If no session, redirect to login
+  // 1. Unauthenticated users handling
   if (!sessionToken) {
-    if (pathname.startsWith("/rotello")) {
-      return NextResponse.redirect(new URL("/login/member", req.url));
+    // If trying to access admin dashboard or reports, go to admin login
+    const isAdminRoute = ADMIN_ONLY_PATHS.some(
+      (p) => pathname === p || pathname.startsWith(`${p}/`)
+    );
+
+    if (isAdminRoute) {
+      return NextResponse.redirect(new URL("/admin-login", req.url));
     }
+
+    // Default for all members/public
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
+  // 2. Authenticated users handling
   try {
     const { payload } = await jwtVerify(sessionToken, JWT_SECRET, {
       algorithms: ["HS256"],
@@ -53,7 +62,7 @@ export async function middleware(req: NextRequest) {
         (p) => pathname === p || pathname.startsWith(`${p}/`)
       );
 
-      if (isAdminRoute || pathname === "/") {
+      if (isAdminRoute || pathname === "/" || pathname === "/admin-login") {
         return NextResponse.redirect(new URL("/rotello/my-tasks", req.url));
       }
     }
