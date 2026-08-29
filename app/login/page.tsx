@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Send, CheckCircle2, Sparkles, AlertCircle, ArrowLeft, ShieldCheck, Lock } from "lucide-react";
 import Link from "next/link";
+import RokadLogo from "@/components/RokadLogo";
 
 export default function MemberLoginPage() {
   const [identifier, setIdentifier] = useState("");
@@ -51,8 +52,8 @@ export default function MemberLoginPage() {
       <div className="w-full max-w-md bg-white rounded-3xl p-7 sm:p-9 border-2 border-primary/20 shadow-[4px_4px_0_#59BBAF]">
         {/* Header & Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-ecosystem-light border border-primary/30 shadow-sm mb-4">
-            <Send className="w-8 h-8 text-primary" />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-ecosystem-dark p-3.5 shadow-[3px_3px_0_#202A5A] mb-4">
+            <RokadLogo className="w-full h-full text-white" />
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-sec tracking-tight">سامانه رُکاد‌استاف (Rotello)</h1>
           <p className="text-xs sm:text-sm text-ink-normal/70 mt-1.5 font-medium">

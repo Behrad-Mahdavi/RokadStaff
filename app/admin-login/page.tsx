@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Lock, Mail, ArrowLeft, ShieldCheck, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import RokadLogo from "@/components/RokadLogo";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -48,8 +49,8 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md">
         {/* Brand Header */}
         <div className="text-center mb-6">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-sec to-primary text-white mx-auto flex items-center justify-center font-black text-3xl shadow-[3px_3px_0_#202A5A] mb-3">
-            رُ
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-sec to-primary text-white mx-auto flex items-center justify-center shadow-[3px_3px_0_#202A5A] mb-3 p-3.5">
+            <RokadLogo className="w-full h-full text-white" />
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-sec tracking-tight">رُکاد‌استاف</h1>
           <p className="text-sm text-ink-normal/60 mt-1 font-medium">پورتال اختصاصی ورود مدیران سیستم</p>

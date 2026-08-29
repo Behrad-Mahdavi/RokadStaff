@@ -18,6 +18,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import RokadLogo from "@/components/RokadLogo";
 
 const EMPLOYEE_NAV_GROUPS = [
   {
@@ -137,8 +138,8 @@ export default function Sidebar({ onCloseMobile }: SidebarProps) {
         {/* Brand Header */}
         <div className="h-20 px-6 flex items-center justify-between border-b border-[#EAEAEA]">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-primary to-ecosystem-dark text-white flex items-center justify-center font-black text-2xl shadow-[2.5px_2.5px_0_#202A5A]">
-              رُ
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-primary to-ecosystem-dark text-white flex items-center justify-center shadow-[2.5px_2.5px_0_#202A5A] p-2">
+              <RokadLogo className="w-full h-full text-white" />
             </div>
             <div>
               <div className="font-extrabold text-lg text-sec leading-none">رُکاد‌استاف</div>
