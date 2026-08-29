@@ -240,9 +240,7 @@ export default function Sidebar({ onCloseMobile }: SidebarProps) {
 
       {/* Brand Footer Card */}
       <div className="p-4 m-4 rounded-2xl bg-gradient-to-br from-ecosystem-light via-white to-college-light/30 border border-primary/20 shadow-sm text-center">
-        <div className="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center mx-auto mb-1.5 font-bold text-xs">
-          🌿
-        </div>
+      
         <div className="text-xs font-black text-sec">اکوسیستم رُکاد‌استاف</div>
         <div className="text-[11px] text-ink-normal/60 mt-0.5">
           {isEmployee ? "میز کار اختصاصی Rotello" : "مدیریت تسک‌ها + اتصال تلگرام"}
