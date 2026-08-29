@@ -2,13 +2,13 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Lock, Mail, ArrowLeft, Sparkles, ShieldCheck, ArrowRight } from "lucide-react";
+import { Lock, Mail, ArrowLeft, ShieldCheck, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("admin@rokad.ir");
-  const [password, setPassword] = useState("Admin@123456");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -79,7 +79,7 @@ export default function AdminLoginPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@rokad.ir"
+                  placeholder="ایمیل سازمانی..."
                   dir="ltr"
                   className="w-full pl-3 pr-11 py-3 rounded-xl border-1.5 border-[#DFDFDF] focus:border-primary focus:outline-none text-sm sm:text-base transition-colors text-left bg-gray-50/50 focus:bg-white font-medium"
                 />
@@ -120,18 +120,6 @@ export default function AdminLoginPage() {
               )}
             </button>
           </form>
-
-          {/* Quick Demo Helper */}
-          <div className="mt-6 pt-4 border-t border-gray-100 text-xs sm:text-sm text-ink-normal/70 bg-ecosystem-light/50 p-3.5 rounded-2xl border border-primary/20">
-            <div className="font-bold text-ecosystem-darker mb-1 flex items-center gap-1">
-              <Sparkles className="w-4 h-4 text-primary" />
-              <span>اطلاعات سوپر ادمین پیش‌فرض:</span>
-            </div>
-            <div className="flex justify-between font-mono dir-ltr mt-1 font-bold text-sec">
-              <span>admin@rokad.ir</span>
-              <span>Admin@123456</span>
-            </div>
-          </div>
 
           {/* Back to Member Portal */}
           <div className="mt-6 text-center">

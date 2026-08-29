@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { formatToJalali } from "@/lib/utils";
-import { LogOut, Calendar, Menu, Sparkles } from "lucide-react";
+import { LogOut, Calendar, Menu } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface NavbarProps {
@@ -12,7 +12,11 @@ interface NavbarProps {
 export default function Navbar({ onToggleMobileMenu }: NavbarProps) {
   const router = useRouter();
   const [currentDate, setCurrentDate] = useState<string>("");
-  const [user, setUser] = useState<{ fullName?: string; email?: string } | null>(null);
+  const [user, setUser] = useState<{
+    fullName?: string;
+    role?: string;
+    department?: string;
+  } | null>(null);
 
   useEffect(() => {
     setCurrentDate(formatToJalali(new Date(), { showMonthName: true, includeDayName: true }));
@@ -35,6 +39,13 @@ export default function Navbar({ onToggleMobileMenu }: NavbarProps) {
       console.error(err);
     }
   };
+
+  const userSubtitle =
+    user?.role === "admin"
+      ? "مدیر سیستم"
+      : user?.department
+      ? `دپارتمان ${user.department}`
+      : "همکار";
 
   return (
     <header className="h-20 bg-white border-b border-[#EAEAEA] px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30 shadow-sm">
@@ -65,11 +76,13 @@ export default function Navbar({ onToggleMobileMenu }: NavbarProps) {
       <div className="flex items-center gap-3 sm:gap-4">
         <div className="flex items-center gap-3 pr-2 sm:pr-3 border-r border-gray-200">
           <div className="w-10 h-10 rounded-full bg-primary/15 border-2 border-primary/40 flex items-center justify-center text-primary font-black text-base">
-            {user?.fullName ? user.fullName.slice(0, 1) : "م"}
+            {user?.fullName ? user.fullName.slice(0, 1) : "ک"}
           </div>
           <div className="hidden sm:block text-right">
-            <div className="text-sm sm:text-base font-black text-ink-normal">{user?.fullName || "مدیر سیستم"}</div>
-            <div className="text-xs text-ink-normal/60">{user?.email || "admin@rokad.ir"}</div>
+            <div className="text-sm sm:text-base font-black text-ink-normal">
+              {user?.fullName || "کاربر سامانه"}
+            </div>
+            <div className="text-xs text-ink-normal/60">{userSubtitle}</div>
           </div>
         </div>
 
