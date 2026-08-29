@@ -19,6 +19,7 @@ import {
   getTehranDateString,
   toPersianDigits,
 } from "@/lib/utils";
+import PersianDatePicker from "@/components/PersianDatePicker";
 
 export default function AnalyticsPage() {
   const [loading, setLoading] = useState(true);
@@ -162,22 +163,23 @@ export default function AnalyticsPage() {
 
         {/* Date Inputs & Dept */}
         <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
-          <div className="flex items-center gap-2 text-xs sm:text-sm bg-gray-50 px-3.5 py-2 rounded-xl border border-gray-200 font-bold text-sec">
-            <Calendar className="w-4 h-4 text-primary shrink-0" />
-            <span className="text-gray-500 font-medium">از:</span>
-            <input
-              type="date"
-              value={from}
-              onChange={(e) => setFrom(e.target.value)}
-              className="bg-transparent text-xs sm:text-sm font-mono focus:outline-none"
-            />
-            <span className="text-gray-500 font-medium mr-2">تا:</span>
-            <input
-              type="date"
-              value={to}
-              onChange={(e) => setTo(e.target.value)}
-              className="bg-transparent text-xs sm:text-sm font-mono focus:outline-none"
-            />
+          <div className="flex items-center gap-2 text-xs sm:text-sm">
+            <span className="text-gray-500 font-bold text-xs">از:</span>
+            <div className="w-40 sm:w-44">
+              <PersianDatePicker
+                value={from}
+                onChange={(d) => setFrom(d)}
+                placeholder="تاریخ شروع..."
+              />
+            </div>
+            <span className="text-gray-500 font-bold text-xs mr-1">تا:</span>
+            <div className="w-40 sm:w-44">
+              <PersianDatePicker
+                value={to}
+                onChange={(d) => setTo(d)}
+                placeholder="تاریخ پایان..."
+              />
+            </div>
           </div>
 
           <select

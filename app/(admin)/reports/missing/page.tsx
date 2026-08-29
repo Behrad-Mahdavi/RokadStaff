@@ -18,6 +18,7 @@ import {
   getTehranDateString,
   toPersianDigits,
 } from "@/lib/utils";
+import PersianDatePicker from "@/components/PersianDatePicker";
 
 export default function MissingReportsPage() {
   const [missingList, setMissingList] = useState<any[]>([]);
@@ -128,12 +129,11 @@ export default function MissingReportsPage() {
         </div>
 
         {/* Date Selector */}
-        <div className="w-full md:w-44">
-          <input
-            type="date"
+        <div className="w-full md:w-56">
+          <PersianDatePicker
             value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-            className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-xs sm:text-sm bg-[#FAFAFA] focus:border-primary focus:outline-none font-bold text-sec font-mono"
+            onChange={(d) => setSelectedDate(d)}
+            placeholder="انتخاب تاریخ شمسی..."
           />
         </div>
 

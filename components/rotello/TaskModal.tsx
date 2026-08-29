@@ -20,6 +20,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { formatToJalali, formatTehranTime, toPersianDigits } from "@/lib/utils";
+import PersianDatePicker from "@/components/PersianDatePicker";
 
 interface TaskModalProps {
   taskId: string | null;
@@ -390,14 +391,13 @@ export default function TaskModal({
                     <Calendar className="w-3.5 h-3.5 text-primary" />
                     <span>مهلت انجام (ددلاین):</span>
                   </label>
-                  <input
-                    type="date"
+                  <PersianDatePicker
                     value={deadline}
-                    onChange={(e) => {
-                      setDeadline(e.target.value);
+                    onChange={(newDate) => {
+                      setDeadline(newDate);
                       setTimeout(handleSaveFields, 50);
                     }}
-                    className="w-full text-xs font-mono font-bold p-2 rounded-xl border border-gray-200 bg-white focus:border-primary focus:outline-none text-sec"
+                    placeholder="انتخاب مهلت شمسی..."
                   />
                 </div>
               </div>
