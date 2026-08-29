@@ -126,27 +126,26 @@ export default function TaskModal({
   }, [isOpen, taskId]);
 
   // Handle field update
-  const handleSaveFields = async () => {
-    if (!taskId || !title.trim()) return;
+  const updateTaskField = async (fields: {
+    title?: string;
+    description?: string;
+    priority?: string;
+    deadline?: string | null;
+    columnId?: string;
+  }) => {
+    if (!taskId) return;
     try {
       const res = await fetch(`/api/rotello/tasks/${taskId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title,
-          description,
-          priority,
-          deadline: deadline || null,
-          columnId,
-        }),
+        body: JSON.stringify(fields),
       });
 
       if (res.ok) {
-        fetchTask();
         if (onTaskUpdated) onTaskUpdated();
       }
     } catch (err) {
-      console.error(err);
+      console.error("Field update error:", err);
     }
   };
 
@@ -323,7 +322,7 @@ export default function TaskModal({
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    onBlur={handleSaveFields}
+                    onBlur={() => updateTaskField({ title })}
                     className="w-full text-base sm:text-lg font-black text-sec p-3 rounded-xl border border-gray-200 focus:border-primary focus:outline-none"
                   />
                 </div>
@@ -334,7 +333,7 @@ export default function TaskModal({
                     rows={3}
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    onBlur={handleSaveFields}
+                    onBlur={() => updateTaskField({ description })}
                     placeholder="شرح جزئیات یا نیازمندی‌های این تسک..."
                     className="w-full text-xs sm:text-sm font-medium text-ink-darker p-3 rounded-xl border border-gray-200 focus:border-primary focus:outline-none leading-relaxed"
                   />
@@ -352,8 +351,9 @@ export default function TaskModal({
                   <select
                     value={columnId}
                     onChange={(e) => {
-                      setColumnId(e.target.value);
-                      setTimeout(handleSaveFields, 50);
+                      const newCol = e.target.value;
+                      setColumnId(newCol);
+                      updateTaskField({ columnId: newCol });
                     }}
                     className="w-full text-xs font-bold p-2.5 rounded-xl border border-gray-200 bg-white focus:border-primary focus:outline-none text-sec"
                   >
@@ -374,8 +374,9 @@ export default function TaskModal({
                   <select
                     value={priority}
                     onChange={(e) => {
-                      setPriority(e.target.value);
-                      setTimeout(handleSaveFields, 50);
+                      const newPri = e.target.value;
+                      setPriority(newPri);
+                      updateTaskField({ priority: newPri });
                     }}
                     className="w-full text-xs font-bold p-2.5 rounded-xl border border-gray-200 bg-white focus:border-primary focus:outline-none text-sec"
                   >
@@ -394,8 +395,9 @@ export default function TaskModal({
                   <PersianDatePicker
                     value={deadline}
                     onChange={(newDate) => {
-                      setDeadline(newDate);
-                      setTimeout(handleSaveFields, 50);
+                      const val = newDate?.trim() || "";
+                      setDeadline(val);
+                      updateTaskField({ deadline: val || null });
                     }}
                     placeholder="انتخاب مهلت شمسی..."
                   />
