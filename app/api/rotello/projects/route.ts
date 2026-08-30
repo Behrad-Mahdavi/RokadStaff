@@ -156,10 +156,10 @@ export async function POST(req: NextRequest) {
 
     // 3. Create default 4 Kanban columns
     const defaultColumns = [
-      { name: "برای انجام", position: 1000, isDoneColumn: false },
-      { name: "در حال انجام", position: 2000, isDoneColumn: false },
-      { name: "بازبینی", position: 3000, isDoneColumn: false },
-      { name: "انجام‌شده", position: 4000, isDoneColumn: true },
+      { name: "برای انجام", position: 1000, isDoneColumn: false, isEntryColumn: true },
+      { name: "در حال انجام", position: 2000, isDoneColumn: false, isEntryColumn: false },
+      { name: "بازبینی", position: 3000, isDoneColumn: false, isEntryColumn: false },
+      { name: "انجام‌شده", position: 4000, isDoneColumn: true, isEntryColumn: false },
     ];
 
     for (const col of defaultColumns) {
@@ -168,6 +168,7 @@ export async function POST(req: NextRequest) {
         name: col.name,
         position: col.position,
         isDoneColumn: col.isDoneColumn,
+        isEntryColumn: col.isEntryColumn,
       });
     }
 

@@ -49,6 +49,7 @@ export default function TaskModal({
   const [priority, setPriority] = useState("normal");
   const [deadline, setDeadline] = useState("");
   const [columnId, setColumnId] = useState("");
+  const [status, setStatus] = useState("todo");
 
   // Assignees
   const [selectedAssignees, setSelectedAssignees] = useState<string[]>([]);
@@ -101,7 +102,8 @@ export default function TaskModal({
         setTitle(json.task.title);
         setDescription(json.task.description || "");
         setPriority(json.task.priority);
-        setColumnId(json.task.columnId);
+        setColumnId(json.task.columnId || "");
+        setStatus(json.task.status || "todo");
         setDeadline(
           json.task.deadline ? new Date(json.task.deadline).toISOString().split("T")[0] : ""
         );
@@ -342,27 +344,57 @@ export default function TaskModal({
 
               {/* Meta Grid (Column, Priority, Deadline) */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 p-4 bg-gray-50 rounded-2xl border border-gray-200">
-                {/* Column */}
+                {/* Column (for Project Tasks) or Status (for Individual Tasks) */}
                 <div>
-                  <label className="block text-xs font-bold text-ink-normal/60 mb-1.5 flex items-center gap-1">
-                    <Layers className="w-3.5 h-3.5 text-primary" />
-                    <span>ستون فعلی:</span>
-                  </label>
-                  <select
-                    value={columnId}
-                    onChange={(e) => {
-                      const newCol = e.target.value;
-                      setColumnId(newCol);
-                      updateTaskField({ columnId: newCol });
-                    }}
-                    className="w-full text-xs font-bold p-2.5 rounded-xl border border-gray-200 bg-white focus:border-primary focus:outline-none text-sec"
-                  >
-                    {boardColumns.map((col: any) => (
-                      <option key={col.id} value={col.id}>
-                        {col.name} {col.isDoneColumn ? "✅" : ""}
-                      </option>
-                    ))}
-                  </select>
+                  {taskData.task.projectId ? (
+                    <>
+                      <label className="block text-xs font-bold text-ink-normal/60 mb-1.5 flex items-center gap-1">
+                        <Layers className="w-3.5 h-3.5 text-primary" />
+                        <span>ستون فعلی:</span>
+                      </label>
+                      <select
+                        value={columnId}
+                        onChange={(e) => {
+                          const newCol = e.target.value;
+                          setColumnId(newCol);
+                          updateTaskField({ columnId: newCol });
+                        }}
+                        className="w-full text-xs font-bold p-2.5 rounded-xl border border-gray-200 bg-white focus:border-primary focus:outline-none text-sec"
+                      >
+                        {boardColumns.map((col: any) => (
+                          <option key={col.id} value={col.id}>
+                            {col.name} {col.isDoneColumn ? "✅" : ""}
+                          </option>
+                        ))}
+                      </select>
+                    </>
+                  ) : (
+                    <>
+                      <label className="block text-xs font-bold text-ink-normal/60 mb-1.5 flex items-center gap-1">
+                        <Layers className="w-3.5 h-3.5 text-primary" />
+                        <span>وضعیت تسک فردی:</span>
+                      </label>
+                      <select
+                        value={status}
+                        onChange={async (e) => {
+                          const newStatus = e.target.value;
+                          setStatus(newStatus);
+                          await fetch(`/api/tasks/${taskId}/status`, {
+                            method: "PATCH",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ status: newStatus }),
+                          });
+                          if (onTaskUpdated) onTaskUpdated();
+                        }}
+                        className="w-full text-xs font-bold p-2.5 rounded-xl border border-gray-200 bg-white focus:border-primary focus:outline-none text-sec"
+                      >
+                        <option value="todo">برای انجام (To Do)</option>
+                        <option value="in_progress">در حال انجام (In Progress)</option>
+                        <option value="done">انجام‌شده (Done) ✅</option>
+                        <option value="cancelled">لغوشده (Cancelled) ❌</option>
+                      </select>
+                    </>
+                  )}
                 </div>
 
                 {/* Priority */}

@@ -16,6 +16,7 @@ import {
   ChevronLeft,
   X,
   LogOut,
+  FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import RokadLogo from "@/components/RokadLogo";
@@ -92,6 +93,13 @@ const ADMIN_NAV_GROUPS = [
         href: "/reports",
         icon: FileCheck2,
         badge: null,
+      },
+      {
+        title: "گزارش جامع همکاران",
+        href: "/reports/employee",
+        icon: FileText,
+        badge: "جامع",
+        badgeColor: "bg-ecosystem-light text-ecosystem-darker border border-primary/30",
       },
       {
         title: "غایبان در گزارش",

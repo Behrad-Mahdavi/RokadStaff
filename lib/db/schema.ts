@@ -200,6 +200,7 @@ export const boardColumns = pgTable(
     name: text("name").notNull(),
     position: doublePrecision("position").notNull(),
     isDoneColumn: boolean("is_done_column").default(false).notNull(),
+    isEntryColumn: boolean("is_entry_column").default(false).notNull(),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => ({
@@ -207,22 +208,19 @@ export const boardColumns = pgTable(
   })
 );
 
-// Tasks
+// Tasks (Supports both Project Kanban Tasks and Individual Standalone Tasks)
 export const tasks = pgTable(
   "tasks",
   {
     id: uuid("id").defaultRandom().primaryKey(),
-    projectId: uuid("project_id")
-      .notNull()
-      .references(() => projects.id, { onDelete: "cascade" }),
-    columnId: uuid("column_id")
-      .notNull()
-      .references(() => boardColumns.id, { onDelete: "cascade" }),
+    projectId: uuid("project_id").references(() => projects.id, { onDelete: "cascade" }),
+    columnId: uuid("column_id").references(() => boardColumns.id, { onDelete: "cascade" }),
     title: text("title").notNull(),
     description: text("description"),
     deadline: timestamp("deadline", { withTimezone: true }),
     priority: text("priority").default("normal").notNull(), // 'normal' | 'important' | 'urgent'
-    position: doublePrecision("position").notNull(),
+    position: doublePrecision("position"),
+    status: text("status"), // For individual tasks: 'todo' | 'in_progress' | 'done' | 'cancelled'
     createdBy: uuid("created_by")
       .notNull()
       .references(() => employees.id),

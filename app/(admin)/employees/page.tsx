@@ -13,9 +13,11 @@ import {
   Unlink,
   Edit2,
   Sparkles,
+  FileText,
 } from "lucide-react";
 import Modal from "@/components/Modal";
 import { toPersianDigits } from "@/lib/utils";
+import Link from "next/link";
 
 const DEPARTMENTS = ["پسرانه", "دخترانه"];
 
@@ -327,6 +329,13 @@ export default function EmployeesPage() {
                     </td>
                     <td className="py-3.5 px-4">
                       <div className="flex items-center justify-center gap-1.5">
+                        <Link
+                          href={`/reports/employee/${emp.id}`}
+                          title="مشاهده کارنامه جامع عملکرد"
+                          className="p-1.5 text-gray-500 hover:text-primary hover:bg-ecosystem-light rounded-lg transition-colors"
+                        >
+                          <FileText className="w-4 h-4" />
+                        </Link>
                         {emp.isLinked ? (
                           <button
                             onClick={() => handleUnlink(emp)}

@@ -56,7 +56,7 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    // 2. Fetch tasks with project and column info
+    // 2. Fetch tasks with leftJoin for both Project and Individual tasks
     const assignedTasks: any[] = await db
       .select({
         id: tasks.id,
@@ -67,6 +67,7 @@ export async function GET(req: NextRequest) {
         deadline: tasks.deadline,
         priority: tasks.priority,
         position: tasks.position,
+        status: tasks.status,
         completedAt: tasks.completedAt,
         createdAt: tasks.createdAt,
         updatedAt: tasks.updatedAt,
@@ -76,16 +77,18 @@ export async function GET(req: NextRequest) {
         isDoneColumn: boardColumns.isDoneColumn,
       })
       .from(tasks)
-      .innerJoin(projects, eq(tasks.projectId, projects.id))
-      .innerJoin(boardColumns, eq(tasks.columnId, boardColumns.id))
+      .leftJoin(projects, eq(tasks.projectId, projects.id))
+      .leftJoin(boardColumns, eq(tasks.columnId, boardColumns.id))
       .where(and(inArray(tasks.id, taskIds), eq(tasks.isDeleted, false)))
       .orderBy(desc(tasks.deadline), desc(tasks.createdAt));
 
     // Filter archived projects if not requested (Decision 5)
-    let filteredTasks = assignedTasks;
-    if (!includeArchived) {
-      filteredTasks = filteredTasks.filter((t) => !t.isProjectArchived);
-    }
+    let filteredTasks = assignedTasks.filter((t) => {
+      if (t.projectId && t.isProjectArchived && !includeArchived) {
+        return false;
+      }
+      return true;
+    });
 
     // 3. Fetch checklist progress
     let checklistProgressByTaskId: Record<string, { total: number; done: number; rate: number }> = {};
@@ -141,9 +144,30 @@ export async function GET(req: NextRequest) {
 
     for (const t of filteredTasks) {
       const progress = checklistProgressByTaskId[t.id] || null;
-      const enhanced = { ...t, progress };
+      const isIndividual = !t.projectId;
+      const isDone = isIndividual ? t.status === "done" : Boolean(t.isDoneColumn);
 
-      if (t.isDoneColumn) {
+      const enhanced = {
+        ...t,
+        progress,
+        isIndividual,
+        projectName: t.projectName || "تسک فردی (مستقل)",
+        columnName:
+          t.columnName ||
+          (t.status === "done"
+            ? "انجام‌شده"
+            : t.status === "in_progress"
+            ? "در حال انجام"
+            : t.status === "cancelled"
+            ? "لغوشده"
+            : "برای انجام"),
+      };
+
+      if (t.status === "cancelled") {
+        continue;
+      }
+
+      if (isDone) {
         completedRecently.push(enhanced);
       } else if (t.deadline && new Date(t.deadline) < now) {
         overdue.push(enhanced);
@@ -162,7 +186,7 @@ export async function GET(req: NextRequest) {
         completedRecently,
       },
       summary: {
-        total: filteredTasks.length,
+        total: overdue.length + todayOrThisWeek.length + noDeadlineOrLater.length + completedRecently.length,
         overdue: overdue.length,
         thisWeek: todayOrThisWeek.length,
         completed: completedRecently.length,
