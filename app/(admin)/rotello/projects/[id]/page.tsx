@@ -189,6 +189,14 @@ export default function ProjectBoardPage() {
     const currentTask = boardData?.tasks?.find((t: any) => t.id === draggedTaskId);
     if (!currentTask) return;
 
+    // Check if target column is a Done column and user is not admin
+    const targetCol = boardData?.columns?.find((c: any) => c.id === targetColId);
+    if (targetCol?.isDoneColumn && !boardData?.isAdmin) {
+      alert("تنها مدیر سیستم مجاز به انتقال تسک به ستون انجام‌شده است.");
+      setDraggedTaskId(null);
+      return;
+    }
+
     // Calculate new position in target column
     const targetColTasks = boardData?.tasks?.filter(
       (t: any) => t.columnId === targetColId && t.id !== draggedTaskId
@@ -213,7 +221,7 @@ export default function ProjectBoardPage() {
 
     // Call API
     try {
-      await fetch(`/api/rotello/tasks/${draggedTaskId}`, {
+      const res = await fetch(`/api/rotello/tasks/${draggedTaskId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -221,9 +229,18 @@ export default function ProjectBoardPage() {
           position: lastPos,
         }),
       });
+
+      if (!res.ok) {
+        const errJson = await res.json();
+        alert(errJson.error || "خطا در انتقال تسک");
+        fetchBoard();
+        return;
+      }
+
       fetchBoard();
     } catch (err) {
       console.error(err);
+      fetchBoard();
     }
   };
 
@@ -310,7 +327,15 @@ export default function ProjectBoardPage() {
               <div className="flex items-center justify-between pb-3 mb-3 border-b border-gray-200 px-1">
                 <div className="flex items-center gap-2">
                   <span className="font-black text-sm text-sec">{column.name}</span>
-                  {column.isDoneColumn && <span className="text-xs">✅</span>}
+                  {column.isDoneColumn && (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-accent-green/10 text-accent-green border border-accent-green/20">
+                      <span>✅</span>
+                      <span>تکمیل‌شده</span>
+                      {!boardData?.isAdmin && (
+                        <span className="text-ink-normal/50 text-[9px] mr-0.5">(فقط مدیر)</span>
+                      )}
+                    </span>
+                  )}
                   <span className="w-5 h-5 rounded-full bg-gray-200 text-ink-normal/70 text-[11px] font-bold flex items-center justify-center">
                     {toPersianDigits(colTasks.length)}
                   </span>
@@ -423,8 +448,12 @@ export default function ProjectBoardPage() {
 
               {/* Quick Add Task in Column */}
               <div className="pt-3 mt-2 border-t border-gray-200/60">
-                {quickTaskColId === column.id ? (
-                  <div className="space-y-2">
+                {column.isDoneColumn && !boardData?.isAdmin ? (
+                  <div className="py-2 text-center text-[11px] font-bold text-ink-normal/40 bg-gray-100/60 rounded-xl">
+                    تکمیل تسک تنها توسط مدیر مجاز است
+                  </div>
+                ) : quickTaskColId === column.id ? (
+                  <div className="bg-white p-3 rounded-2xl border border-gray-200 shadow-sm space-y-2">
                     <input
                       type="text"
                       autoFocus
@@ -479,6 +508,7 @@ export default function ProjectBoardPage() {
         onTaskUpdated={fetchBoard}
         projectMembers={members}
         boardColumns={columns}
+        isAdmin={Boolean(boardData?.isAdmin)}
       />
 
       {/* Modal: Add Column */}

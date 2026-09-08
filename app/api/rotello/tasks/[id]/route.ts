@@ -37,6 +37,7 @@ export async function GET(
         deadline: tasks.deadline,
         priority: tasks.priority,
         position: tasks.position,
+        status: tasks.status,
         createdBy: tasks.createdBy,
         isDeleted: tasks.isDeleted,
         completedAt: tasks.completedAt,
@@ -47,7 +48,7 @@ export async function GET(
         creatorName: employees.fullName,
       })
       .from(tasks)
-      .innerJoin(boardColumns, eq(tasks.columnId, boardColumns.id))
+      .leftJoin(boardColumns, eq(tasks.columnId, boardColumns.id))
       .leftJoin(employees, eq(tasks.createdBy, employees.id))
       .where(and(eq(tasks.id, taskId), eq(tasks.isDeleted, false)))
       .limit(1);
@@ -201,7 +202,15 @@ export async function PATCH(
         .where(eq(boardColumns.id, targetColumnId))
         .limit(1);
 
+      const isAdmin = session.role === "admin" || session.role === "supervisor";
+
       if (targetColInfo.length > 0 && targetColInfo[0].isDoneColumn) {
+        if (!isAdmin) {
+          return NextResponse.json(
+            { error: "تنها مدیر سیستم مجاز به انتقال تسک به ستون انجام‌شده است." },
+            { status: 403 }
+          );
+        }
         updateData.completedAt = new Date();
       } else if (targetColInfo.length > 0 && !targetColInfo[0].isDoneColumn) {
         updateData.completedAt = null;

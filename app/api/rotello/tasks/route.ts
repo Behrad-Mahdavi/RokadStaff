@@ -89,6 +89,23 @@ export async function POST(req: NextRequest) {
       targetColumnId = firstCol[0].id;
     }
 
+    // Check if target column is a Done column
+    const targetColInfo: any[] = await db
+      .select()
+      .from(boardColumns)
+      .where(eq(boardColumns.id, targetColumnId))
+      .limit(1);
+
+    const isAdmin = session.role === "admin" || session.role === "supervisor";
+    const isTargetDone = targetColInfo.length > 0 && targetColInfo[0].isDoneColumn;
+
+    if (isTargetDone && !isAdmin) {
+      return NextResponse.json(
+        { error: "تنها مدیر سیستم مجاز به قرار دادن تسک در ستون انجام‌شده است." },
+        { status: 403 }
+      );
+    }
+
     // Calculate position (last + 1000)
     const lastTask: any[] = await db
       .select({ position: tasks.position })
@@ -111,6 +128,7 @@ export async function POST(req: NextRequest) {
         priority,
         position,
         createdBy: creatorId,
+        completedAt: isTargetDone ? new Date() : null,
         isDeleted: false,
       })
       .returning();

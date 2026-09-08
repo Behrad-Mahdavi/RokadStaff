@@ -29,6 +29,7 @@ interface TaskModalProps {
   onTaskUpdated?: () => void;
   projectMembers?: any[];
   boardColumns?: any[];
+  isAdmin?: boolean;
 }
 
 export default function TaskModal({
@@ -38,10 +39,12 @@ export default function TaskModal({
   onTaskUpdated,
   projectMembers = [],
   boardColumns = [],
+  isAdmin,
 }: TaskModalProps) {
   const [loading, setLoading] = useState(false);
   const [taskData, setTaskData] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<"details" | "timeline">("details");
+  const [sessionUser, setSessionUser] = useState<any>(null);
 
   // Form states
   const [title, setTitle] = useState("");
@@ -55,6 +58,22 @@ export default function TaskModal({
   const [selectedAssignees, setSelectedAssignees] = useState<string[]>([]);
   const [isAssigneeDropdownOpen, setIsAssigneeDropdownOpen] = useState(false);
   const [organizationEmployees, setOrganizationEmployees] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.authenticated && data.user) {
+          setSessionUser(data.user);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const effectiveIsAdmin =
+    isAdmin !== undefined
+      ? isAdmin
+      : sessionUser?.role === "admin" || sessionUser?.role === "supervisor";
 
   // Fetch all employees if not provided
   useEffect(() => {
@@ -355,17 +374,25 @@ export default function TaskModal({
                       <select
                         value={columnId}
                         onChange={(e) => {
-                          const newCol = e.target.value;
-                          setColumnId(newCol);
-                          updateTaskField({ columnId: newCol });
+                          const newColId = e.target.value;
+                          const targetCol = boardColumns.find((c: any) => c.id === newColId);
+                          if (targetCol?.isDoneColumn && !effectiveIsAdmin) {
+                            alert("تنها مدیر سیستم مجاز به انتقال تسک به ستون انجام‌شده است.");
+                            return;
+                          }
+                          setColumnId(newColId);
+                          updateTaskField({ columnId: newColId });
                         }}
                         className="w-full text-xs font-bold p-2.5 rounded-xl border border-gray-200 bg-white focus:border-primary focus:outline-none text-sec"
                       >
-                        {boardColumns.map((col: any) => (
-                          <option key={col.id} value={col.id}>
-                            {col.name} {col.isDoneColumn ? "✅" : ""}
-                          </option>
-                        ))}
+                        {boardColumns.map((col: any) => {
+                          const isLocked = col.isDoneColumn && !effectiveIsAdmin;
+                          return (
+                            <option key={col.id} value={col.id} disabled={isLocked}>
+                              {col.name} {col.isDoneColumn ? (isLocked ? "🔒 (فقط مدیر)" : "✅") : ""}
+                            </option>
+                          );
+                        })}
                       </select>
                     </>
                   ) : (

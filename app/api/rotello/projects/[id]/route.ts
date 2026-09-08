@@ -182,9 +182,12 @@ export async function GET(
       progress: checklistProgressByTaskId[t.id] || null,
     }));
 
+    const isAdmin = session.role === "admin" || session.role === "supervisor";
+
     return NextResponse.json({
       project,
       userRole,
+      isAdmin,
       members,
       allEmployees,
       columns,
