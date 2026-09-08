@@ -21,6 +21,8 @@ export async function middleware(req: NextRequest) {
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api/telegram") ||
     pathname.startsWith("/api/auth") ||
+    pathname.startsWith("/api/cron") ||
+    pathname === "/api/health" ||
     pathname.startsWith("/auth/verify") ||
     pathname === "/login" ||
     pathname === "/login/member" ||
@@ -34,6 +36,11 @@ export async function middleware(req: NextRequest) {
 
   // 1. Unauthenticated users handling
   if (!sessionToken) {
+    // Return JSON 401 for API routes rather than HTML redirect
+    if (pathname.startsWith("/api/")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     // If trying to access admin dashboard or reports, go to admin login
     const isAdminRoute = ADMIN_ONLY_PATHS.some(
       (p) => pathname === p || pathname.startsWith(`${p}/`)
@@ -69,6 +76,9 @@ export async function middleware(req: NextRequest) {
 
     return NextResponse.next();
   } catch (err) {
+    if (pathname.startsWith("/api/")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     return NextResponse.redirect(new URL("/login", req.url));
   }
 }
