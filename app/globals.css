@@ -302,22 +302,16 @@ body {
     margin: 10mm 12mm 12mm 12mm;
   }
 
-  /* Hide screen-specific controls, sidebars, interactive tabs */
-  aside,
-  header,
-  nav,
-  .no-print,
-  .screen-only {
-    display: none !important;
-  }
-
-  /* Reveal dedicated official executive report */
-  .print-only {
-    display: block !important;
-  }
-
-  body {
+  /* 1. Global root & body reset: strictly force light theme on paper regardless of dark mode */
+  :root,
+  html,
+  html.dark,
+  body,
+  .dark,
+  .dark body {
+    color-scheme: light !important;
     background: #ffffff !important;
+    background-color: #ffffff !important;
     color: #0F172A !important;
     font-size: 10.5pt !important;
     line-height: 1.4 !important;
@@ -326,27 +320,71 @@ body {
     color-adjust: exact !important;
   }
 
+  /* 2. Neutralize all application layout wrappers & dark mode background/text classes */
+  .dark [class*="min-h-screen"],
+  .dark [class*="dark:bg-"],
+  .dark [class*="dark:text-"],
+  .dark main,
+  .dark .flex-1,
+  .dark div:not(.print-only):not(.print-only *) {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #0F172A !important;
+  }
+
+  /* 3. Hide screen-specific controls, sidebars, interactive tabs */
+  aside,
+  header,
+  nav,
+  .no-print,
+  .screen-only {
+    display: none !important;
+  }
+
   main {
     padding: 0 !important;
     margin: 0 !important;
     width: 100% !important;
     max-width: 100% !important;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
   }
 
-  /* Executive Table Styling - Clean & Modern */
-  .executive-table {
+  /* 4. Display and enforce crystal-clear executive styling on .print-only */
+  .print-only,
+  .dark .print-only {
+    display: block !important;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #0F172A !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .print-only *,
+  .dark .print-only * {
+    color-scheme: light !important;
+  }
+
+  /* 5. Executive Table Styling - Clean & Modern (Immune to Dark Mode) */
+  .executive-table,
+  .dark .executive-table {
     width: 100% !important;
     border-collapse: collapse !important;
     font-size: 9pt !important;
     page-break-inside: auto !important;
+    background-color: #FFFFFF !important;
   }
 
-  .executive-table tr {
+  .executive-table tr,
+  .dark .executive-table tr {
     page-break-inside: avoid !important;
     page-break-after: auto !important;
   }
 
-  .executive-table th {
+  .executive-table th,
+  .dark .executive-table th {
     background-color: #F1F5F9 !important;
     color: #1E293B !important;
     font-weight: 800 !important;
@@ -356,24 +394,69 @@ body {
     text-align: right !important;
   }
 
-  .executive-table th.text-center {
+  .executive-table th.text-center,
+  .dark .executive-table th.text-center {
     text-align: center !important;
   }
 
-  .executive-table td {
+  .executive-table td,
+  .dark .executive-table td {
     border: 1px solid #E2E8F0 !important;
     padding: 7px 10px !important;
     color: #1E293B !important;
-    background-color: #FFFFFF;
-    vertical-align: middle;
+    background-color: #FFFFFF !important;
+    vertical-align: middle !important;
   }
 
-  .executive-table tr:nth-child(even) td {
+  .executive-table tr:nth-child(even) td,
+  .dark .executive-table tr:nth-child(even) td {
     background-color: #F8FAFC !important;
   }
 
-  /* Badge and status print adjustments */
-  .print-badge {
+  /* 6. Preservation of pastel card backgrounds and badges */
+  .print-only .bg-white,
+  .dark .print-only .bg-white {
+    background-color: #FFFFFF !important;
+  }
+
+  .print-only .bg-slate-50,
+  .dark .print-only .bg-slate-50 {
+    background-color: #F8FAFC !important;
+  }
+
+  .print-only [class*="bg-emerald-50"],
+  .dark .print-only [class*="bg-emerald-50"] {
+    background-color: #ECFDF5 !important;
+  }
+
+  .print-only [class*="bg-rose-50"],
+  .dark .print-only [class*="bg-rose-50"] {
+    background-color: #FFF1F2 !important;
+  }
+
+  .print-only [class*="bg-blue-50"],
+  .dark .print-only [class*="bg-blue-50"] {
+    background-color: #EFF6FF !important;
+  }
+
+  .print-only [class*="bg-teal-50"],
+  .dark .print-only [class*="bg-teal-50"] {
+    background-color: #F0FDFA !important;
+  }
+
+  .print-only [class*="bg-amber-50"],
+  .dark .print-only [class*="bg-amber-50"] {
+    background-color: #FFFBEB !important;
+  }
+
+  .print-only [class*="bg-slate-100"],
+  .dark .print-only [class*="bg-slate-100"] {
+    background-color: #F1F5F9 !important;
+  }
+
+  /* 7. Badge and status print adjustments */
+  .print-badge,
+  .dark .print-badge {
     display: inline-block !important;
     padding: 2px 8px !important;
     border-radius: 6px !important;
@@ -389,7 +472,7 @@ body {
     break-inside: avoid !important;
   }
 
-  /* Reset box shadows and animations for crisp paper print */
+  /* 8. Reset box shadows and animations for crisp paper print */
   * {
     box-shadow: none !important;
     text-shadow: none !important;

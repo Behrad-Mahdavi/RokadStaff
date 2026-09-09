@@ -411,7 +411,7 @@ export default function UnifiedEmployeeReportPage() {
       {/* 2. SIMPLE, CLEAN & USEFUL EMPLOYEE PERFORMANCE REPORT (PRINT ONLY) */}
       {/* ------------------------------------------------------------- */}
       {data && (
-        <div className="print-only text-slate-900 space-y-4" dir="rtl">
+        <div className="print-only bg-white text-slate-900 space-y-4" dir="rtl">
           {/* Clean Modern Header */}
           <div className="border-b border-slate-200 pb-3.5 mb-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
