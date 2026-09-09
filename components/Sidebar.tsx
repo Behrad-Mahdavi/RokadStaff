@@ -24,13 +24,13 @@ const EMPLOYEE_NAV_GROUPS = [
     title: "میز کار و پروژه‌ها",
     items: [
       {
-        title: "میز کار و وظایف من",
+        title: "میز کار من",
         href: "/rotello/my-tasks",
         icon: Briefcase,
         badge: null,
       },
       {
-        title: "پروژه‌ها و بوردها",
+        title: "پروژه‌ها",
         href: "/rotello/projects",
         icon: Kanban,
         badge: null,
@@ -44,19 +44,19 @@ const ADMIN_NAV_GROUPS = [
     title: "مدیریت پروژه‌ها و کارها",
     items: [
       {
-        title: "پروژه‌ها و بوردها",
-        href: "/rotello/projects",
-        icon: Kanban,
-        badge: null,
-      },
-      {
         title: "میز کار من",
         href: "/rotello/my-tasks",
         icon: Briefcase,
         badge: null,
       },
       {
-        title: "آمار و پیشرفت پروژه‌ها",
+        title: "پروژه‌ها",
+        href: "/rotello/projects",
+        icon: Kanban,
+        badge: null,
+      },
+      {
+        title: "داشبورد مانیتورینگ",
         href: "/rotello/analytics",
         icon: Layers,
         badge: null,
@@ -67,13 +67,13 @@ const ADMIN_NAV_GROUPS = [
     title: "پایش عملکرد و گزارش‌ها",
     items: [
       {
-        title: "داشبورد کل عملکرد",
+        title: "داشبورد عملکرد روزانه",
         href: "/dashboard",
         icon: LayoutDashboard,
         badge: null,
       },
       {
-        title: "گزارش‌های روزانه",
+        title: "گزارش‌ها و پیگیری غایبان",
         href: "/reports",
         icon: FileCheck2,
         badge: null,
@@ -86,14 +86,7 @@ const ADMIN_NAV_GROUPS = [
         badgeColor: "bg-ecosystem-light dark:bg-ecosystem-darker/70 text-ecosystem-darker dark:text-ecosystem-light border border-primary/30",
       },
       {
-        title: "پیگیری عدم ثبت گزارش",
-        href: "/reports/missing",
-        icon: AlertTriangle,
-        badge: "امروز",
-        badgeColor: "bg-college-light dark:bg-college-darker/70 text-college-darker dark:text-college-light border border-college-normal/30",
-      },
-      {
-        title: "تحلیل آماری و فایل اکسل",
+        title: "گزارش‌گیری",
         href: "/analytics",
         icon: BarChart3,
         badge: null,
@@ -153,11 +146,11 @@ export default function Sidebar({ onCloseMobile }: SidebarProps) {
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-extrabold text-xl text-sec dark:text-white tracking-tight">روتلو</span>
-                <span className="text-[11px] font-black px-2 py-0.5 rounded-full bg-primary/15 dark:bg-primary/25 text-primary border border-primary/30">
+                <span className="text-xs font-black px-2 py-0.5 rounded-full bg-primary/15 dark:bg-primary/25 text-primary border border-primary/30">
                   عوامل
                 </span>
               </div>
-              <div className="text-[11px] text-ink-normal/60 dark:text-gray-400 mt-1 font-medium">
+              <div className="text-xs text-ink-normal/60 dark:text-gray-400 mt-0.5 font-medium">
                 مدیریت پروژه‌ها و کارها
               </div>
             </div>

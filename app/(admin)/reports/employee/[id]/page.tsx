@@ -17,10 +17,11 @@ import {
   Activity,
   AlertTriangle,
   FolderKanban,
+  Printer,
 } from "lucide-react";
 import Link from "next/link";
 import PersianDatePicker from "@/components/PersianDatePicker";
-import { formatToJalali, formatTehranTime, toPersianDigits } from "@/lib/utils";
+import { formatToJalali, formatTehranTime, toPersianDigits, getTehranDateString } from "@/lib/utils";
 
 export default function UnifiedEmployeeReportPage() {
   const params = useParams();
@@ -32,10 +33,12 @@ export default function UnifiedEmployeeReportPage() {
   const [activeTab, setActiveTab] = useState<"snapshot" | "rotello" | "daily">("snapshot");
 
   // Date filters (Default to last 30 days)
-  const defaultTo = new Date().toISOString().split("T")[0];
-  const defaultFrom = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-    .toISOString()
-    .split("T")[0];
+  const defaultTo = getTehranDateString();
+  const defaultFrom = (() => {
+    const d = new Date();
+    d.setDate(d.getDate() - 30);
+    return getTehranDateString(d);
+  })();
 
   const [fromDate, setFromDate] = useState(defaultFrom);
   const [toDate, setToDate] = useState(defaultTo);
@@ -67,10 +70,28 @@ export default function UnifiedEmployeeReportPage() {
     window.open(url, "_blank");
   };
 
+  const handleExportPDF = () => {
+    window.print();
+  };
+
   return (
     <div className="p-4 sm:p-8 max-w-7xl mx-auto font-vazirmatn space-y-6">
+      {/* Printable Header (Visible only when printed/saved to PDF) */}
+      <div className="hidden print:block border-b-2 border-primary pb-4 mb-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-black text-sec">کارنامه جامع عملکرد همکار</h1>
+            <p className="text-xs text-ink-normal/70 mt-1">سامانه روتلو عوامل • مدیریت پروژه‌ها و کارها</p>
+          </div>
+          <div className="text-left text-xs font-medium">
+            <div>تاریخ صدور: {formatToJalali(new Date())}</div>
+            <div>بازه کارنامه: {fromDate} تا {toDate}</div>
+          </div>
+        </div>
+      </div>
+
       {/* Top Navigation & Breadcrumb */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 no-print">
         <Link
           href="/reports/employee"
           className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-ink-normal/60 hover:text-primary transition"
@@ -79,27 +100,36 @@ export default function UnifiedEmployeeReportPage() {
           <span>بازگشت به لیست همکاران</span>
         </Link>
 
-        <button
-          onClick={handleExportExcel}
-          className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-accent-green text-white text-xs sm:text-sm font-black shadow-sm hover:opacity-95 transition w-full sm:w-auto"
-        >
-          <Download className="w-4 h-4" />
-          <span>خروجی اکسل چند شیت</span>
-        </button>
+        <div className="flex items-center gap-2.5 w-full sm:w-auto">
+          <button
+            onClick={handleExportPDF}
+            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-white text-xs sm:text-sm font-black shadow-sm hover:opacity-95 transition flex-1 sm:flex-initial"
+          >
+            <Printer className="w-4 h-4" />
+            <span>دریافت فایل PDF</span>
+          </button>
+          <button
+            onClick={handleExportExcel}
+            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-accent-green text-white text-xs sm:text-sm font-black shadow-sm hover:opacity-95 transition flex-1 sm:flex-initial"
+          >
+            <Download className="w-4 h-4" />
+            <span>خروجی اکسل</span>
+          </button>
+        </div>
       </div>
 
       {/* Employee Profile Header & Date Range */}
-      <div className="p-5 sm:p-6 bg-white rounded-3xl border border-gray-200 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-5 sm:gap-6">
+      <div className="p-5 sm:p-6 bg-white dark:bg-[#151C28] rounded-3xl border border-gray-200 dark:border-gray-800 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-5 sm:gap-6">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-primary to-ecosystem-dark text-white flex items-center justify-center font-black text-xl sm:text-2xl shadow-[3px_3px_0_#202A5A] shrink-0">
             {data?.employee?.fullName ? data.employee.fullName.slice(0, 1) : "ک"}
           </div>
           <div>
             <div className="flex items-center gap-2.5">
-              <h1 className="text-lg sm:text-2xl font-black text-sec">
+              <h1 className="text-lg sm:text-2xl font-black text-sec dark:text-white">
                 {data?.employee?.fullName || "در حال دریافت..."}
               </h1>
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-ecosystem-light text-ecosystem-darker border border-primary/20">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-ecosystem-light dark:bg-ecosystem-darker/60 text-ecosystem-darker dark:text-ecosystem-light border border-primary/20">
                 {data?.employee?.role === "admin"
                   ? "مدیر کل"
                   : data?.employee?.role === "supervisor"
@@ -107,16 +137,16 @@ export default function UnifiedEmployeeReportPage() {
                   : "همکار"}
               </span>
             </div>
-            <p className="text-xs sm:text-sm text-ink-normal/60 mt-1 font-medium">
+            <p className="text-xs sm:text-sm text-ink-normal/60 dark:text-gray-400 mt-1 font-medium">
               {data?.employee?.position || "همکار"} • دپارتمان {data?.employee?.department || "پسرانه"}
             </p>
           </div>
         </div>
 
         {/* Jalali Date Filter */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-gray-50 rounded-2xl border border-gray-200 w-full lg:w-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-gray-50 dark:bg-[#1C2536] rounded-2xl border border-gray-200 dark:border-gray-700 w-full lg:w-auto no-print">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-ink-normal/60 shrink-0">از تاریخ:</span>
+            <span className="text-xs font-bold text-ink-normal/60 dark:text-gray-400 shrink-0">از تاریخ:</span>
             <div className="flex-1 sm:w-40">
               <PersianDatePicker
                 value={fromDate}
@@ -126,7 +156,7 @@ export default function UnifiedEmployeeReportPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-ink-normal/60 shrink-0">تا تاریخ:</span>
+            <span className="text-xs font-bold text-ink-normal/60 dark:text-gray-400 shrink-0">تا تاریخ:</span>
             <div className="flex-1 sm:w-40">
               <PersianDatePicker
                 value={toDate}
@@ -138,7 +168,7 @@ export default function UnifiedEmployeeReportPage() {
       </div>
 
       {/* Tabs Navigation */}
-      <div className="flex items-center gap-2 border-b border-gray-200 dark:border-gray-800 overflow-x-auto pb-1 scrollbar-none">
+      <div className="flex items-center gap-2 border-b border-gray-200 dark:border-gray-800 overflow-x-auto pb-1 scrollbar-none no-print">
         <button
           onClick={() => setActiveTab("snapshot")}
           className={`flex items-center gap-2 px-4 sm:px-5 py-3 text-xs sm:text-sm font-black border-b-2 transition-all shrink-0 whitespace-nowrap ${

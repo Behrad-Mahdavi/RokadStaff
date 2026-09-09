@@ -57,7 +57,7 @@ export default function RotelloAnalyticsPage() {
             <Layers className="w-4 h-4" />
             <span>داشبورد نظارتی و شاخص‌های سلامت پروژه‌ها</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-sec dark:text-white tracking-tight">آمار و پیشرفت پروژه‌ها</h1>
+          <h1 className="text-2xl sm:text-3xl font-black text-sec dark:text-white tracking-tight">داشبورد مانیتورینگ</h1>
           <p className="text-xs sm:text-sm text-ink-normal/70 dark:text-gray-400 mt-1 font-medium">
             پایش بار کاری تیم، وظایف در گردش و سرعت تکمیل پروژه‌ها
           </p>

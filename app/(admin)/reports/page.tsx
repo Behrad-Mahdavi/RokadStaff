@@ -1,16 +1,18 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   FileCheck2,
   Search,
   Calendar,
   Clock,
   Eye,
-  Filter,
   ChevronLeft,
   ChevronRight,
-  FileText,
+  AlertTriangle,
+  Bell,
+  CheckCircle2,
 } from "lucide-react";
 import Modal from "@/components/Modal";
 import {
@@ -21,21 +23,34 @@ import {
 } from "@/lib/utils";
 import PersianDatePicker from "@/components/PersianDatePicker";
 
-export default function ReportsPage() {
-  const [reports, setReports] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
-  const [selectedDept, setSelectedDept] = useState("all");
-  const [selectedStatus, setSelectedStatus] = useState("all");
-  const [selectedDate, setSelectedDate] = useState(getTehranDateString());
+function ReportsContent() {
+  const searchParams = useSearchParams();
+  const initialTab = searchParams.get("tab") === "missing" ? "missing" : "submitted";
 
-  // Report details modal
+  const [activeTab, setActiveTab] = useState<"submitted" | "missing">(initialTab);
+
+  // Shared filters
+  const [selectedDate, setSelectedDate] = useState(getTehranDateString());
+  const [selectedDept, setSelectedDept] = useState("all");
+  const [search, setSearch] = useState("");
+
+  // Submitted reports state
+  const [reports, setReports] = useState<any[]>([]);
+  const [reportsLoading, setReportsLoading] = useState(true);
+  const [selectedStatus, setSelectedStatus] = useState("all");
   const [selectedReport, setSelectedReport] = useState<any>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
+  // Missing employees state
+  const [missingList, setMissingList] = useState<any[]>([]);
+  const [missingLoading, setMissingLoading] = useState(true);
+  const [sendingReminder, setSendingReminder] = useState(false);
+  const [notificationMsg, setNotificationMsg] = useState<string | null>(null);
+
+  // Fetch submitted reports
   const fetchReports = async () => {
     try {
-      setLoading(true);
+      setReportsLoading(true);
       const params = new URLSearchParams();
       if (search) params.append("search", search);
       if (selectedDept !== "all") params.append("department", selectedDept);
@@ -50,13 +65,38 @@ export default function ReportsPage() {
     } catch (err) {
       console.error(err);
     } finally {
-      setLoading(false);
+      setReportsLoading(false);
+    }
+  };
+
+  // Fetch missing employees
+  const fetchMissing = async () => {
+    try {
+      setMissingLoading(true);
+      const params = new URLSearchParams();
+      if (selectedDate) params.append("date", selectedDate);
+      if (selectedDept !== "all") params.append("department", selectedDept);
+
+      const res = await fetch(`/api/reports/missing?${params.toString()}`);
+      if (res.ok) {
+        const data = await res.json();
+        setMissingList(data.missingEmployees || []);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setMissingLoading(false);
     }
   };
 
   useEffect(() => {
     fetchReports();
-  }, [search, selectedDept, selectedStatus, selectedDate]);
+    fetchMissing();
+  }, [selectedDate, selectedDept]);
+
+  useEffect(() => {
+    fetchReports();
+  }, [search, selectedStatus]);
 
   const changeDateByDays = (days: number) => {
     const current = new Date(selectedDate);
@@ -64,14 +104,40 @@ export default function ReportsPage() {
     setSelectedDate(getTehranDateString(current));
   };
 
+  const handleSendReminderAll = async () => {
+    if (!confirm("آیا می‌خواهید برای تمام کارمندان غایب که به تلگرام متصل هستند یادآوری ارسال کنید؟")) return;
+
+    setSendingReminder(true);
+    setNotificationMsg(null);
+    try {
+      const res = await fetch("/api/cron/reminder", { method: "POST" });
+      const data = await res.json();
+      if (res.ok) {
+        setNotificationMsg(`پیام یادآوری با موفقیت برای ${toPersianDigits(data.sentCount)} نفر ارسال شد.`);
+      } else {
+        setNotificationMsg(`خطا: ${data.error}`);
+      }
+    } catch (err) {
+      setNotificationMsg("خطا در ارسال پیام‌ها.");
+    } finally {
+      setSendingReminder(false);
+    }
+  };
+
+  const filteredMissingList = missingList.filter((emp) =>
+    emp.fullName.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-300">
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-sec dark:text-white tracking-tight">گزارش‌های روزانه کارکنان</h1>
+          <h1 className="text-xl sm:text-2xl font-black text-sec dark:text-white tracking-tight">
+            گزارش‌ها و پیگیری غایبان
+          </h1>
           <p className="text-xs sm:text-sm text-ink-normal/70 dark:text-gray-300 mt-1 font-medium">
-            مشاهده، جستجو و بررسی گزارش‌های ثبت‌شده از طریق تلگرام
+            مشاهده گزارش‌های روزانه کارکنان و پیگیری هوشمند غایبان
           </p>
         </div>
 
@@ -82,7 +148,7 @@ export default function ReportsPage() {
             className="p-2 hover:bg-gray-100 dark:hover:bg-[#1C2536] rounded-xl text-sec dark:text-gray-200 transition-colors"
             title="روز بعد"
           >
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-4 h-4" />
           </button>
           <div className="flex items-center gap-2 px-3 py-1 font-bold text-xs sm:text-sm text-sec dark:text-white">
             <Calendar className="w-4 h-4 text-primary" />
@@ -93,7 +159,7 @@ export default function ReportsPage() {
             className="p-2 hover:bg-gray-100 dark:hover:bg-[#1C2536] rounded-xl text-sec dark:text-gray-200 transition-colors"
             title="روز قبل"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-4 h-4" />
           </button>
           <button
             onClick={() => setSelectedDate(getTehranDateString())}
@@ -104,18 +170,55 @@ export default function ReportsPage() {
         </div>
       </div>
 
-      {/* Filter Bar */}
+      {/* Tabs Switcher */}
+      <div className="flex items-center gap-2 border-b border-gray-200 dark:border-gray-800 pb-2">
+        <button
+          onClick={() => setActiveTab("submitted")}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-black text-xs sm:text-sm transition-all ${
+            activeTab === "submitted"
+              ? "bg-primary text-white shadow-sm"
+              : "text-ink-normal/70 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+          }`}
+        >
+          <FileCheck2 className="w-4 h-4" />
+          <span>گزارش‌های ثبت‌شده</span>
+          <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
+            activeTab === "submitted" ? "bg-white/20 text-white" : "bg-gray-200 dark:bg-gray-700 text-sec dark:text-gray-300"
+          }`}>
+            {toPersianDigits(reports.length)}
+          </span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab("missing")}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-black text-xs sm:text-sm transition-all ${
+            activeTab === "missing"
+              ? "bg-college-normal text-white shadow-sm"
+              : "text-ink-normal/70 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+          }`}
+        >
+          <AlertTriangle className="w-4 h-4" />
+          <span>لیست غایبان و پیگیری</span>
+          <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
+            activeTab === "missing" ? "bg-white/20 text-white" : "bg-gray-200 dark:bg-gray-700 text-sec dark:text-gray-300"
+          }`}>
+            {toPersianDigits(missingList.length)}
+          </span>
+        </button>
+      </div>
+
+      {/* Shared Filter Bar */}
       <div className="bg-white dark:bg-[#151C28] p-4 sm:p-5 rounded-3xl border border-[#EAEAEA] dark:border-gray-800 shadow-sm flex flex-col md:flex-row items-center gap-3">
         {/* Search Input */}
         <div className="relative flex-1 w-full">
           <input
             type="text"
-            placeholder="جستجوی نام کارمند یا متن گزارش..."
+            placeholder={activeTab === "submitted" ? "جستجوی نام همکار یا متن گزارش..." : "جستجوی نام همکار غایب..."}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-3 pr-11 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-xs sm:text-sm focus:border-primary focus:outline-none bg-[#FAFAFA] dark:bg-[#1C2536] dark:text-white focus:bg-white dark:focus:bg-[#1C2536] font-medium"
+            className="w-full pl-3 pr-10 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-xs sm:text-sm focus:border-primary focus:outline-none bg-[#FAFAFA] dark:bg-[#1C2536] dark:text-white focus:bg-white dark:focus:bg-[#1C2536] font-medium"
           />
-          <Search className="w-4 h-4 text-gray-400 absolute right-4 top-3.5" />
+          <Search className="w-4 h-4 text-gray-400 absolute right-3.5 top-3" />
         </div>
 
         {/* Date Selector Input */}
@@ -140,97 +243,192 @@ export default function ReportsPage() {
           </select>
         </div>
 
-        {/* Status Filter */}
-        <div className="w-full md:w-40">
-          <select
-            value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
-            className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-xs sm:text-sm bg-[#FAFAFA] dark:bg-[#1C2536] dark:text-white focus:border-primary focus:outline-none font-bold text-sec"
+        {/* Status Filter (Only for submitted reports) */}
+        {activeTab === "submitted" && (
+          <div className="w-full md:w-40">
+            <select
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-xs sm:text-sm bg-[#FAFAFA] dark:bg-[#1C2536] dark:text-white focus:border-primary focus:outline-none font-bold text-sec"
+            >
+              <option value="all">همه وضعیت‌ها</option>
+              <option value="on_time">به‌موقع</option>
+              <option value="late">با تأخیر</option>
+            </select>
+          </div>
+        )}
+
+        {/* Action Button for Missing Tab */}
+        {activeTab === "missing" && (
+          <button
+            onClick={handleSendReminderAll}
+            disabled={sendingReminder || missingList.length === 0}
+            className="w-full md:w-auto rokad-btn-sec px-4 py-2.5 text-xs sm:text-sm rounded-xl font-bold flex items-center justify-center gap-2 shrink-0 dark:bg-college-dark dark:border-college-normal"
           >
-            <option value="all">همه وضعیت‌ها</option>
-            <option value="on_time">به‌موقع</option>
-            <option value="late">با تأخیر</option>
-          </select>
-        </div>
+            <Bell className="w-4 h-4 text-primary" />
+            <span>{sendingReminder ? "در حال ارسال..." : "ارسال یادآوری به غایبان"}</span>
+          </button>
+        )}
       </div>
 
-      {/* Reports Table */}
-      <div className="bg-white dark:bg-[#151C28] rounded-3xl border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-right text-xs sm:text-sm min-w-[650px]">
-            <thead className="bg-[#F8F9FA] dark:bg-[#1C2536] border-b border-gray-200 dark:border-gray-800 text-ink-normal/70 dark:text-gray-300 font-bold">
-              <tr>
-                <th className="py-4 px-4 sm:px-6">کارمند</th>
-                <th className="py-4 px-4">دپارتمان</th>
-                <th className="py-4 px-4">ساعت ارسال</th>
-                <th className="py-4 px-4">وضعیت ارسال</th>
-                <th className="py-4 px-4">پیش‌نمایش گزارش</th>
-                <th className="py-4 px-4 sm:px-6 text-center">مشاهده کامل</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-              {loading ? (
+      {notificationMsg && (
+        <div className="p-4 rounded-2xl bg-ecosystem-light dark:bg-ecosystem-darker/40 border border-primary/40 text-xs sm:text-sm font-bold text-ecosystem-darker dark:text-ecosystem-light flex items-center justify-between shadow-sm">
+          <span>🌿 {notificationMsg}</span>
+          <button onClick={() => setNotificationMsg(null)} className="text-xs font-black underline">بستن</button>
+        </div>
+      )}
+
+      {/* TAB 1: Submitted Reports Table */}
+      {activeTab === "submitted" && (
+        <div className="bg-white dark:bg-[#151C28] rounded-3xl border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs sm:text-sm min-w-[650px]">
+              <thead className="bg-[#F8F9FA] dark:bg-[#1C2536] border-b border-gray-200 dark:border-gray-800 text-ink-normal/70 dark:text-gray-300 font-bold">
                 <tr>
-                  <td colSpan={6} className="text-center py-12 text-sm text-gray-400">
-                    در حال بارگذاری گزارش‌ها...
-                  </td>
+                  <th className="py-3.5 px-4 sm:px-6">همکار</th>
+                  <th className="py-3.5 px-4">دپارتمان</th>
+                  <th className="py-3.5 px-4">ساعت ارسال</th>
+                  <th className="py-3.5 px-4">وضعیت ارسال</th>
+                  <th className="py-3.5 px-4">پیش‌نمایش گزارش</th>
+                  <th className="py-3.5 px-4 sm:px-6 text-center">مشاهده کامل</th>
                 </tr>
-              ) : reports.length === 0 ? (
+              </thead>
+              <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+                {reportsLoading ? (
+                  <tr>
+                    <td colSpan={6} className="text-center py-12 text-sm text-gray-400">
+                      در حال بارگذاری گزارش‌ها...
+                    </td>
+                  </tr>
+                ) : reports.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="text-center py-12 text-sm text-gray-400">
+                      گزارشی در این تاریخ با مشخصات انتخاب‌شده ثبت نشده است.
+                    </td>
+                  </tr>
+                ) : (
+                  reports.map((report) => {
+                    const cleanText = report.rawText.replace(/^\/report\s*/i, "").trim();
+                    return (
+                      <tr key={report.id} className="hover:bg-gray-50/70 dark:hover:bg-[#1C2536]/50 transition-colors">
+                        <td className="py-3.5 px-4 sm:px-6 font-bold text-sec dark:text-white">
+                          <div className="font-black text-sm text-sec dark:text-white">{report.employeeFullName}</div>
+                          <div className="text-xs text-ink-normal/50 dark:text-gray-400 mt-0.5">{report.employeePosition || "همکار"}</div>
+                        </td>
+                        <td className="py-3.5 px-4 font-bold text-ink-normal/80 dark:text-gray-300">
+                          {report.employeeDepartment || "پسرانه"}
+                        </td>
+                        <td className="py-3.5 px-4 font-mono font-bold text-sec dark:text-gray-200 text-xs sm:text-sm">
+                          {formatTehranTime(report.submittedAt)}
+                        </td>
+                        <td className="py-3.5 px-4">
+                          <span
+                            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-bold text-xs border ${
+                              report.status === "on_time"
+                                ? "bg-ecosystem-light dark:bg-ecosystem-darker/40 text-ecosystem-darker dark:text-ecosystem-light border-primary/30"
+                                : "bg-female-light dark:bg-female-darker/40 text-female-darker dark:text-female-light border-female-normal/30"
+                            }`}
+                          >
+                            <Clock className="w-3.5 h-3.5" />
+                            {report.status === "on_time" ? "به‌موقع" : "با تأخیر"}
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-4 max-w-xs truncate text-ink-normal/70 dark:text-gray-400 font-medium">
+                          {cleanText}
+                        </td>
+                        <td className="py-3.5 px-4 sm:px-6 text-center">
+                          <button
+                            onClick={() => {
+                              setSelectedReport(report);
+                              setIsDetailModalOpen(true);
+                            }}
+                            className="rokad-btn-outline px-3.5 py-1.5 text-xs sm:text-sm rounded-xl font-bold dark:bg-[#1C2536] dark:border-gray-700 dark:text-gray-200"
+                          >
+                            <Eye className="w-4 h-4 text-primary" />
+                            <span>مشاهده متن</span>
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 2: Missing Employees Table */}
+      {activeTab === "missing" && (
+        <div className="bg-white dark:bg-[#151C28] rounded-3xl border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-xs sm:text-sm">
+              <thead className="bg-[#F8F9FA] dark:bg-[#1C2536] border-b border-gray-200 dark:border-gray-800 text-ink-normal/70 dark:text-gray-300 font-bold">
                 <tr>
-                  <td colSpan={6} className="text-center py-12 text-sm text-gray-400">
-                    گزارشی در این تاریخ با مشخصات انتخاب‌شده ثبت نشده است.
-                  </td>
+                  <th className="py-3.5 px-4 sm:px-6">نام همکار</th>
+                  <th className="py-3.5 px-4">دپارتمان</th>
+                  <th className="py-3.5 px-4">سمت شغلی</th>
+                  <th className="py-3.5 px-4">وضعیت اتصال تلگرام</th>
+                  <th className="py-3.5 px-4 sm:px-6 text-center">امکان ارسال یادآوری</th>
                 </tr>
-              ) : (
-                reports.map((report) => {
-                  const cleanText = report.rawText.replace(/^\/report\s*/i, "").trim();
-                  return (
-                    <tr key={report.id} className="hover:bg-gray-50/70 dark:hover:bg-[#1C2536]/50 transition-colors">
-                      <td className="py-4 px-4 sm:px-6 font-bold text-sec dark:text-white">
-                        <div className="font-black text-sm sm:text-base text-sec dark:text-white">{report.employeeFullName}</div>
-                        <div className="text-xs text-ink-normal/50 dark:text-gray-400 mt-0.5">{report.employeePosition || "همکار"}</div>
+              </thead>
+              <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+                {missingLoading ? (
+                  <tr>
+                    <td colSpan={5} className="text-center py-12 text-sm text-gray-400">
+                      در حال محاسبه لیست غایبان...
+                    </td>
+                  </tr>
+                ) : filteredMissingList.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="text-center py-12 text-sm text-accent-green font-bold">
+                      🎉 تبریک! همه کارکنان در این تاریخ گزارش خود را ثبت کرده‌اند.
+                    </td>
+                  </tr>
+                ) : (
+                  filteredMissingList.map((emp) => (
+                    <tr key={emp.id} className="hover:bg-gray-50/70 dark:hover:bg-[#1C2536]/50 transition-colors">
+                      <td className="py-3.5 px-4 sm:px-6 font-black text-sm text-sec dark:text-white">
+                        {emp.fullName}
                       </td>
-                      <td className="py-4 px-4 font-bold text-ink-normal/80 dark:text-gray-300">
-                        {report.employeeDepartment || "پسرانه"}
+                      <td className="py-3.5 px-4 font-bold text-ink-normal/80 dark:text-gray-300">
+                        {emp.department || "پسرانه"}
                       </td>
-                      <td className="py-4 px-4 font-mono font-bold text-sec dark:text-gray-200 text-xs sm:text-sm">
-                        {formatTehranTime(report.submittedAt)}
+                      <td className="py-3.5 px-4 text-ink-normal/60 dark:text-gray-400 font-medium">
+                        {emp.position || "همکار"}
                       </td>
-                      <td className="py-4 px-4">
-                        <span
-                          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-bold text-xs border ${
-                            report.status === "on_time"
-                              ? "bg-ecosystem-light dark:bg-ecosystem-darker/40 text-ecosystem-darker dark:text-ecosystem-light border-primary/30"
-                              : "bg-female-light dark:bg-female-darker/40 text-female-darker dark:text-female-light border-female-normal/30"
-                          }`}
-                        >
-                          <Clock className="w-3.5 h-3.5" />
-                          {report.status === "on_time" ? "به‌موقع" : "با تأخیر"}
-                        </span>
+                      <td className="py-3.5 px-4">
+                        {emp.isLinked ? (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-ecosystem-light dark:bg-ecosystem-darker/40 text-ecosystem-darker dark:text-ecosystem-light border border-primary/30 font-bold text-xs">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                            متصل به ربات
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-female-light dark:bg-female-darker/40 text-female-darker dark:text-female-light border border-female-normal/30 font-bold text-xs">
+                            <AlertTriangle className="w-3.5 h-3.5 text-female-normal" />
+                            عدم اتصال تلگرام
+                          </span>
+                        )}
                       </td>
-                      <td className="py-4 px-4 max-w-xs truncate text-ink-normal/70 dark:text-gray-400 font-medium">
-                        {cleanText}
-                      </td>
-                      <td className="py-4 px-4 sm:px-6 text-center">
-                        <button
-                          onClick={() => {
-                            setSelectedReport(report);
-                            setIsDetailModalOpen(true);
-                          }}
-                          className="rokad-btn-outline px-3.5 py-1.5 text-xs sm:text-sm rounded-xl font-bold dark:bg-[#1C2536] dark:border-gray-700 dark:text-gray-200"
-                        >
-                          <Eye className="w-4 h-4 text-primary" />
-                          <span>مشاهده متن</span>
-                        </button>
+                      <td className="py-3.5 px-4 sm:px-6 text-center">
+                        {emp.isLinked ? (
+                          <span className="text-xs sm:text-sm font-bold text-accent-green">
+                            ✓ دریافت‌کننده یادآوری
+                          </span>
+                        ) : (
+                          <span className="text-xs sm:text-sm text-female-normal font-bold">
+                            نیازمند صدور کد اتصال
+                          </span>
+                        )}
                       </td>
                     </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Modal: View Report Full Details */}
       <Modal
@@ -275,5 +473,13 @@ export default function ReportsPage() {
         )}
       </Modal>
     </div>
+  );
+}
+
+export default function ReportsPage() {
+  return (
+    <Suspense fallback={<div className="p-6 text-sm text-gray-400">در حال بارگذاری صفحه گزارش‌ها...</div>}>
+      <ReportsContent />
+    </Suspense>
   );
 }

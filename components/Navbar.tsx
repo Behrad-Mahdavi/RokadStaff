@@ -195,7 +195,7 @@ export default function Navbar({ onToggleMobileMenu }: NavbarProps) {
             {isProfileMenuOpen && (
               <div className="absolute left-0 mt-2 w-64 bg-white dark:bg-[#161D2A] rounded-2xl border border-gray-200 dark:border-gray-700 shadow-xl p-2 z-50 animate-in fade-in zoom-in-95 duration-150">
                 {/* User Info Header */}
-                <div className="p-3 bg-gray-50 dark:bg-gray-800/60 rounded-xl mb-2">
+                <div className="p-3 bg-gray-50 dark:bg-gray-800/60 rounded-xl mb-1.5">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-ecosystem-dark text-white font-black flex items-center justify-center text-sm shadow-xs shrink-0">
                       {user?.fullName ? user.fullName.slice(0, 1) : "ک"}
@@ -204,54 +204,16 @@ export default function Navbar({ onToggleMobileMenu }: NavbarProps) {
                       <div className="text-sm font-black text-sec dark:text-white truncate">
                         {user?.fullName || "کاربر سامانه"}
                       </div>
-                      <div className="text-[11px] text-ink-normal/60 dark:text-gray-400 mt-0.5 flex items-center gap-1 truncate">
-                        <ShieldCheck className="w-3 h-3 text-primary shrink-0" />
+                      <div className="text-xs text-ink-normal/60 dark:text-gray-400 mt-0.5 flex items-center gap-1 truncate">
+                        <ShieldCheck className="w-3.5 h-3.5 text-primary shrink-0" />
                         <span>{userSubtitle}</span>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Quick Navigation Links */}
-                <div className="space-y-1">
-                  <Link
-                    href="/rotello/my-tasks"
-                    onClick={() => setIsProfileMenuOpen(false)}
-                    className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-ink-normal/80 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800/80 transition-colors"
-                  >
-                    <Briefcase className="w-4 h-4 text-primary" />
-                    <span>میز کار و وظایف من</span>
-                  </Link>
-
-                  {/* Dark Mode Switcher Row inside dropdown */}
-                  <button
-                    onClick={toggleTheme}
-                    className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold text-ink-normal/80 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800/80 transition-colors"
-                  >
-                    <div className="flex items-center gap-2.5">
-                      {isDarkMode ? (
-                        <Sun className="w-4 h-4 text-college-normal" />
-                      ) : (
-                        <Moon className="w-4 h-4 text-sec dark:text-gray-400" />
-                      )}
-                      <span>حالت تاریک (دارک مود)</span>
-                    </div>
-                    <div
-                      className={`w-9 h-5 rounded-full transition-colors relative flex items-center p-0.5 ${
-                        isDarkMode ? "bg-primary" : "bg-gray-300"
-                      }`}
-                    >
-                      <div
-                        className={`w-4 h-4 rounded-full bg-white transition-transform ${
-                          isDarkMode ? "translate-x-0" : "-translate-x-4"
-                        }`}
-                      />
-                    </div>
-                  </button>
-                </div>
-
                 {/* Divider */}
-                <div className="my-2 border-t border-gray-100 dark:border-gray-800" />
+                <div className="my-1.5 border-t border-gray-100 dark:border-gray-800" />
 
                 {/* Logout Button */}
                 <button

@@ -78,9 +78,9 @@ export default function ProjectsListPage() {
         <div>
           <div className="flex items-center gap-2 text-sm font-black text-primary mb-1.5">
             <Kanban className="w-4 h-4" />
-            <span>مدیریت پروژه‌ها و بوردها</span>
+            <span>مدیریت و نظارت بر پروژه‌ها</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-sec dark:text-white tracking-tight">پروژه‌ها و بوردهای کاری</h1>
+          <h1 className="text-xl sm:text-2xl font-black text-sec dark:text-white tracking-tight">پروژه‌ها</h1>
           <p className="text-xs sm:text-sm text-ink-normal/70 dark:text-gray-400 mt-1 font-medium">
             ایجاد بورد، پیگیری پیشرفت مرحله‌ای وظایف و همکاری تیمی اعضا
           </p>

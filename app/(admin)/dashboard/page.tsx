@@ -97,7 +97,7 @@ export default function DashboardPage() {
             <Sparkles className="w-4 h-4" />
             <span>گزارش جامع عملکرد امروز</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-sec dark:text-white tracking-tight">داشبورد پایش عملکرد و گزارش‌ها</h1>
+          <h1 className="text-2xl sm:text-3xl font-black text-sec dark:text-white tracking-tight">داشبورد عملکرد روزانه</h1>
           <p className="text-sm text-ink-normal/70 dark:text-gray-300 mt-1 font-medium">
             وضعیت دریافت گزارش کار پایان روز کارکنان در تاریخ {formatToJalali(new Date())}
           </p>

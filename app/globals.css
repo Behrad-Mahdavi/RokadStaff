@@ -270,3 +270,37 @@ body {
   background: #4B5563;
 }
 
+/* Print / PDF Export Styles */
+@media print {
+  aside,
+  header,
+  nav,
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 12pt;
+  }
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .print-header {
+    display: block !important;
+  }
+
+  /* Reset box shadows for crisp paper/PDF print */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+}
+
+

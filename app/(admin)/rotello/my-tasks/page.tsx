@@ -60,7 +60,7 @@ export default function PersonalWorkspacePage() {
             <Briefcase className="w-4 h-4" />
             <span>میز کار جامع وظایف</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-sec dark:text-white tracking-tight">میز کار و وظایف من</h1>
+          <h1 className="text-xl sm:text-2xl font-black text-sec dark:text-white tracking-tight">میز کار من</h1>
           <p className="text-xs sm:text-sm text-ink-normal/70 dark:text-gray-400 mt-1 font-medium">
             مشاهده یکپارچه تمام وظایف واگذارشده به شما از پروژه‌های مختلف
           </p>
@@ -226,7 +226,7 @@ function TaskCard({
           : "border-gray-200 dark:border-gray-700 hover:border-primary"
       }`}
     >
-      <div className="flex items-center justify-between gap-1 text-[11px] font-bold">
+      <div className="flex items-center justify-between gap-1 text-xs font-bold">
         <span className="text-sec dark:text-gray-200 font-black bg-gray-100 dark:bg-gray-800 px-2.5 py-0.5 rounded-full">
           {task.projectName}
         </span>
@@ -250,7 +250,7 @@ function TaskCard({
 
       {task.progress && task.progress.total > 0 && (
         <div className="space-y-1">
-          <div className="flex items-center justify-between text-[11px] text-ink-normal/60 dark:text-gray-400 font-bold">
+          <div className="flex items-center justify-between text-xs text-ink-normal/60 dark:text-gray-400 font-bold">
             <span>چک‌لیست</span>
             <span>
               {toPersianDigits(task.progress.done)}/{toPersianDigits(task.progress.total)} (٪{toPersianDigits(task.progress.rate)})
@@ -262,7 +262,7 @@ function TaskCard({
         </div>
       )}
 
-      <div className="pt-2 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between text-[11px] text-ink-normal/60 dark:text-gray-400 font-medium">
+      <div className="pt-2 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between text-xs text-ink-normal/60 dark:text-gray-400 font-medium">
         <span className="font-bold text-sec dark:text-gray-300">{task.columnName}</span>
         {task.deadline && (
           <span className={`font-mono font-bold ${isOverdue ? "text-red-600 dark:text-red-400" : ""}`}>

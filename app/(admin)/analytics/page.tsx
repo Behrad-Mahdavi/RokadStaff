@@ -11,6 +11,7 @@ import {
   Users,
   AlertCircle,
   FileText,
+  Printer,
 } from "lucide-react";
 import StatCard from "@/components/StatCard";
 import Modal from "@/components/Modal";
@@ -90,6 +91,10 @@ export default function AnalyticsPage() {
     window.open(`/api/reporting/export?${params.toString()}`, "_blank");
   };
 
+  const handleExportPDF = () => {
+    window.print();
+  };
+
   const handleViewEmployeeHistory = async (empId: string) => {
     setSelectedEmployeeId(empId);
     setHistoryLoading(true);
@@ -118,33 +123,56 @@ export default function AnalyticsPage() {
 
   return (
     <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-300">
+      {/* Printable Header (Visible only when printed/saved to PDF) */}
+      <div className="hidden print:block border-b-2 border-primary pb-4 mb-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-black text-sec">گزارش‌گیری و تحلیل عملکرد همکاران</h1>
+            <p className="text-xs text-ink-normal/70 mt-1">سامانه روتلو عوامل • مدیریت پروژه‌ها و کارها</p>
+          </div>
+          <div className="text-left text-xs font-medium">
+            <div>تاریخ صدور: {formatToJalali(new Date())}</div>
+            <div>بازه گزارش: {from} تا {to}</div>
+          </div>
+        </div>
+      </div>
+
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 bg-gradient-to-r from-ecosystem-light via-white to-club-light/40 p-6 sm:p-7 rounded-3xl border-2 border-primary/20 shadow-[3px_3px_0_#59BBAF]">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 bg-gradient-to-r from-ecosystem-light via-white to-club-light/40 dark:from-[#132824] dark:via-[#151C28] dark:to-[#1c152a] p-6 sm:p-7 rounded-3xl border-2 border-primary/20 shadow-[3px_3px_0_#59BBAF]">
         <div>
           <div className="flex items-center gap-2 text-sm font-black text-primary mb-1.5">
             <BarChart3 className="w-4 h-4" />
-            <span>ماژول پیشرفته گزارش‌گیری و آنالیتیکس</span>
+            <span>ماژول پیشرفته تحلیل و پایش</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-sec tracking-tight">تحلیل و گزارش‌گیری جامع عملکرد</h1>
-          <p className="text-xs sm:text-sm text-ink-normal/70 mt-1 font-medium">
-            پایش هوشمند متریک‌های ثبت گزارش کار، انضباط کاری و دریافت خروجی اکسل
+          <h1 className="text-xl sm:text-2xl font-black text-sec dark:text-white tracking-tight">گزارش‌گیری و تحلیل عملکرد</h1>
+          <p className="text-xs sm:text-sm text-ink-normal/70 dark:text-gray-300 mt-1 font-medium">
+            پایش هوشمند شاخص‌های عملکرد، انضباط کاری و دریافت خروجی اکسل و PDF
           </p>
         </div>
 
-        <button
-          onClick={handleExportExcel}
-          className="rokad-btn-primary px-5 py-3.5 text-xs sm:text-sm rounded-xl flex items-center gap-2 font-bold shadow-[2.5px_2.5px_0_#1F413D] self-start md:self-auto"
-        >
-          <FileSpreadsheet className="w-5 h-5" />
-          <span>دریافت فایل اکسل</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-2.5 self-start md:self-auto no-print">
+          <button
+            onClick={handleExportPDF}
+            className="px-4 py-3 text-xs sm:text-sm rounded-xl bg-primary text-white flex items-center gap-2 font-bold shadow-sm hover:opacity-95 transition"
+          >
+            <Printer className="w-4 h-4" />
+            <span>دریافت فایل PDF</span>
+          </button>
+          <button
+            onClick={handleExportExcel}
+            className="rokad-btn-primary px-4 py-3 text-xs sm:text-sm rounded-xl flex items-center gap-2 font-bold shadow-[2.5px_2.5px_0_#1F413D]"
+          >
+            <FileSpreadsheet className="w-4 h-4" />
+            <span>دریافت فایل اکسل</span>
+          </button>
+        </div>
       </div>
 
       {/* Filter & Range Bar */}
-      <div className="bg-white p-4 sm:p-5 rounded-3xl border border-[#EAEAEA] shadow-[2px_2px_0_#202A5A] flex flex-col lg:flex-row items-center justify-between gap-4">
+      <div className="bg-white dark:bg-[#151C28] p-4 sm:p-5 rounded-3xl border border-[#EAEAEA] dark:border-gray-800 shadow-[2px_2px_0_#202A5A] flex flex-col lg:flex-row items-center justify-between gap-4 no-print">
         {/* Preset Range Buttons */}
         <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
-          <span className="text-xs sm:text-sm font-black text-ink-normal/70 ml-2">بازه سریع:</span>
+          <span className="text-xs sm:text-sm font-black text-ink-normal/70 dark:text-gray-300 ml-2">بازه سریع:</span>
           {[
             { label: "امروز", days: 0 },
             { label: "۷ روز اخیر", days: 7 },
@@ -154,7 +182,7 @@ export default function AnalyticsPage() {
             <button
               key={preset.days}
               onClick={() => applyPreset(preset.days)}
-              className="px-3.5 py-2 rounded-xl border border-gray-200 text-xs sm:text-sm font-bold hover:bg-ecosystem-light hover:border-primary/40 hover:text-ecosystem-darker transition-colors"
+              className="px-3.5 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-xs sm:text-sm font-bold hover:bg-ecosystem-light dark:hover:bg-ecosystem-darker/50 hover:border-primary/40 hover:text-ecosystem-darker dark:text-gray-200 transition-colors"
             >
               {preset.label}
             </button>
@@ -164,7 +192,7 @@ export default function AnalyticsPage() {
         {/* Date Inputs & Dept */}
         <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
           <div className="flex items-center gap-2 text-xs sm:text-sm">
-            <span className="text-gray-500 font-bold text-xs">از:</span>
+            <span className="text-gray-500 dark:text-gray-400 font-bold text-xs">از:</span>
             <div className="w-40 sm:w-44">
               <PersianDatePicker
                 value={from}
@@ -172,7 +200,7 @@ export default function AnalyticsPage() {
                 placeholder="تاریخ شروع..."
               />
             </div>
-            <span className="text-gray-500 font-bold text-xs mr-1">تا:</span>
+            <span className="text-gray-500 dark:text-gray-400 font-bold text-xs mr-1">تا:</span>
             <div className="w-40 sm:w-44">
               <PersianDatePicker
                 value={to}
@@ -185,7 +213,7 @@ export default function AnalyticsPage() {
           <select
             value={selectedDept}
             onChange={(e) => setSelectedDept(e.target.value)}
-            className="px-3.5 py-2 rounded-xl border border-gray-200 text-xs sm:text-sm bg-gray-50 focus:border-primary focus:outline-none font-bold text-sec"
+            className="px-3.5 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-xs sm:text-sm bg-gray-50 dark:bg-[#1C2536] dark:text-white focus:border-primary focus:outline-none font-bold text-sec"
           >
             <option value="all">تمام دپارتمان‌ها</option>
             <option value="پسرانه">پسرانه</option>
@@ -197,7 +225,7 @@ export default function AnalyticsPage() {
       {/* KPI Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <StatCard
-          title="نرخ مشارکت (Completion Rate)"
+          title="نرخ مشارکت کل"
           value={`٪${toPersianDigits(kpis.completionRate)}`}
           subtitle={`${toPersianDigits(kpis.totalSubmitted)} گزارش از ${toPersianDigits(kpis.activeEmployeeDays)} نفر-روز`}
           icon={TrendingUp}
@@ -205,7 +233,7 @@ export default function AnalyticsPage() {
         />
 
         <StatCard
-          title="نرخ به‌موقع بودن (On-Time Rate)"
+          title="نرخ ثبت به‌موقع"
           value={`٪${toPersianDigits(kpis.onTimeRate)}`}
           subtitle={`${toPersianDigits(kpis.totalOnTime || 0)} به‌موقع | ${toPersianDigits(kpis.totalLate || 0)} با تأخیر`}
           icon={Clock}
@@ -230,17 +258,17 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Interactive Trend Chart Card */}
-      <div className="bg-white rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] shadow-[3px_3px_0_#202A5A]">
+      <div className="bg-white dark:bg-[#151C28] rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A]">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
-            <h2 className="text-lg font-black text-sec">روند زمانی شاخص‌های مشارکت و نظم</h2>
-            <p className="text-xs sm:text-sm text-ink-normal/60 mt-0.5 font-medium">
+            <h2 className="text-lg font-black text-sec dark:text-white">روند زمانی شاخص‌های مشارکت و نظم</h2>
+            <p className="text-xs sm:text-sm text-ink-normal/60 dark:text-gray-400 mt-0.5 font-medium">
               نمودار مقایسه‌ای نوسانات نرخ ثبت گزارش در طول بازه زمانی انتخابی
             </p>
           </div>
 
           {/* Metric Toggle Tabs */}
-          <div className="flex flex-wrap items-center gap-1.5 p-1 bg-gray-100 rounded-2xl">
+          <div className="flex flex-wrap items-center gap-1.5 p-1 bg-gray-100 dark:bg-[#1C2536] rounded-2xl no-print">
             {[
               { id: "completionRate", label: "نرخ مشارکت گزارش" },
               { id: "onTimeRate", label: "نرخ به‌موقع بودن" },
@@ -250,8 +278,8 @@ export default function AnalyticsPage() {
                 onClick={() => setActiveMetric(m.id)}
                 className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
                   activeMetric === m.id
-                    ? "bg-white text-sec shadow-sm border border-gray-200"
-                    : "text-ink-normal/60 hover:text-ink-normal"
+                    ? "bg-white dark:bg-[#121824] text-sec dark:text-white shadow-sm border border-gray-200 dark:border-gray-700"
+                    : "text-ink-normal/60 dark:text-gray-400 hover:text-ink-normal"
                 }`}
               >
                 {m.label}
@@ -262,34 +290,34 @@ export default function AnalyticsPage() {
 
         {/* Visual Trend Bars */}
         {trendData.length === 0 ? (
-          <div className="text-center py-16 text-sm text-ink-normal/50">
+          <div className="text-center py-16 text-sm text-ink-normal/50 dark:text-gray-400">
             داده‌ای برای ترسیم نمودار در این بازه یافت نشد.
           </div>
         ) : (
           <div className="space-y-3 pt-4">
-            <div className="h-56 flex items-end gap-3 sm:gap-5 overflow-x-auto pb-4 pt-8 px-2 border-b border-gray-100">
+            <div className="h-56 flex items-end gap-3 sm:gap-5 overflow-x-auto pb-4 pt-8 px-2 border-b border-gray-100 dark:border-gray-800">
               {trendData.map((pt, i) => (
                 <div key={i} className="flex-1 min-w-[48px] flex flex-col items-center gap-2 group">
-                  <div className="text-xs font-black text-ink-normal/70 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="text-xs font-black text-ink-normal/70 dark:text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity">
                     ٪{toPersianDigits(pt.value)}
                   </div>
-                  <div className="w-full max-w-[36px] h-36 bg-gray-100 rounded-t-xl relative flex items-end overflow-hidden">
+                  <div className="w-full max-w-[36px] h-36 bg-gray-100 dark:bg-gray-800 rounded-t-xl relative flex items-end overflow-hidden">
                     <div
                       className={`w-full rounded-t-xl transition-all duration-500 ${
-                        activeMetric === "completionRate" ? "bg-primary" : "bg-sec"
+                        activeMetric === "completionRate" ? "bg-primary" : "bg-sec dark:bg-ecosystem-dark"
                       }`}
                       style={{ height: `${Math.max(8, pt.value)}%` }}
                     />
                   </div>
-                  <div className="text-xs font-bold text-ink-normal/70 rotate-45 sm:rotate-0 mt-2 whitespace-nowrap">
+                  <div className="text-xs font-bold text-ink-normal/70 dark:text-gray-300 rotate-45 sm:rotate-0 mt-2 whitespace-nowrap">
                     {toPersianDigits(pt.dateJalali.slice(5))}
                   </div>
                 </div>
               ))}
             </div>
-            <div className="flex flex-wrap items-center justify-between text-xs sm:text-sm text-ink-normal/60 pt-3 px-2 font-medium">
+            <div className="flex flex-wrap items-center justify-between text-xs sm:text-sm text-ink-normal/60 dark:text-gray-400 pt-3 px-2 font-medium">
               <span>راهنما: با نگه داشتن ماوس یا لمس هر ستون، درصد دقیق روز نمایش داده می‌شود.</span>
-              <span className="font-bold text-sec">مجموع روزهای محاسبه‌شده: {toPersianDigits(trendData.length)} روز</span>
+              <span className="font-bold text-sec dark:text-white">مجموع روزهای محاسبه‌شده: {toPersianDigits(trendData.length)} روز</span>
             </div>
           </div>
         )}
