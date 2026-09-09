@@ -12,10 +12,12 @@ export default function AdminShell({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen flex bg-[#F8F9FA] dark:bg-[#0B0F17] text-ink-normal dark:text-gray-100 relative overflow-x-hidden transition-colors duration-200">
-      {/* Desktop Sidebar (hidden on mobile, visible on lg+) */}
-      <div className="hidden lg:block shrink-0 sticky top-0 h-screen self-start z-30">
-        <Sidebar />
+    <div className="min-h-screen flex bg-[#F8F9FA] dark:bg-[#0B0F17] text-ink-normal dark:text-gray-100 relative transition-colors duration-200">
+      {/* Desktop Sidebar (hidden on mobile, fixed full-height on desktop) */}
+      <div className="hidden lg:block w-72 shrink-0">
+        <div className="fixed inset-y-0 right-0 w-72 h-screen z-30">
+          <Sidebar />
+        </div>
       </div>
 
       {/* Mobile Drawer Backdrop */}
