@@ -265,7 +265,7 @@ function TaskCard({
       <div className="pt-2 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between text-xs text-ink-normal/60 dark:text-gray-400 font-medium">
         <span className="font-bold text-sec dark:text-gray-300">{task.columnName}</span>
         {task.deadline && (
-          <span className={`font-mono font-bold ${isOverdue ? "text-red-600 dark:text-red-400" : ""}`}>
+          <span className={`font-bold ${isOverdue ? "text-red-600 dark:text-red-400" : ""}`}>
             {formatToJalali(task.deadline)}
           </span>
         )}

@@ -419,7 +419,7 @@ export default function AnalyticsPage() {
             <div className="border border-slate-300 bg-slate-50/80 rounded-xl p-2.5 text-[10.5px] space-y-1 min-w-[220px]">
               <div className="flex justify-between">
                 <span className="font-bold text-slate-600">شماره ثبت سند:</span>
-                <span className="font-mono font-bold text-slate-900">ROT-ANL-{toPersianDigits(Date.now().toString().slice(-6))}</span>
+                <span className="font-bold text-slate-900">ROT-ANL-{toPersianDigits(Date.now().toString().slice(-6))}</span>
               </div>
               <div className="flex justify-between">
                 <span className="font-bold text-slate-600">بازه ارزیابی:</span>
@@ -453,7 +453,7 @@ export default function AnalyticsPage() {
             {/* Tile 1 */}
             <div className="border border-emerald-300 rounded-xl p-3 bg-emerald-50/50 border-t-4 border-t-emerald-600 text-center">
               <div className="text-[11px] font-bold text-emerald-800">نرخ مشارکت گزارش‌ها</div>
-              <div className="text-xl font-black text-emerald-700 my-1 font-mono">
+              <div className="text-xl font-black text-emerald-700 my-1">
                 ٪{toPersianDigits(kpis.completionRate)}
               </div>
               <div className="text-[10px] text-emerald-600 font-bold">میانگین کل دوره</div>
@@ -462,7 +462,7 @@ export default function AnalyticsPage() {
             {/* Tile 2 */}
             <div className="border border-blue-300 rounded-xl p-3 bg-blue-50/50 border-t-4 border-t-blue-600 text-center">
               <div className="text-[11px] font-bold text-blue-800">شاخص تحویل به‌موقع</div>
-              <div className="text-xl font-black text-blue-700 my-1 font-mono">
+              <div className="text-xl font-black text-blue-700 my-1">
                 ٪{toPersianDigits(kpis.onTimeRate)}
               </div>
               <div className="text-[10px] text-blue-600">نرخ انضباط سازمانی</div>
@@ -471,7 +471,7 @@ export default function AnalyticsPage() {
             {/* Tile 3 */}
             <div className="border border-slate-300 rounded-xl p-3 bg-slate-50 border-t-4 border-t-slate-700 text-center">
               <div className="text-[11px] font-bold text-slate-700">کل گزارش‌های دریافتی</div>
-              <div className="text-xl font-black text-slate-900 my-1 font-mono">
+              <div className="text-xl font-black text-slate-900 my-1">
                 {toPersianDigits(kpis.totalSubmitted)} <span className="text-xs font-normal">فقره</span>
               </div>
               <div className="text-[10px] text-slate-500">در بازه ارزیابی</div>
@@ -480,7 +480,7 @@ export default function AnalyticsPage() {
             {/* Tile 4 */}
             <div className="border border-rose-300 rounded-xl p-3 bg-rose-50/50 border-t-4 border-t-rose-600 text-center">
               <div className="text-[11px] font-bold text-rose-800">موارد عدم ثبت (غیبت)</div>
-              <div className="text-xl font-black text-rose-700 my-1 font-mono">
+              <div className="text-xl font-black text-rose-700 my-1">
                 {toPersianDigits(kpis.totalMissing)} <span className="text-xs font-normal">مورد</span>
               </div>
               <div className="text-[10px] text-rose-600 font-bold">
@@ -524,7 +524,7 @@ export default function AnalyticsPage() {
                     return (
                       <tr key={idx}>
                         <td className="font-bold text-slate-600">{toPersianDigits(idx + 1)}</td>
-                        <td className="font-mono text-slate-800 text-[10px]">{pt.dateJalali}</td>
+                        <td className="font-bold text-slate-800 text-[10px]">{pt.dateJalali}</td>
                         <td className="font-black text-slate-900">٪{toPersianDigits(pt.value)}</td>
                         <td>
                           <span
@@ -573,7 +573,7 @@ export default function AnalyticsPage() {
           {/* Official Security Footer */}
           <div className="mt-4 pt-2 border-t border-slate-200 flex items-center justify-between text-[9px] text-slate-500">
             <span>استودیو خلاق روتلو • سامانه هوشمند پایش عملکرد و تحلیل داده‌ها</span>
-            <span className="font-mono">ROT-ANL-REPORT • محرمانه سازمانی</span>
+            <span className="font-bold">ROT-ANL-REPORT • محرمانه سازمانی</span>
             <span>صفحه ۱ از ۱</span>
           </div>
         </div>

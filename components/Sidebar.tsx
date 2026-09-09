@@ -134,7 +134,7 @@ export default function Sidebar({ onCloseMobile }: SidebarProps) {
   const navGroups = isEmployee ? EMPLOYEE_NAV_GROUPS : ADMIN_NAV_GROUPS;
 
   return (
-    <aside className="w-72 bg-white dark:bg-[#121824] border-l border-[#EAEAEA] dark:border-gray-800 min-h-screen flex flex-col justify-between shrink-0 shadow-[2px_0_10px_rgba(0,0,0,0.03)] dark:shadow-none z-50 transition-colors duration-200">
+    <aside className="w-72 bg-white dark:bg-[#121824] border-l border-[#EAEAEA] dark:border-gray-800 h-full min-h-screen flex flex-col justify-between shrink-0 shadow-[2px_0_10px_rgba(0,0,0,0.03)] dark:shadow-none z-50 transition-colors duration-200 overflow-y-auto">
       <div>
         {/* Brand Header */}
         <div className="h-20 px-6 flex items-center justify-between border-b border-[#EAEAEA] dark:border-gray-800">

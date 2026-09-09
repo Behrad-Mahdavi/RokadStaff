@@ -189,6 +189,155 @@ export function createMockProject({
   return newProj;
 }
 
+export function getMockColumns(projectId: string): MockColumn[] {
+  return globalStore.__rotelloColumns
+    .filter((c: MockColumn) => c.projectId === projectId)
+    .sort((a: MockColumn, b: MockColumn) => a.position - b.position);
+}
+
+export function createMockColumn({
+  projectId,
+  name,
+  isDoneColumn = false,
+  isEntryColumn = false,
+}: {
+  projectId: string;
+  name: string;
+  isDoneColumn?: boolean;
+  isEntryColumn?: boolean;
+}): MockColumn {
+  const existingCols = getMockColumns(projectId);
+  const position = (existingCols.length + 1) * 1000;
+  const newCol: MockColumn = {
+    id: `col-${Date.now()}`,
+    projectId,
+    name: name.trim(),
+    position,
+    isDoneColumn,
+    isEntryColumn,
+  };
+  globalStore.__rotelloColumns.push(newCol);
+  return newCol;
+}
+
+export function createMockTask({
+  projectId,
+  columnId,
+  title,
+  description = null,
+  deadline = null,
+  priority = "normal",
+  assigneeIds = [],
+}: {
+  projectId: string;
+  columnId?: string;
+  title: string;
+  description?: string | null;
+  deadline?: string | null;
+  priority?: "normal" | "important" | "urgent";
+  assigneeIds?: string[];
+}): MockTask {
+  // If columnId not given, find entry or first column
+  let targetColId = columnId;
+  if (!targetColId) {
+    const cols = getMockColumns(projectId);
+    targetColId = cols.find((c) => c.isEntryColumn)?.id || cols[0]?.id || "col-1";
+  }
+
+  const newId = `task-${Date.now()}`;
+  const now = new Date().toISOString();
+
+  // Map assignees
+  const allEmps = [
+    { id: "emp-1", fullName: "علی رضایی" },
+    { id: "emp-2", fullName: "فاطمه کاظمی" },
+    { id: "emp-3", fullName: "محمد حسینی" },
+  ];
+  const assignees = assigneeIds.map((id) => {
+    const found = allEmps.find((e) => e.id === id);
+    return found || { id, fullName: "همکار" };
+  });
+
+  const newTask: MockTask = {
+    id: newId,
+    projectId,
+    columnId: targetColId,
+    title: title.trim(),
+    description: description ? description.trim() : null,
+    priority: priority as any,
+    deadline: deadline || null,
+    isDeleted: false,
+    orderInColumn: 1000,
+    createdAt: now,
+    updatedAt: now,
+    assignees,
+    checklists: [],
+  };
+
+  globalStore.__rotelloTasks.unshift(newTask);
+
+  // Update project task count
+  const proj = globalStore.__rotelloProjects.find((p: MockProject) => p.id === projectId);
+  if (proj) {
+    proj.activeTasksCount = (proj.activeTasksCount || 0) + 1;
+    proj.updatedAt = now;
+  }
+
+  return newTask;
+}
+
+export function addMockMember({
+  projectId,
+  employeeId,
+  role = "member",
+}: {
+  projectId: string;
+  employeeId: string;
+  role?: string;
+}) {
+  const proj = globalStore.__rotelloProjects.find((p: MockProject) => p.id === projectId);
+  if (!proj) return null;
+
+  const allEmps = [
+    { id: "emp-1", fullName: "علی رضایی", department: "پسرانه" },
+    { id: "emp-2", fullName: "فاطمه کاظمی", department: "دخترانه" },
+    { id: "emp-3", fullName: "محمد حسینی", department: "پسرانه" },
+  ];
+  const emp = allEmps.find((e) => e.id === employeeId) || { id: employeeId, fullName: "همکار جدید", department: "پسرانه" };
+
+  if (!proj.members) proj.members = [];
+  const existingIdx = proj.members.findIndex((m: any) => m.employeeId === employeeId);
+  if (existingIdx >= 0) {
+    proj.members[existingIdx].role = role;
+    return proj.members[existingIdx];
+  }
+
+  const newMember = {
+    id: `pm-${Date.now()}`,
+    employeeId,
+    fullName: emp.fullName,
+    department: emp.department,
+    role,
+  };
+  proj.members.push(newMember);
+  proj.membersCount = proj.members.length;
+  return newMember;
+}
+
+export function removeMockMember({
+  projectId,
+  employeeId,
+}: {
+  projectId: string;
+  employeeId: string;
+}) {
+  const proj = globalStore.__rotelloProjects.find((p: MockProject) => p.id === projectId);
+  if (!proj || !proj.members) return false;
+  proj.members = proj.members.filter((m: any) => m.employeeId !== employeeId);
+  proj.membersCount = proj.members.length;
+  return true;
+}
+
 export function getMockProjectBoard(projectId: string) {
   const project = globalStore.__rotelloProjects.find((p: MockProject) => p.id === projectId);
   if (!project) return null;
@@ -209,7 +358,8 @@ export function getMockProjectBoard(projectId: string) {
 
   return {
     project,
-    userRole: project.userRole || "owner",
+    userRole: "owner",
+    isAdmin: true,
     columns: columnsWithTasks,
     members: project.members || [],
     allEmployees: [
@@ -219,3 +369,4 @@ export function getMockProjectBoard(projectId: string) {
     ],
   };
 }
+

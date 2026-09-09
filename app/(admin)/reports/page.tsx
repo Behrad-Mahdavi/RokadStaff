@@ -339,7 +339,7 @@ function ReportsContent() {
                         <td className="py-3.5 px-4 font-bold text-ink-normal/80 dark:text-gray-300">
                           {report.employeeDepartment || "پسرانه"}
                         </td>
-                        <td className="py-3.5 px-4 font-mono font-bold text-sec dark:text-gray-200 text-xs sm:text-sm">
+                        <td className="py-3.5 px-4 font-bold text-sec dark:text-gray-200 text-xs sm:text-sm">
                           {formatTehranTime(report.submittedAt)}
                         </td>
                         <td className="py-3.5 px-4">
@@ -464,11 +464,13 @@ function ReportsContent() {
             <div className="p-4 rounded-2xl bg-[#F8F9FA] dark:bg-[#1C2536] border border-gray-200 dark:border-gray-800 flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm">
               <div>
                 <span className="text-ink-normal/60 dark:text-gray-400">تاریخ گزارش: </span>
-                <span className="font-bold text-sec dark:text-white">{selectedReport.reportDateJalali}</span>
+                <span className="font-bold text-sec dark:text-white">
+                  {formatToJalali(selectedReport.reportDate || selectedReport.submittedAt, { showMonthName: true })}
+                </span>
               </div>
               <div>
                 <span className="text-ink-normal/60 dark:text-gray-400">ساعت ثبت: </span>
-                <span className="font-bold text-sec dark:text-white font-mono">{selectedReport.submittedAtTime}</span>
+                <span className="font-bold text-sec dark:text-white">{formatTehranTime(selectedReport.submittedAt)}</span>
               </div>
               <div>
                 <span
@@ -518,7 +520,7 @@ function ReportsContent() {
             <div className="border border-slate-300 bg-slate-50/80 rounded-xl p-2.5 text-[10.5px] space-y-1 min-w-[210px]">
               <div className="flex justify-between">
                 <span className="font-bold text-slate-600">شماره ثبت سند:</span>
-                <span className="font-mono font-bold text-slate-900">ROT-RPT-{toPersianDigits(selectedDate.replace(/-/g, "").slice(2))}-{toPersianDigits(reports.length)}</span>
+                <span className="font-bold text-slate-900">ROT-RPT-{toPersianDigits(selectedDate.replace(/-/g, "").slice(2))}-{toPersianDigits(reports.length)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="font-bold text-slate-600">تاریخ گزارش:</span>
@@ -526,7 +528,7 @@ function ReportsContent() {
               </div>
               <div className="flex justify-between">
                 <span className="font-bold text-slate-600">زمان صدور:</span>
-                <span className="font-mono text-slate-800">{formatToJalali(new Date())}</span>
+                <span className="font-bold text-slate-800">{formatToJalali(new Date())}</span>
               </div>
               <div className="flex justify-between pt-1 border-t border-slate-200">
                 <span className="font-bold text-slate-600">طبقه‌بندی:</span>
@@ -552,7 +554,7 @@ function ReportsContent() {
             {/* Tile 1: Total Personnel */}
             <div className="border border-slate-300 rounded-xl p-3 bg-slate-50 border-t-4 border-t-slate-700 text-center">
               <div className="text-[11px] font-bold text-slate-600">کل عوامل فعال</div>
-              <div className="text-xl font-black text-slate-900 my-1 font-mono">
+              <div className="text-xl font-black text-slate-900 my-1">
                 {toPersianDigits(reports.length + missingList.length)} <span className="text-xs font-normal">نفر</span>
               </div>
               <div className="text-[10px] text-slate-500">مجموع ثبت‌شده و بدون ثبت</div>
@@ -561,7 +563,7 @@ function ReportsContent() {
             {/* Tile 2: Submitted */}
             <div className="border border-emerald-300 rounded-xl p-3 bg-emerald-50/50 border-t-4 border-t-emerald-600 text-center">
               <div className="text-[11px] font-bold text-emerald-800">گزارش‌های ثبت‌شده</div>
-              <div className="text-xl font-black text-emerald-700 my-1 font-mono">
+              <div className="text-xl font-black text-emerald-700 my-1">
                 {toPersianDigits(reports.length)} <span className="text-xs font-normal">نفر</span>
               </div>
               <div className="text-[10px] text-emerald-600 font-bold">
@@ -576,7 +578,7 @@ function ReportsContent() {
             {/* Tile 3: Missing */}
             <div className="border border-rose-300 rounded-xl p-3 bg-rose-50/50 border-t-4 border-t-rose-600 text-center">
               <div className="text-[11px] font-bold text-rose-800">موارد عدم ثبت (غیبت)</div>
-              <div className="text-xl font-black text-rose-700 my-1 font-mono">
+              <div className="text-xl font-black text-rose-700 my-1">
                 {toPersianDigits(missingList.length)} <span className="text-xs font-normal">نفر</span>
               </div>
               <div className="text-[10px] text-rose-600 font-bold">
@@ -587,7 +589,7 @@ function ReportsContent() {
             {/* Tile 4: On-time rate */}
             <div className="border border-blue-300 rounded-xl p-3 bg-blue-50/50 border-t-4 border-t-blue-600 text-center">
               <div className="text-[11px] font-bold text-blue-800">نرخ ثبت به‌موقع</div>
-              <div className="text-xl font-black text-blue-700 my-1 font-mono">
+              <div className="text-xl font-black text-blue-700 my-1">
                 ٪{toPersianDigits(
                   reports.length > 0
                     ? Math.round((reports.filter((r) => r.status === "on_time").length / reports.length) * 100)
@@ -636,9 +638,9 @@ function ReportsContent() {
                     return (
                       <tr key={rep.id}>
                         <td className="text-center font-bold text-slate-600">{toPersianDigits(idx + 1)}</td>
-                        <td className="font-bold text-slate-900">{rep.employeeName}</td>
-                        <td className="text-center text-slate-700 font-medium">{rep.department || "پسرانه"}</td>
-                        <td className="text-center font-mono text-slate-700 text-[10px]">{rep.submittedAtTime}</td>
+                        <td className="font-bold text-slate-900">{rep.employeeFullName || rep.employeeName}</td>
+                        <td className="text-center text-slate-700 font-medium">{rep.employeeDepartment || rep.department || "پسرانه"}</td>
+                        <td className="text-center font-bold text-slate-700 text-[11px]">{formatTehranTime(rep.submittedAt)}</td>
                         <td className="text-center">
                           <span
                             className={`print-badge ${
@@ -750,7 +752,7 @@ function ReportsContent() {
           {/* Official Security Footer */}
           <div className="mt-4 pt-2 border-t border-slate-200 flex items-center justify-between text-[9px] text-slate-500">
             <span>استودیو خلاق روتلو • سامانه اختصاصی مدیریت پروژه‌ها و عوامل</span>
-            <span className="font-mono">ROT-SYS-SECURED • صفحه ۱ از ۱</span>
+            <span className="font-bold">ROT-SYS-SECURED • صفحه ۱ از ۱</span>
             <span>تولید شده توسط سامانه هوشمند روتلو</span>
           </div>
         </div>

@@ -321,7 +321,7 @@ export default function UnifiedEmployeeReportPage() {
                             <div className="text-sm font-bold text-sec dark:text-white">{task.title}</div>
                             <div className="text-xs text-ink-normal/50 dark:text-gray-400 mt-0.5">پروژه: {task.projectName}</div>
                           </div>
-                          <div className="text-xs font-mono text-ink-normal/60 dark:text-gray-400">
+                          <div className="text-xs font-bold text-ink-normal/60 dark:text-gray-400">
                             تکمیل در: {formatToJalali(task.updatedAt)}
                           </div>
                         </div>
@@ -377,7 +377,7 @@ export default function UnifiedEmployeeReportPage() {
                           <div className="flex items-center justify-between text-xs font-bold border-b border-gray-200/50 dark:border-gray-700 pb-2">
                             <span className="text-sec dark:text-white flex items-center gap-2">
                               <span>📅 تاریخ: {formatToJalali(rep.reportDate)}</span>
-                              <span className="text-ink-normal/40 dark:text-gray-500 font-mono text-[11px]">({formatTehranTime(rep.createdAt)})</span>
+                              <span className="text-ink-normal/40 dark:text-gray-500 font-bold text-[11px]">({formatTehranTime(rep.createdAt)})</span>
                             </span>
 
                             <div className="flex items-center gap-2">
@@ -430,7 +430,7 @@ export default function UnifiedEmployeeReportPage() {
               <div className="border border-slate-300 bg-slate-50/80 rounded-xl p-2.5 text-[10.5px] space-y-1 min-w-[220px]">
                 <div className="flex justify-between">
                   <span className="font-bold text-slate-600">شماره پرونده:</span>
-                  <span className="font-mono font-bold text-slate-900">ROT-EMP-{toPersianDigits(data?.employee?.id?.replace(/\D/g, "") || "101")}-{toPersianDigits(new Date().getFullYear())}</span>
+                  <span className="font-bold text-slate-900">ROT-EMP-{toPersianDigits(data?.employee?.id?.replace(/\D/g, "") || "101")}-{toPersianDigits(new Date().getFullYear())}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="font-bold text-slate-600">بازه زمانی ارزیابی:</span>
@@ -438,7 +438,7 @@ export default function UnifiedEmployeeReportPage() {
                 </div>
                 <div className="flex justify-between">
                   <span className="font-bold text-slate-600">زمان صدور کارنامه:</span>
-                  <span className="font-mono text-slate-800">{formatToJalali(new Date())}</span>
+                  <span className="font-bold text-slate-800">{formatToJalali(new Date())}</span>
                 </div>
                 <div className="flex justify-between pt-1 border-t border-slate-200">
                   <span className="font-bold text-slate-600">طبقه‌بندی:</span>
@@ -489,7 +489,7 @@ export default function UnifiedEmployeeReportPage() {
               {/* Tile 1 */}
               <div className="border border-slate-300 rounded-xl p-2.5 bg-slate-50 border-t-4 border-t-slate-700 text-center">
                 <div className="text-[10.5px] font-bold text-slate-600">وظایف باز جاری</div>
-                <div className="text-lg font-black text-slate-900 my-0.5 font-mono">
+                <div className="text-lg font-black text-slate-900 my-0.5">
                   {toPersianDigits(data?.currentTasksSnapshot?.totalOpen || 0)} <span className="text-[10px] font-normal">مورد</span>
                 </div>
                 <div className="text-[9.5px] text-slate-500">در تابلوهای پروژه‌ها</div>
@@ -498,7 +498,7 @@ export default function UnifiedEmployeeReportPage() {
               {/* Tile 2 */}
               <div className="border border-emerald-300 rounded-xl p-2.5 bg-emerald-50/50 border-t-4 border-t-emerald-600 text-center">
                 <div className="text-[10.5px] font-bold text-emerald-800">وظایف تکمیل‌شده</div>
-                <div className="text-lg font-black text-emerald-700 my-0.5 font-mono">
+                <div className="text-lg font-black text-emerald-700 my-0.5">
                   {toPersianDigits(data?.rotelloTasksPerformance?.completedTasks?.length || 0)} <span className="text-[10px] font-normal">مورد</span>
                 </div>
                 <div className="text-[9.5px] text-emerald-600 font-bold">بسته شده در این دوره</div>
@@ -507,7 +507,7 @@ export default function UnifiedEmployeeReportPage() {
               {/* Tile 3 */}
               <div className="border border-blue-300 rounded-xl p-2.5 bg-blue-50/50 border-t-4 border-t-blue-600 text-center">
                 <div className="text-[10.5px] font-bold text-blue-800">تعداد گزارش روزانه</div>
-                <div className="text-lg font-black text-blue-700 my-0.5 font-mono">
+                <div className="text-lg font-black text-blue-700 my-0.5">
                   {toPersianDigits(data?.dailyReportsSummary?.totalSubmitted || 0)} <span className="text-[10px] font-normal">روز</span>
                 </div>
                 <div className="text-[9.5px] text-blue-600 font-bold">ثبت شده در سامانه</div>
@@ -516,7 +516,7 @@ export default function UnifiedEmployeeReportPage() {
               {/* Tile 4 */}
               <div className="border border-teal-300 rounded-xl p-2.5 bg-teal-50/50 border-t-4 border-t-teal-600 text-center">
                 <div className="text-[10.5px] font-bold text-teal-800">نرخ ثبت به‌موقع</div>
-                <div className="text-lg font-black text-teal-700 my-0.5 font-mono">
+                <div className="text-lg font-black text-teal-700 my-0.5">
                   ٪{toPersianDigits(data?.dailyReportsSummary?.onTimeRate || 0)}
                 </div>
                 <div className="text-[9.5px] text-teal-600 font-bold">شاخص انضباط</div>
@@ -525,7 +525,7 @@ export default function UnifiedEmployeeReportPage() {
               {/* Tile 5 */}
               <div className="border border-rose-300 rounded-xl p-2.5 bg-rose-50/50 border-t-4 border-t-rose-600 text-center">
                 <div className="text-[10.5px] font-bold text-rose-800">وظایف با تأخیر</div>
-                <div className="text-lg font-black text-rose-700 my-0.5 font-mono">
+                <div className="text-lg font-black text-rose-700 my-0.5">
                   {toPersianDigits(data?.currentTasksSnapshot?.overdueCount || 0)} <span className="text-[10px] font-normal">مورد</span>
                 </div>
                 <div className="text-[9.5px] text-rose-600 font-bold">
@@ -584,7 +584,7 @@ export default function UnifiedEmployeeReportPage() {
                             {t.priority === "urgent" ? "فوری" : t.priority === "important" ? "مهم" : "عادی"}
                           </span>
                         </td>
-                        <td className="text-center font-mono text-[10px] text-slate-700">
+                        <td className="text-center font-bold text-[10px] text-slate-700">
                           {t.deadline ? formatToJalali(t.deadline) : "بدون مهلت"}
                         </td>
                       </tr>
@@ -626,7 +626,7 @@ export default function UnifiedEmployeeReportPage() {
                     {data?.dailyReportsSummary?.reports?.slice(0, 15).map((rep: any, idx: number) => (
                       <tr key={rep.id}>
                         <td className="text-center font-bold text-slate-600">{toPersianDigits(idx + 1)}</td>
-                        <td className="text-center font-mono text-[10px] font-bold text-slate-800">
+                        <td className="text-center font-bold text-[10px] text-slate-800">
                           {formatToJalali(rep.reportDate)}
                         </td>
                         <td className="leading-relaxed text-[10px] text-slate-800">
@@ -667,7 +667,7 @@ export default function UnifiedEmployeeReportPage() {
             {/* Official Security Footer */}
             <div className="mt-4 pt-2 border-t border-slate-200 flex items-center justify-between text-[9px] text-slate-500">
               <span>استودیو خلاق روتلو • پرونده الکترونیک و کارنامه عوامل</span>
-              <span className="font-mono">ROT-EMP-RECORD • محرمانه و غیرقابل انتقال</span>
+              <span className="font-bold">ROT-EMP-RECORD • محرمانه و غیرقابل انتقال</span>
               <span>صفحه ۱ از ۱</span>
             </div>
           </div>

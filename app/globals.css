@@ -87,7 +87,7 @@
   --accent-purple: #8A38F5;
 
   /* Typography */
-  --font-family: "Vazirmatn", "IRANSansX", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-family: var(--font-iransans), "IRANSansX", "Vazirmatn", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 html {

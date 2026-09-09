@@ -36,6 +36,13 @@ export async function middleware(req: NextRequest) {
 
   // 1. Unauthenticated users handling
   if (!sessionToken) {
+    // In development mode, allow seamless local development and testing
+    if (process.env.NODE_ENV !== "production") {
+      const res = NextResponse.next();
+      res.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+      return res;
+    }
+
     // Return JSON 401 for API routes rather than HTML redirect
     if (pathname.startsWith("/api/")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

@@ -268,23 +268,23 @@ export default function QuickTaskModal({
             {/* Project Selector (If Project Task) */}
             {taskType === "project" && (
               <div>
-                <label className="block text-xs font-bold text-ink-normal/70 dark:text-gray-300 mb-1.5 flex items-center gap-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-gray-200 mb-1.5 flex items-center gap-1.5">
                   <FolderKanban className="w-3.5 h-3.5 text-primary" />
                   <span>انتخاب پروژه مقصد:</span>
                   <span className="text-college-normal">*</span>
                 </label>
                 {projects.length === 0 ? (
-                  <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 text-xs text-gray-400">
+                  <div className="p-3 bg-gray-50 dark:bg-gray-800/80 rounded-xl border border-gray-200 dark:border-gray-700 text-xs text-gray-400">
                     هیچ پروژه فعالی یافت نشد. ابتدا یک پروژه ایجاد کنید.
                   </div>
                 ) : (
                   <select
                     value={selectedProjectId}
                     onChange={(e) => setSelectedProjectId(e.target.value)}
-                    className="w-full text-xs font-bold p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#161D2A] focus:border-primary focus:outline-none text-sec dark:text-white"
+                    className="w-full text-xs font-bold p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#121824] focus:border-primary focus:outline-none text-slate-900 dark:text-white"
                   >
                     {projects.map((p) => (
-                      <option key={p.id} value={p.id} className="dark:bg-[#161D2A]">
+                      <option key={p.id} value={p.id} className="bg-white dark:bg-[#121824] text-slate-900 dark:text-white">
                         {p.name}
                       </option>
                     ))}
@@ -295,7 +295,7 @@ export default function QuickTaskModal({
 
             {/* Task Title */}
             <div>
-              <label className="block text-xs font-bold text-ink-normal/70 dark:text-gray-300 mb-1.5">
+              <label className="block text-xs font-bold text-slate-700 dark:text-gray-200 mb-1.5">
                 عنوان وظیفه: <span className="text-college-normal">*</span>
               </label>
               <input
@@ -303,13 +303,13 @@ export default function QuickTaskModal({
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="مثال: طراحی صفحه اصلی / بررسی مستندات..."
-                className="w-full text-sm font-bold text-sec dark:text-white p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#161D2A] focus:border-primary focus:outline-none placeholder:text-gray-300 dark:placeholder:text-gray-500"
+                className="w-full text-sm font-bold text-slate-900 dark:text-white p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#121824] focus:border-primary focus:outline-none placeholder:text-gray-400 dark:placeholder:text-gray-500"
               />
             </div>
 
             {/* Task Description */}
             <div>
-              <label className="block text-xs font-bold text-ink-normal/70 dark:text-gray-300 mb-1.5">
+              <label className="block text-xs font-bold text-slate-700 dark:text-gray-200 mb-1.5">
                 توضیحات تکمیلی (اختیاری):
               </label>
               <textarea
@@ -317,30 +317,30 @@ export default function QuickTaskModal({
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="شرح جزئیات یا نیازمندی‌های این وظیفه..."
-                className="w-full text-xs font-medium text-ink-darker dark:text-gray-200 p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#161D2A] focus:border-primary focus:outline-none placeholder:text-gray-300 dark:placeholder:text-gray-500 leading-relaxed"
+                className="w-full text-xs font-medium text-slate-900 dark:text-white p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#121824] focus:border-primary focus:outline-none placeholder:text-gray-400 dark:placeholder:text-gray-500 leading-relaxed"
               />
             </div>
 
             {/* Priority & Deadline Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-gray-50 dark:bg-[#161D2A] rounded-2xl border border-gray-200 dark:border-gray-700">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-gray-50 dark:bg-[#121824]/60 rounded-2xl border border-gray-200 dark:border-gray-800">
               <div>
-                <label className="block text-xs font-bold text-ink-normal/60 dark:text-gray-400 mb-1.5 flex items-center gap-1">
+                <label className="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1.5 flex items-center gap-1">
                   <AlertCircle className="w-3.5 h-3.5 text-college-normal" />
                   <span>اولویت:</span>
                 </label>
                 <select
                   value={priority}
                   onChange={(e) => setPriority(e.target.value)}
-                  className="w-full text-xs font-bold p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#121824] focus:border-primary focus:outline-none text-sec dark:text-white"
+                  className="w-full text-xs font-bold p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#161D2A] focus:border-primary focus:outline-none text-slate-900 dark:text-white"
                 >
-                  <option value="normal" className="dark:bg-[#121824]">عادی</option>
-                  <option value="important" className="dark:bg-[#121824]">مهم</option>
-                  <option value="urgent" className="dark:bg-[#121824]">فوری</option>
+                  <option value="normal" className="bg-white dark:bg-[#161D2A] text-slate-900 dark:text-white">عادی</option>
+                  <option value="important" className="bg-white dark:bg-[#161D2A] text-slate-900 dark:text-white">مهم</option>
+                  <option value="urgent" className="bg-white dark:bg-[#161D2A] text-slate-900 dark:text-white">فوری</option>
                 </select>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-ink-normal/60 dark:text-gray-400 mb-1.5 flex items-center gap-1">
+                <label className="block text-xs font-bold text-slate-700 dark:text-gray-300 mb-1.5 flex items-center gap-1">
                   <Calendar className="w-3.5 h-3.5 text-primary" />
                   <span>مهلت انجام:</span>
                 </label>
@@ -354,13 +354,13 @@ export default function QuickTaskModal({
 
             {/* Multi-Assignee Selection */}
             <div>
-              <label className="block text-xs font-bold text-ink-normal/70 dark:text-gray-300 mb-2 flex items-center justify-between">
+              <label className="block text-xs font-bold text-slate-700 dark:text-gray-200 mb-2 flex items-center justify-between">
                 <span className="flex items-center gap-1.5">
                   <Users className="w-4 h-4 text-primary" />
                   <span>همکاران مسئول:</span>
                   {taskType === "individual" && <span className="text-college-normal">*</span>}
                 </span>
-                <span className="text-xs text-ink-normal/50 dark:text-gray-400 font-normal">
+                <span className="text-xs text-slate-500 dark:text-gray-400 font-normal">
                   {toPersianDigits(selectedAssignees.length)} نفر انتخاب شده
                 </span>
               </label>
@@ -368,7 +368,7 @@ export default function QuickTaskModal({
               {employees.length === 0 ? (
                 <p className="text-xs text-gray-400">در حال بارگذاری لیست کارکنان...</p>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 max-h-40 overflow-y-auto p-2 bg-gray-50 dark:bg-[#161D2A] rounded-2xl border border-gray-200 dark:border-gray-700">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 max-h-40 overflow-y-auto p-2 bg-gray-50 dark:bg-[#121824]/60 rounded-2xl border border-gray-200 dark:border-gray-800">
                   {employees.map((emp) => {
                     const isSelected = selectedAssignees.includes(emp.id);
                     return (
@@ -379,7 +379,7 @@ export default function QuickTaskModal({
                         className={`flex items-center gap-2 p-2 rounded-xl text-xs font-bold text-right transition border ${
                           isSelected
                             ? "bg-primary text-white border-primary shadow-sm"
-                            : "bg-white dark:bg-[#121824] text-ink-dark dark:text-gray-200 border-gray-200 dark:border-gray-700 hover:border-primary/50"
+                            : "bg-white dark:bg-[#161D2A] text-slate-800 dark:text-gray-100 border-gray-200 dark:border-gray-700 hover:border-primary/50"
                         }`}
                       >
                         <div
@@ -404,7 +404,7 @@ export default function QuickTaskModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-xs font-bold text-ink-dark dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition text-center"
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-xs font-bold text-slate-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition text-center"
               >
                 انصراف
               </button>

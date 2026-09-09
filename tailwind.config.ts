@@ -127,6 +127,10 @@ const config: Config = {
         "dark-ecosystem": "2.75px 2.75px 0 #59BBAF",
         "dark-hard": "3px 3px 0 #59BBAF",
       },
+      fontFamily: {
+        sans: ["var(--font-iransans)", "IRANSansX", "Vazirmatn", "sans-serif"],
+        vazirmatn: ["var(--font-iransans)", "IRANSansX", "Vazirmatn", "sans-serif"],
+      },
     },
   },
   plugins: [],

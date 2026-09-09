@@ -14,7 +14,7 @@ export default function AdminShell({
   return (
     <div className="min-h-screen flex bg-[#F8F9FA] dark:bg-[#0B0F17] text-ink-normal dark:text-gray-100 relative overflow-x-hidden transition-colors duration-200">
       {/* Desktop Sidebar (hidden on mobile, visible on lg+) */}
-      <div className="hidden lg:block shrink-0">
+      <div className="hidden lg:block shrink-0 sticky top-0 h-screen self-start z-30">
         <Sidebar />
       </div>
 
