@@ -299,7 +299,7 @@ body {
 @media print {
   @page {
     size: A4 portrait;
-    margin: 12mm 15mm 15mm 15mm;
+    margin: 10mm 12mm 12mm 12mm;
   }
 
   /* Hide screen-specific controls, sidebars, interactive tabs */
@@ -319,10 +319,11 @@ body {
   body {
     background: #ffffff !important;
     color: #0F172A !important;
-    font-size: 11pt !important;
-    line-height: 1.5 !important;
+    font-size: 10.5pt !important;
+    line-height: 1.4 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+    color-adjust: exact !important;
   }
 
   main {
@@ -332,30 +333,58 @@ body {
     max-width: 100% !important;
   }
 
-  /* Crisp table formatting for official documents */
-  table {
+  /* Executive Table Styling */
+  .executive-table {
     width: 100% !important;
     border-collapse: collapse !important;
+    font-size: 8.5pt !important;
     page-break-inside: auto !important;
   }
 
-  tr {
+  .executive-table tr {
     page-break-inside: avoid !important;
     page-break-after: auto !important;
   }
 
-  th {
-    background-color: #F1F5F9 !important;
-    color: #1E293B !important;
+  .executive-table th {
+    background-color: #1E293B !important;
+    color: #FFFFFF !important;
     font-weight: 800 !important;
-    border: 1px solid #CBD5E1 !important;
-    padding: 6px 10px !important;
+    border: 1px solid #334155 !important;
+    padding: 7px 9px !important;
+    text-align: right !important;
   }
 
-  td {
-    border: 1px solid #E2E8F0 !important;
-    padding: 6px 10px !important;
-    color: #334155 !important;
+  .executive-table th.text-center {
+    text-align: center !important;
+  }
+
+  .executive-table td {
+    border: 1px solid #CBD5E1 !important;
+    padding: 6px 9px !important;
+    color: #1E293B !important;
+    background-color: #FFFFFF;
+  }
+
+  .executive-table tr:nth-child(even) td {
+    background-color: #F8FAFC !important;
+  }
+
+  /* Badge and status print adjustments */
+  .print-badge {
+    display: inline-block !important;
+    padding: 2px 8px !important;
+    border-radius: 9999px !important;
+    font-weight: 800 !important;
+    font-size: 7.5pt !important;
+    border: 1px solid currentColor !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .avoid-break {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
 
   /* Reset box shadows and animations for crisp paper print */
@@ -364,11 +393,6 @@ body {
     text-shadow: none !important;
     transition: none !important;
     animation: none !important;
-  }
-
-  .avoid-break {
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
   }
 }
 

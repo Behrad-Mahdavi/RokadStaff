@@ -82,8 +82,7 @@ const ADMIN_NAV_GROUPS = [
         title: "کارنامه جامع همکاران",
         href: "/reports/employee",
         icon: FileText,
-        badge: "جامع",
-        badgeColor: "bg-ecosystem-light dark:bg-ecosystem-darker/70 text-ecosystem-darker dark:text-ecosystem-light border border-primary/30",
+        badge: null,
       },
       {
         title: "گزارش‌گیری",
@@ -167,104 +166,61 @@ export default function Sidebar({ onCloseMobile }: SidebarProps) {
           )}
         </div>
 
-        {/* Navigation Sections */}
-        <div className="p-4 space-y-6">
+        {/* Navigation Items */}
+        <div className="p-4 space-y-1">
           {navGroups.map((group, gIdx) => (
-            <div key={gIdx} className="space-y-1.5">
-              <div className="text-xs font-black text-ink-normal/40 dark:text-gray-400 px-3 py-1">
-                {group.title}
+            <React.Fragment key={gIdx}>
+              {gIdx > 0 && (
+                <div className="my-2.5 border-t border-gray-100 dark:border-gray-800/80" />
+              )}
+              <div className="space-y-1">
+                {group.items.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = (() => {
+                    if (item.href === "/reports") {
+                      return pathname === "/reports" || pathname === "/reports/missing";
+                    }
+                    if (item.href === "/reports/employee") {
+                      return pathname.startsWith("/reports/employee");
+                    }
+                    if (item.href === "/rotello/projects") {
+                      return pathname === "/rotello/projects" || pathname.startsWith("/rotello/projects/");
+                    }
+                    if (item.href === "/dashboard") {
+                      return pathname === "/dashboard";
+                    }
+                    return pathname === item.href || pathname.startsWith(item.href + "/");
+                  })();
+
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={onCloseMobile}
+                      className={cn(
+                        "flex items-center justify-between px-4 py-2.5 rounded-2xl text-[14px] font-bold transition-all duration-150 group",
+                        isActive
+                          ? "bg-ecosystem-light dark:bg-ecosystem-darker/60 text-ecosystem-darker dark:text-ecosystem-light border border-primary/40 shadow-[2px_2px_0_#59BBAF]"
+                          : "text-ink-normal/80 dark:text-gray-300 hover:bg-[#F5F7F9] dark:hover:bg-gray-800/60 hover:text-ink-normal dark:hover:text-white"
+                      )}
+                    >
+                      <div className="flex items-center gap-3">
+                        <Icon
+                          className={cn(
+                            "w-4 h-4 transition-colors",
+                            isActive ? "text-primary" : "text-ink-normal/50 dark:text-gray-400 group-hover:text-primary"
+                          )}
+                        />
+                        <span>{item.title}</span>
+                      </div>
+
+                      {isActive && <ChevronLeft className="w-3.5 h-3.5 text-primary" />}
+                    </Link>
+                  );
+                })}
               </div>
-              {group.items.map((item) => {
-                const Icon = item.icon;
-                const isActive = (() => {
-                  if (item.href === "/reports") {
-                    return pathname === "/reports" || pathname === "/reports/missing";
-                  }
-                  if (item.href === "/reports/employee") {
-                    return pathname.startsWith("/reports/employee");
-                  }
-                  if (item.href === "/rotello/projects") {
-                    return pathname === "/rotello/projects" || pathname.startsWith("/rotello/projects/");
-                  }
-                  if (item.href === "/dashboard") {
-                    return pathname === "/dashboard";
-                  }
-                  return pathname === item.href || pathname.startsWith(item.href + "/");
-                })();
-
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={onCloseMobile}
-                    className={cn(
-                      "flex items-center justify-between px-4 py-2.5 rounded-2xl text-[14px] font-bold transition-all duration-150 group",
-                      isActive
-                        ? "bg-ecosystem-light dark:bg-ecosystem-darker/60 text-ecosystem-darker dark:text-ecosystem-light border border-primary/40 shadow-[2px_2px_0_#59BBAF]"
-                        : "text-ink-normal/80 dark:text-gray-300 hover:bg-[#F5F7F9] dark:hover:bg-gray-800/60 hover:text-ink-normal dark:hover:text-white"
-                    )}
-                  >
-                    <div className="flex items-center gap-3">
-                      <Icon
-                        className={cn(
-                          "w-4 h-4 transition-colors",
-                          isActive ? "text-primary" : "text-ink-normal/50 dark:text-gray-400 group-hover:text-primary"
-                        )}
-                      />
-                      <span>{item.title}</span>
-                    </div>
-
-                    {item.badge ? (
-                      <span
-                        className={cn(
-                          "text-[11px] px-2 py-0.5 rounded-full font-bold",
-                          item.badgeColor
-                        )}
-                      >
-                        {item.badge}
-                      </span>
-                    ) : (
-                      isActive && <ChevronLeft className="w-3.5 h-3.5 text-primary" />
-                    )}
-                  </Link>
-                );
-              })}
-            </div>
+            </React.Fragment>
           ))}
-        </div>
-      </div>
-
-      {/* Elevated Executive Footer Card */}
-      <div className="p-3 m-3.5 rounded-2xl bg-gray-50/90 dark:bg-[#161D2A] border border-gray-200/80 dark:border-gray-800 shadow-sm space-y-2.5 transition-colors">
-        {/* User preview */}
-        <div className="flex items-center gap-2.5 p-1">
-          <div className="relative">
-            <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-primary to-ecosystem-dark text-white font-black flex items-center justify-center text-xs shadow-xs shrink-0">
-              {currentUser?.fullName ? currentUser.fullName.slice(0, 1) : "ر"}
-            </div>
-            <span className="w-2.5 h-2.5 bg-accent-green rounded-full absolute -bottom-0.5 -left-0.5 ring-2 ring-white dark:ring-[#161D2A]" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="text-xs font-black text-sec dark:text-white truncate">
-              {currentUser?.fullName || "کاربر سامانه"}
-            </div>
-            <div className="text-[10px] text-ink-normal/60 dark:text-gray-400 truncate">
-              {currentUser?.role === "admin"
-                ? "مدیر ارشد سیستم"
-                : currentUser?.department
-                ? `دپارتمان ${currentUser.department}`
-                : "عضو همکار"}
-            </div>
-          </div>
-        </div>
-
-        {/* System Health & Version Tag */}
-        <div className="pt-2 border-t border-gray-200/60 dark:border-gray-800 flex items-center justify-between text-[10px] text-ink-normal/50 dark:text-gray-400 font-medium px-1">
-          <span className="flex items-center gap-1.5 text-accent-green font-bold">
-            <span className="w-1.5 h-1.5 rounded-full bg-accent-green animate-pulse" />
-            <span>سرور متصل</span>
-          </span>
-          <span className="font-mono text-ink-normal/40 dark:text-gray-500">v1.4.0 • روتلو</span>
         </div>
       </div>
     </aside>
