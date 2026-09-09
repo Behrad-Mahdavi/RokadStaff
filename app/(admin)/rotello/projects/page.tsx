@@ -26,6 +26,7 @@ export default function ProjectsListPage() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [creating, setCreating] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
 
   const fetchProjects = async () => {
     try {
@@ -51,6 +52,7 @@ export default function ProjectsListPage() {
     if (!name.trim()) return;
 
     setCreating(true);
+    setCreateError(null);
     try {
       const res = await fetch("/api/rotello/projects", {
         method: "POST",
@@ -61,11 +63,16 @@ export default function ProjectsListPage() {
       if (res.ok) {
         setName("");
         setDescription("");
+        setCreateError(null);
         setIsNewProjectModalOpen(false);
         fetchProjects();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setCreateError(data.error || "خطا در ایجاد پروژه. لطفاً مجدداً تلاش کنید.");
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      setCreateError("خطای ارتباط با سرور رخ داد.");
     } finally {
       setCreating(false);
     }
@@ -185,14 +192,23 @@ export default function ProjectsListPage() {
         </div>
       )}
 
-      {/* Modal: Create Project */}
+      {/* New Project Modal */}
       <Modal
         isOpen={isNewProjectModalOpen}
-        onClose={() => setIsNewProjectModalOpen(false)}
+        onClose={() => {
+          setIsNewProjectModalOpen(false);
+          setCreateError(null);
+        }}
         title="ایجاد پروژه و بورد کانبان جدید"
         maxWidth="md"
       >
         <form onSubmit={handleCreateProject} className="space-y-4">
+          {createError && (
+            <div className="p-3.5 bg-female-light dark:bg-female-darker/40 border border-female-normal/30 rounded-2xl text-xs font-bold text-female-darker dark:text-female-light">
+              ⚠️ {createError}
+            </div>
+          )}
+
           <div>
             <label className="block text-xs font-black text-sec dark:text-white mb-1.5">نام پروژه:</label>
             <input

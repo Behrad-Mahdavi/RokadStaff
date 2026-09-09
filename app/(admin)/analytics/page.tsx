@@ -123,22 +123,12 @@ export default function AnalyticsPage() {
 
   return (
     <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-300">
-      {/* Printable Header (Visible only when printed/saved to PDF) */}
-      <div className="hidden print:block border-b-2 border-primary pb-4 mb-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-black text-sec">گزارش‌گیری و تحلیل عملکرد همکاران</h1>
-            <p className="text-xs text-ink-normal/70 mt-1">سامانه روتلو عوامل • مدیریت پروژه‌ها و کارها</p>
-          </div>
-          <div className="text-left text-xs font-medium">
-            <div>تاریخ صدور: {formatToJalali(new Date())}</div>
-            <div>بازه گزارش: {from} تا {to}</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 bg-gradient-to-r from-ecosystem-light via-white to-club-light/40 dark:from-[#132824] dark:via-[#151C28] dark:to-[#1c152a] p-6 sm:p-7 rounded-3xl border-2 border-primary/20 shadow-[3px_3px_0_#59BBAF]">
+      {/* ------------------------------------------------------------- */}
+      {/* 1. INTERACTIVE SCREEN UI (Hidden when printing/saving to PDF) */}
+      {/* ------------------------------------------------------------- */}
+      <div className="screen-only space-y-6 sm:space-y-8">
+        {/* Header Banner */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 bg-gradient-to-r from-ecosystem-light via-white to-club-light/40 dark:from-[#132824] dark:via-[#151C28] dark:to-[#1c152a] p-6 sm:p-7 rounded-3xl border-2 border-primary/20 shadow-[3px_3px_0_#59BBAF]">
         <div>
           <div className="flex items-center gap-2 text-sm font-black text-primary mb-1.5">
             <BarChart3 className="w-4 h-4" />
@@ -405,6 +395,111 @@ export default function AnalyticsPage() {
           </div>
         ) : null}
       </Modal>
+      </div>
+
+      {/* ------------------------------------------------------------- */}
+      {/* 2. DEDICATED OFFICIAL EXECUTIVE MANAGEMENT REPORT (PRINT ONLY) */}
+      {/* ------------------------------------------------------------- */}
+      <div className="print-only font-vazirmatn text-black space-y-6" dir="rtl">
+        {/* Official Header */}
+        <div className="border-b-2 border-slate-900 pb-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl border border-slate-800 flex items-center justify-center p-1 bg-slate-50">
+                <img src="/icon.png" alt="Logo" className="w-full h-full object-contain" />
+              </div>
+              <div>
+                <h1 className="text-xl font-black text-slate-900">استودیو روتلو • سامانه مدیریت عوامل</h1>
+                <p className="text-xs text-slate-600 font-bold mt-0.5">گزارش رسمی و تحلیلی شاخص‌های عملکرد کل سازمان</p>
+              </div>
+            </div>
+            <div className="text-left text-xs text-slate-700 font-medium space-y-0.5">
+              <div><span className="font-bold">شماره گزارش:</span> <span className="font-mono">ROT-ORG-{toPersianDigits(Date.now().toString().slice(-5))}</span></div>
+              <div><span className="font-bold">تاریخ صدور:</span> {formatToJalali(new Date())}</div>
+              <div><span className="font-bold">بازه ارزیابی:</span> {from} تا {to}</div>
+              <div><span className="font-bold">دپارتمان:</span> {selectedDept === "all" ? "تمام دپارتمان‌ها" : `دپارتمان ${selectedDept}`}</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Executive KPI Summary Table */}
+        <div className="avoid-break">
+          <h2 className="text-sm font-black text-slate-900 mb-2">۱. خلاصه شاخص‌های کلان عملکرد و انضباط سازمانی</h2>
+          <table className="text-xs text-center">
+            <thead>
+              <tr>
+                <th>نرخ مشارکت گزارش‌ها</th>
+                <th>نرخ ثبت به‌موقع</th>
+                <th>کل گزارش‌های دریافتی</th>
+                <th>موارد عدم ثبت (غیبت)</th>
+                <th>کل روزهای کاری محاسبه‌شده</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="font-black text-sm">
+                <td className="text-slate-900">٪{toPersianDigits(kpis.completionRate)}</td>
+                <td className="text-slate-900">٪{toPersianDigits(kpis.onTimeRate)}</td>
+                <td>{toPersianDigits(kpis.totalSubmitted)}</td>
+                <td className={kpis.totalMissing > 0 ? "text-red-600 font-black" : ""}>
+                  {toPersianDigits(kpis.totalMissing)} مورد
+                </td>
+                <td>{toPersianDigits(kpis.activeEmployeeDays)} نفر-روز</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        {/* Trend Summary Table */}
+        <div className="avoid-break">
+          <h2 className="text-sm font-black text-slate-900 mb-2">۲. پایش روزانه نوسانات مشارکت در طول بازه</h2>
+          {trendData.length === 0 ? (
+            <div className="p-3 border border-slate-200 text-xs text-slate-500 text-center rounded">داده‌ای در این بازه یافت نشد.</div>
+          ) : (
+            <table className="text-xs text-center">
+              <thead>
+                <tr>
+                  <th className="w-12">ردیف</th>
+                  <th className="w-32">تاریخ شمسی</th>
+                  <th>شاخص مشارکت ثبت گزارش</th>
+                  <th className="w-40">ارزیابی انضباط روزانه</th>
+                </tr>
+              </thead>
+              <tbody>
+                {trendData.slice(0, 15).map((pt: any, idx: number) => (
+                  <tr key={idx}>
+                    <td className="font-bold">{toPersianDigits(idx + 1)}</td>
+                    <td className="font-mono">{pt.dateJalali}</td>
+                    <td className="font-black">٪{toPersianDigits(pt.value)}</td>
+                    <td className="font-bold">
+                      {pt.value >= 80 ? (
+                        <span className="text-emerald-700">عالی و منظم</span>
+                      ) : pt.value >= 50 ? (
+                        <span className="text-amber-700">متوسط</span>
+                      ) : (
+                        <span className="text-red-600">نیازمند پیگیری</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+
+        {/* Signatures and Sign-off */}
+        <div className="avoid-break pt-8 border-t-2 border-slate-300">
+          <div className="grid grid-cols-2 gap-8 text-center text-xs">
+            <div className="border border-slate-300 p-4 rounded-xl space-y-8">
+              <div className="font-black text-slate-800">تأیید سرپرست پایش و کنترل پروژه</div>
+              <div className="text-[11px] text-slate-400">محل امضا و تاریخ</div>
+            </div>
+            <div className="border border-slate-300 p-4 rounded-xl space-y-8">
+              <div className="font-black text-slate-800">تأیید مدیریت ارشد استودیو روتلو</div>
+              <div className="text-[11px] text-slate-400">محل مهر و امضای رسمی</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

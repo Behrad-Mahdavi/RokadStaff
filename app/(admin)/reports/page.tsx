@@ -13,6 +13,7 @@ import {
   AlertTriangle,
   Bell,
   CheckCircle2,
+  Printer,
 } from "lucide-react";
 import Modal from "@/components/Modal";
 import {
@@ -46,6 +47,10 @@ function ReportsContent() {
   const [missingLoading, setMissingLoading] = useState(true);
   const [sendingReminder, setSendingReminder] = useState(false);
   const [notificationMsg, setNotificationMsg] = useState<string | null>(null);
+
+  const handleExportPDF = () => {
+    window.print();
+  };
 
   // Fetch submitted reports
   const fetchReports = async () => {
@@ -130,43 +135,59 @@ function ReportsContent() {
 
   return (
     <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-300">
-      {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* ------------------------------------------------------------- */}
+      {/* 1. INTERACTIVE SCREEN UI (Hidden when printing/saving to PDF) */}
+      {/* ------------------------------------------------------------- */}
+      <div className="screen-only space-y-6 sm:space-y-8">
+        {/* Page Header */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-black text-sec dark:text-white tracking-tight">
-            گزارش‌ها و پیگیری غایبان
+            گزارش‌های روزانه
           </h1>
           <p className="text-xs sm:text-sm text-ink-normal/70 dark:text-gray-300 mt-1 font-medium">
             مشاهده گزارش‌های روزانه کارکنان و پیگیری هوشمند غایبان
           </p>
         </div>
 
-        {/* Date Navigator Quick Bar */}
-        <div className="flex items-center gap-2 bg-white dark:bg-[#151C28] p-1.5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm self-start md:self-auto">
+        {/* Action Bar */}
+        <div className="flex flex-wrap items-center gap-2.5 self-start md:self-auto">
+          {/* Export PDF Button */}
           <button
-            onClick={() => changeDateByDays(1)}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-[#1C2536] rounded-xl text-sec dark:text-gray-200 transition-colors"
-            title="روز بعد"
+            onClick={handleExportPDF}
+            className="px-3.5 py-2.5 rounded-2xl bg-primary text-white text-xs font-black flex items-center gap-1.5 shadow-sm hover:opacity-95 transition"
           >
-            <ChevronRight className="w-4 h-4" />
+            <Printer className="w-4 h-4" />
+            <span>دریافت PDF</span>
           </button>
-          <div className="flex items-center gap-2 px-3 py-1 font-bold text-xs sm:text-sm text-sec dark:text-white">
-            <Calendar className="w-4 h-4 text-primary" />
-            <span>{formatToJalali(selectedDate, { showMonthName: true, includeDayName: true })}</span>
+
+          {/* Date Navigator Quick Bar */}
+          <div className="flex items-center gap-2 bg-white dark:bg-[#151C28] p-1.5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm">
+            <button
+              onClick={() => changeDateByDays(1)}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-[#1C2536] rounded-xl text-sec dark:text-gray-200 transition-colors"
+              title="روز بعد"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+            <div className="flex items-center gap-2 px-3 py-1 font-bold text-xs sm:text-sm text-sec dark:text-white">
+              <Calendar className="w-4 h-4 text-primary" />
+              <span>{formatToJalali(selectedDate, { showMonthName: true, includeDayName: true })}</span>
+            </div>
+            <button
+              onClick={() => changeDateByDays(-1)}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-[#1C2536] rounded-xl text-sec dark:text-gray-200 transition-colors"
+              title="روز قبل"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setSelectedDate(getTehranDateString())}
+              className="px-3 py-1.5 bg-ecosystem-light dark:bg-ecosystem-darker/50 text-ecosystem-darker dark:text-ecosystem-light rounded-xl text-xs sm:text-sm font-bold border border-primary/30 hover:bg-ecosystem-light-hover transition-colors"
+            >
+              امروز
+            </button>
           </div>
-          <button
-            onClick={() => changeDateByDays(-1)}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-[#1C2536] rounded-xl text-sec dark:text-gray-200 transition-colors"
-            title="روز قبل"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => setSelectedDate(getTehranDateString())}
-            className="px-3 py-1.5 bg-ecosystem-light dark:bg-ecosystem-darker/50 text-ecosystem-darker dark:text-ecosystem-light rounded-xl text-xs sm:text-sm font-bold border border-primary/30 hover:bg-ecosystem-light-hover transition-colors"
-          >
-            امروز
-          </button>
         </div>
       </div>
 
@@ -472,6 +493,141 @@ function ReportsContent() {
           </div>
         )}
       </Modal>
+      </div>
+
+      {/* ------------------------------------------------------------- */}
+      {/* 2. DEDICATED OFFICIAL EXECUTIVE DAILY MANAGEMENT REPORT (PRINT ONLY) */}
+      {/* ------------------------------------------------------------- */}
+      <div className="print-only font-vazirmatn text-black space-y-6" dir="rtl">
+        {/* Header */}
+        <div className="border-b-2 border-slate-900 pb-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl border border-slate-800 flex items-center justify-center p-1 bg-slate-50">
+                <img src="/icon.png" alt="Logo" className="w-full h-full object-contain" />
+              </div>
+              <div>
+                <h1 className="text-xl font-black text-slate-900">استودیو روتلو • سامانه مدیریت عوامل</h1>
+                <p className="text-xs text-slate-600 font-bold mt-0.5">صورتجلسه و گزارش رسمی روزانه عملکرد پرسنل</p>
+              </div>
+            </div>
+            <div className="text-left text-xs text-slate-700 font-medium space-y-0.5">
+              <div><span className="font-bold">شماره سند:</span> <span className="font-mono">ROT-DAY-{toPersianDigits(Date.now().toString().slice(-5))}</span></div>
+              <div><span className="font-bold">تاریخ گزارش:</span> {formatToJalali(selectedDate, { showMonthName: true, includeDayName: true })}</div>
+              <div><span className="font-bold">تاریخ چاپ:</span> {formatToJalali(new Date())}</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Executive Daily Summary Table */}
+        <div className="avoid-break">
+          <h2 className="text-sm font-black text-slate-900 mb-2">۱. خلاصه وضعیت آماری روز</h2>
+          <table className="text-xs text-center">
+            <thead>
+              <tr>
+                <th>تعداد گزارش‌های ارسالی</th>
+                <th>تعداد موارد عدم ثبت (غیبت)</th>
+                <th>مجموع کل پرسنل فعال</th>
+                <th>درصد تکمیل روزانه</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="font-black text-sm">
+                <td className="text-emerald-700">{toPersianDigits(reports.length)} نفر</td>
+                <td className={missingList.length > 0 ? "text-red-600 font-black" : ""}>{toPersianDigits(missingList.length)} نفر</td>
+                <td>{toPersianDigits(reports.length + missingList.length)} نفر</td>
+                <td>
+                  ٪{toPersianDigits(
+                    reports.length + missingList.length > 0
+                      ? Math.round((reports.length / (reports.length + missingList.length)) * 100)
+                      : 0
+                  )}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        {/* Submitted Reports Table */}
+        <div className="avoid-break">
+          <h2 className="text-sm font-black text-slate-900 mb-2">۲. فهرست گزارش‌های کار ثبت‌شده در این تاریخ</h2>
+          {reports.length === 0 ? (
+            <div className="p-3 border border-slate-200 text-xs text-slate-500 text-center rounded">هیچ گزارشی برای این تاریخ ثبت نشده است.</div>
+          ) : (
+            <table className="text-xs">
+              <thead>
+                <tr>
+                  <th className="w-10 text-center">ردیف</th>
+                  <th className="w-32">نام همکار</th>
+                  <th className="w-24 text-center">دپارتمان</th>
+                  <th className="w-20 text-center">ساعت ثبت</th>
+                  <th className="w-20 text-center">وضعیت</th>
+                  <th>شرح فعالیت‌های روزانه</th>
+                </tr>
+              </thead>
+              <tbody>
+                {reports.map((rep: any, idx: number) => (
+                  <tr key={rep.id}>
+                    <td className="text-center font-bold">{toPersianDigits(idx + 1)}</td>
+                    <td className="font-bold text-slate-900">{rep.employeeName}</td>
+                    <td className="text-center">{rep.department || "پسرانه"}</td>
+                    <td className="text-center font-mono">{rep.submittedAtTime}</td>
+                    <td className="text-center font-bold">
+                      {rep.status === "on_time" ? "به‌موقع" : "با تأخیر"}
+                    </td>
+                    <td className="leading-relaxed">
+                      {(rep.rawText || "").replace(/^\/report\s*/i, "").trim()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+
+        {/* Missing Employees Table */}
+        {missingList.length > 0 && (
+          <div className="avoid-break">
+            <h2 className="text-sm font-black text-slate-900 mb-2">۳. فهرست همکاران بدون گزارش (غایب در سیستم)</h2>
+            <table className="text-xs">
+              <thead>
+                <tr>
+                  <th className="w-10 text-center">ردیف</th>
+                  <th>نام و نام خانوادگی</th>
+                  <th>دپارتمان</th>
+                  <th>سمت سازمانی</th>
+                  <th className="w-28 text-center">وضعیت اتصال تلگرام</th>
+                </tr>
+              </thead>
+              <tbody>
+                {missingList.map((emp: any, idx: number) => (
+                  <tr key={emp.id}>
+                    <td className="text-center font-bold">{toPersianDigits(idx + 1)}</td>
+                    <td className="font-bold text-slate-900">{emp.fullName}</td>
+                    <td>{emp.department || "پسرانه"}</td>
+                    <td>{emp.position || "همکار"}</td>
+                    <td className="text-center">{emp.isLinked ? "متصل" : "عدم اتصال"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Signatures */}
+        <div className="avoid-break pt-8 border-t-2 border-slate-300">
+          <div className="grid grid-cols-2 gap-8 text-center text-xs">
+            <div className="border border-slate-300 p-4 rounded-xl space-y-8">
+              <div className="font-black text-slate-800">تأیید سرپرست دپارتمان</div>
+              <div className="text-[11px] text-slate-400">محل امضا و تاریخ</div>
+            </div>
+            <div className="border border-slate-300 p-4 rounded-xl space-y-8">
+              <div className="font-black text-slate-800">تأیید مدیریت منابع انسانی</div>
+              <div className="text-[11px] text-slate-400">محل مهر و امضای رسمی</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

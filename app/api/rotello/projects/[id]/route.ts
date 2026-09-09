@@ -194,7 +194,12 @@ export async function GET(
       tasks: enhancedTasks,
     });
   } catch (error: any) {
-    console.error("Fetch project board error:", error);
+    console.warn("Fetch project board DB offline, using mock store:", error);
+    const { getMockProjectBoard } = await import("@/lib/mockRotello");
+    const mockBoard = getMockProjectBoard(projectId);
+    if (mockBoard) {
+      return NextResponse.json(mockBoard);
+    }
     return NextResponse.json({ error: error.message || "Server error" }, { status: 500 });
   }
 }

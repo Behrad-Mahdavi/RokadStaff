@@ -73,7 +73,7 @@ const ADMIN_NAV_GROUPS = [
         badge: null,
       },
       {
-        title: "گزارش‌ها و پیگیری غایبان",
+        title: "گزارش‌های روزانه",
         href: "/reports",
         icon: FileCheck2,
         badge: null,
@@ -176,13 +176,21 @@ export default function Sidebar({ onCloseMobile }: SidebarProps) {
               </div>
               {group.items.map((item) => {
                 const Icon = item.icon;
-                const isActive =
-                  pathname === item.href ||
-                  (item.href !== "/dashboard" &&
-                    item.href !== "/rotello/projects" &&
-                    pathname.startsWith(item.href)) ||
-                  (item.href === "/rotello/projects" &&
-                    pathname.startsWith("/rotello/projects/"));
+                const isActive = (() => {
+                  if (item.href === "/reports") {
+                    return pathname === "/reports" || pathname === "/reports/missing";
+                  }
+                  if (item.href === "/reports/employee") {
+                    return pathname.startsWith("/reports/employee");
+                  }
+                  if (item.href === "/rotello/projects") {
+                    return pathname === "/rotello/projects" || pathname.startsWith("/rotello/projects/");
+                  }
+                  if (item.href === "/dashboard") {
+                    return pathname === "/dashboard";
+                  }
+                  return pathname === item.href || pathname.startsWith(item.href + "/");
+                })();
 
                 return (
                   <Link
@@ -226,14 +234,37 @@ export default function Sidebar({ onCloseMobile }: SidebarProps) {
         </div>
       </div>
 
-      {/* Brand Footer Card */}
-      <div className="p-4 m-4 rounded-2xl bg-gradient-to-br from-ecosystem-light/60 via-white to-ecosystem-light/30 dark:from-gray-800/80 dark:via-gray-800/50 dark:to-gray-800/80 border border-primary/20 dark:border-gray-700 shadow-sm text-center">
-        <div className="text-xs font-black text-sec dark:text-gray-200 flex items-center justify-center gap-1.5">
-          <span>سامانه روتلو</span>
-          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-primary/20 text-primary font-bold">عوامل</span>
+      {/* Elevated Executive Footer Card */}
+      <div className="p-3 m-3.5 rounded-2xl bg-gray-50/90 dark:bg-[#161D2A] border border-gray-200/80 dark:border-gray-800 shadow-sm space-y-2.5 transition-colors">
+        {/* User preview */}
+        <div className="flex items-center gap-2.5 p-1">
+          <div className="relative">
+            <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-primary to-ecosystem-dark text-white font-black flex items-center justify-center text-xs shadow-xs shrink-0">
+              {currentUser?.fullName ? currentUser.fullName.slice(0, 1) : "ر"}
+            </div>
+            <span className="w-2.5 h-2.5 bg-accent-green rounded-full absolute -bottom-0.5 -left-0.5 ring-2 ring-white dark:ring-[#161D2A]" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="text-xs font-black text-sec dark:text-white truncate">
+              {currentUser?.fullName || "کاربر سامانه"}
+            </div>
+            <div className="text-[10px] text-ink-normal/60 dark:text-gray-400 truncate">
+              {currentUser?.role === "admin"
+                ? "مدیر ارشد سیستم"
+                : currentUser?.department
+                ? `دپارتمان ${currentUser.department}`
+                : "عضو همکار"}
+            </div>
+          </div>
         </div>
-        <div className="text-[11px] text-ink-normal/60 dark:text-gray-400 mt-1">
-          مدیریت پروژه‌ها و کارها
+
+        {/* System Health & Version Tag */}
+        <div className="pt-2 border-t border-gray-200/60 dark:border-gray-800 flex items-center justify-between text-[10px] text-ink-normal/50 dark:text-gray-400 font-medium px-1">
+          <span className="flex items-center gap-1.5 text-accent-green font-bold">
+            <span className="w-1.5 h-1.5 rounded-full bg-accent-green animate-pulse" />
+            <span>سرور متصل</span>
+          </span>
+          <span className="font-mono text-ink-normal/40 dark:text-gray-500">v1.4.0 • روتلو</span>
         </div>
       </div>
     </aside>
