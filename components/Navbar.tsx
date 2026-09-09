@@ -20,9 +20,15 @@ import QuickTaskModal from "@/components/QuickTaskModal";
 
 interface NavbarProps {
   onToggleMobileMenu?: () => void;
+  onToggleSidebar?: () => void;
+  isSidebarOpen?: boolean;
 }
 
-export default function Navbar({ onToggleMobileMenu }: NavbarProps) {
+export default function Navbar({
+  onToggleMobileMenu,
+  onToggleSidebar,
+  isSidebarOpen = true,
+}: NavbarProps) {
   const router = useRouter();
   const [currentDate, setCurrentDate] = useState<string>("");
   const [isQuickTaskOpen, setIsQuickTaskOpen] = useState(false);
@@ -115,17 +121,23 @@ export default function Navbar({ onToggleMobileMenu }: NavbarProps) {
   return (
     <>
       <header className="h-20 bg-white dark:bg-[#121824] border-b border-[#EAEAEA] dark:border-gray-800 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30 shadow-sm transition-colors duration-200">
-        {/* Mobile Hamburger & Date */}
-        <div className="flex items-center gap-3">
-          {onToggleMobileMenu && (
-            <button
-              onClick={onToggleMobileMenu}
-              className="lg:hidden p-2 rounded-xl text-sec dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700 transition-colors"
-              title="منوی اصلی"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
-          )}
+        {/* Sidebar Toggle & Date (Right side in RTL) */}
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          {/* Toggle Sidebar Button for both Desktop & Mobile */}
+          <button
+            onClick={() => {
+              if (typeof window !== "undefined" && window.innerWidth < 1024) {
+                onToggleMobileMenu?.();
+              } else {
+                onToggleSidebar?.();
+              }
+            }}
+            className="p-2.5 rounded-xl text-sec dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700 transition-all duration-150 flex items-center justify-center group shadow-sm active:scale-95"
+            title={isSidebarOpen ? "بستن منوی کناری (سایدبار)" : "باز کردن منوی کناری (سایدبار)"}
+            aria-label="تغییر وضعیت منوی کناری"
+          >
+            <Menu className="w-5 h-5 text-sec dark:text-gray-200 group-hover:text-primary transition-colors" />
+          </button>
 
           <div className="flex items-center gap-1.5 sm:gap-2 bg-ecosystem-light dark:bg-ecosystem-darker/50 text-ecosystem-darker dark:text-ecosystem-light px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-full border border-ecosystem-normal/30 text-[11px] sm:text-xs md:text-sm font-bold truncate max-w-[150px] xs:max-w-[200px] sm:max-w-none">
             <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary shrink-0" />
