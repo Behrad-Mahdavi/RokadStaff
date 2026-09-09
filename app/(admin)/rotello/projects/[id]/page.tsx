@@ -19,6 +19,7 @@ import {
   UserPlus,
   Trash2,
   ShieldCheck,
+  Pencil,
 } from "lucide-react";
 import Link from "next/link";
 import Modal from "@/components/Modal";
@@ -57,6 +58,18 @@ export default function ProjectBoardPage() {
   const [allEmployees, setAllEmployees] = useState<any[]>([]);
   const [selectedEmpToAdd, setSelectedEmpToAdd] = useState("");
   const [selectedRoleToAdd, setSelectedRoleToAdd] = useState("member");
+
+  // Edit Project Modal
+  const [isEditProjectOpen, setIsEditProjectOpen] = useState(false);
+  const [editProjectName, setEditProjectName] = useState("");
+  const [editProjectDesc, setEditProjectDesc] = useState("");
+  const [updatingProject, setUpdatingProject] = useState(false);
+  const [editProjectError, setEditProjectError] = useState("");
+
+  // Delete Project Modal
+  const [isDeleteProjectOpen, setIsDeleteProjectOpen] = useState(false);
+  const [deletingProject, setDeletingProject] = useState(false);
+  const [deleteProjectError, setDeleteProjectError] = useState("");
 
   // Drag & Drop State
   const [draggedTaskId, setDraggedTaskId] = useState<string | null>(null);
@@ -142,6 +155,68 @@ export default function ProjectBoardPage() {
       setCreateTaskError("خطای شبکه یا ارتباط با سرور");
     } finally {
       setCreatingTask(false);
+    }
+  };
+
+  // Handle Edit Project
+  const handleOpenEditProject = () => {
+    setEditProjectName(project?.name || "");
+    setEditProjectDesc(project?.description || "");
+    setEditProjectError("");
+    setIsEditProjectOpen(true);
+  };
+
+  const handleUpdateProject = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editProjectName.trim()) return;
+
+    setUpdatingProject(true);
+    setEditProjectError("");
+    try {
+      const res = await fetch(`/api/rotello/projects/${projectId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: editProjectName.trim(),
+          description: editProjectDesc.trim() || null,
+        }),
+      });
+
+      if (res.ok) {
+        setIsEditProjectOpen(false);
+        fetchBoard();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setEditProjectError(data.error || "خطا در ویرایش پروژه");
+      }
+    } catch (err) {
+      console.error(err);
+      setEditProjectError("خطای ارتباط با سرور رخ داد.");
+    } finally {
+      setUpdatingProject(false);
+    }
+  };
+
+  // Handle Delete Project
+  const handleDeleteProject = async () => {
+    setDeletingProject(true);
+    setDeleteProjectError("");
+    try {
+      const res = await fetch(`/api/rotello/projects/${projectId}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        router.push("/rotello/projects");
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setDeleteProjectError(data.error || "خطا در حذف پروژه");
+      }
+    } catch (err) {
+      console.error(err);
+      setDeleteProjectError("خطای ارتباط با سرور رخ داد.");
+    } finally {
+      setDeletingProject(false);
     }
   };
 
@@ -340,13 +415,36 @@ export default function ProjectBoardPage() {
 
           {/* Add Column Button (Manager only) */}
           {isManager && (
-            <button
-              onClick={() => setIsNewColModalOpen(true)}
-              className="rokad-btn-outline px-4 py-2 text-xs font-bold rounded-xl flex items-center gap-1.5"
-            >
-              <Plus className="w-4 h-4" />
-              <span>افزودن ستون</span>
-            </button>
+            <>
+              <button
+                onClick={() => setIsNewColModalOpen(true)}
+                className="rokad-btn-outline px-4 py-2 text-xs font-bold rounded-xl flex items-center gap-1.5"
+              >
+                <Plus className="w-4 h-4" />
+                <span>افزودن ستون</span>
+              </button>
+
+              <button
+                onClick={handleOpenEditProject}
+                className="px-3.5 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/80 hover:bg-gray-100 dark:hover:bg-gray-800 text-xs font-bold text-sec dark:text-gray-200 flex items-center gap-1.5 transition-colors"
+                title="ویرایش مشخصات پروژه"
+              >
+                <Pencil className="w-4 h-4 text-primary" />
+                <span className="hidden sm:inline">ویرایش</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setDeleteProjectError("");
+                  setIsDeleteProjectOpen(true);
+                }}
+                className="px-3.5 py-2 rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50/70 dark:bg-red-950/30 hover:bg-red-100 dark:hover:bg-red-950/60 text-xs font-bold text-red-600 dark:text-red-400 flex items-center gap-1.5 transition-colors"
+                title="حذف کامل پروژه"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span className="hidden sm:inline">حذف</span>
+              </button>
+            </>
           )}
         </div>
       </div>
@@ -865,6 +963,107 @@ export default function ProjectBoardPage() {
                 })
               )}
             </div>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Edit Project Modal */}
+      <Modal
+        isOpen={isEditProjectOpen}
+        onClose={() => {
+          setIsEditProjectOpen(false);
+          setEditProjectError("");
+        }}
+        title="ویرایش مشخصات پروژه"
+        maxWidth="md"
+      >
+        <form onSubmit={handleUpdateProject} className="space-y-4">
+          {editProjectError && (
+            <div className="p-3.5 bg-female-light dark:bg-female-darker/40 border border-female-normal/30 rounded-2xl text-xs font-bold text-female-darker dark:text-female-light">
+              ⚠️ {editProjectError}
+            </div>
+          )}
+
+          <div>
+            <label className="block text-xs font-black text-sec dark:text-white mb-1.5">نام پروژه:</label>
+            <input
+              type="text"
+              required
+              value={editProjectName}
+              onChange={(e) => setEditProjectName(e.target.value)}
+              className="w-full text-xs sm:text-sm p-3 rounded-2xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#1C2536] text-ink-normal dark:text-white focus:border-primary focus:outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-black text-sec dark:text-white mb-1.5">توضیحات (اختیاری):</label>
+            <textarea
+              rows={3}
+              value={editProjectDesc}
+              onChange={(e) => setEditProjectDesc(e.target.value)}
+              className="w-full text-xs sm:text-sm p-3 rounded-2xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#1C2536] text-ink-normal dark:text-white focus:border-primary focus:outline-none"
+            />
+          </div>
+
+          <div className="flex justify-end gap-2 pt-2">
+            <button
+              type="button"
+              onClick={() => setIsEditProjectOpen(false)}
+              className="px-4 py-2.5 text-xs font-bold text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl"
+            >
+              انصراف
+            </button>
+            <button
+              type="submit"
+              disabled={updatingProject || !editProjectName.trim()}
+              className="rokad-btn-primary px-5 py-2.5 text-xs font-black rounded-xl shadow-sm"
+            >
+              {updatingProject ? "در حال ذخیره..." : "ذخیره تغییرات"}
+            </button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Delete Project Confirmation Modal */}
+      <Modal
+        isOpen={isDeleteProjectOpen}
+        onClose={() => {
+          setIsDeleteProjectOpen(false);
+          setDeleteProjectError("");
+        }}
+        title="حذف کامل پروژه"
+        maxWidth="sm"
+      >
+        <div className="space-y-4">
+          {deleteProjectError && (
+            <div className="p-3.5 bg-female-light dark:bg-female-darker/40 border border-female-normal/30 rounded-2xl text-xs font-bold text-female-darker dark:text-female-light">
+              ⚠️ {deleteProjectError}
+            </div>
+          )}
+
+          <div className="p-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 rounded-2xl text-xs sm:text-sm text-red-700 dark:text-red-300 leading-relaxed font-medium">
+            آیا از حذف پروژه <span className="font-black text-red-900 dark:text-red-100">«{project?.name}»</span> اطمینان دارید؟
+            <br />
+            تمامی ستون‌ها، وظایف و اعضای منتسب به این بورد به‌طور دائمی حذف خواهند شد و به صفحه لیست پروژه‌ها منتقل خواهید شد.
+          </div>
+
+          <div className="flex justify-end gap-2 pt-2">
+            <button
+              type="button"
+              disabled={deletingProject}
+              onClick={() => setIsDeleteProjectOpen(false)}
+              className="px-4 py-2.5 text-xs font-bold text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl"
+            >
+              انصراف
+            </button>
+            <button
+              type="button"
+              disabled={deletingProject}
+              onClick={handleDeleteProject}
+              className="px-5 py-2.5 text-xs font-black rounded-xl bg-red-600 hover:bg-red-700 text-white shadow-[2px_2px_0_#991B1B] transition-all disabled:opacity-50"
+            >
+              {deletingProject ? "در حال حذف..." : "بله، حذف پروژه"}
+            </button>
           </div>
         </div>
       </Modal>

@@ -49,43 +49,9 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ employees: serialized });
   } catch (error: any) {
-    console.warn("Fetch employees falling back to mock data (database offline):", error);
+    console.warn("Fetch employees error / DB offline:", error);
     return NextResponse.json({
-      employees: [
-        {
-          id: "emp-1",
-          fullName: "علی رضایی",
-          department: "پسرانه",
-          position: "توسعه‌دهنده فرانت‌اند",
-          telegramChatId: "123456789",
-          linkCode: "123456",
-          isActive: true,
-          isLinked: true,
-          createdAt: new Date().toISOString(),
-        },
-        {
-          id: "emp-2",
-          fullName: "سارا محمدی",
-          department: "دخترانه",
-          position: "طراح رابط کاربری (UI/UX)",
-          telegramChatId: "987654321",
-          linkCode: "654321",
-          isActive: true,
-          isLinked: true,
-          createdAt: new Date().toISOString(),
-        },
-        {
-          id: "emp-3",
-          fullName: "محمد حسینی",
-          department: "پسرانه",
-          position: "مدیر پروژه",
-          telegramChatId: null,
-          linkCode: "789123",
-          isActive: true,
-          isLinked: false,
-          createdAt: new Date().toISOString(),
-        },
-      ],
+      employees: [],
     });
   }
 }

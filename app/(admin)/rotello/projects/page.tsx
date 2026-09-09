@@ -11,6 +11,8 @@ import {
   Sparkles,
   Archive,
   FolderKanban,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 import Link from "next/link";
 import Modal from "@/components/Modal";
@@ -27,6 +29,18 @@ export default function ProjectsListPage() {
   const [description, setDescription] = useState("");
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
+
+  // Edit Project Modal
+  const [editProject, setEditProject] = useState<any | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [editError, setEditError] = useState<string | null>(null);
+
+  // Delete Project Modal
+  const [deleteProject, setDeleteProject] = useState<any | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const fetchProjects = async () => {
     try {
@@ -75,6 +89,59 @@ export default function ProjectsListPage() {
       setCreateError("خطای ارتباط با سرور رخ داد.");
     } finally {
       setCreating(false);
+    }
+  };
+
+  const handleUpdateProject = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editProject || !editName.trim()) return;
+
+    setIsUpdating(true);
+    setEditError(null);
+    try {
+      const res = await fetch(`/api/rotello/projects/${editProject.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: editName, description: editDescription }),
+      });
+
+      if (res.ok) {
+        setEditProject(null);
+        fetchProjects();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setEditError(data.error || "خطا در ویرایش پروژه");
+      }
+    } catch (err) {
+      console.error(err);
+      setEditError("خطای ارتباط با سرور رخ داد.");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleDeleteProject = async () => {
+    if (!deleteProject) return;
+
+    setIsDeleting(true);
+    setDeleteError(null);
+    try {
+      const res = await fetch(`/api/rotello/projects/${deleteProject.id}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        setDeleteProject(null);
+        fetchProjects();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setDeleteError(data.error || "خطا در حذف پروژه");
+      }
+    } catch (err) {
+      console.error(err);
+      setDeleteError("خطای ارتباط با سرور رخ داد.");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -133,62 +200,105 @@ export default function ProjectsListPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.map((proj) => (
-            <Link
-              key={proj.id}
-              href={`/rotello/projects/${proj.id}`}
-              className="bg-white dark:bg-[#151C28] p-6 sm:p-7 rounded-3xl border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] hover:border-primary hover:shadow-[4px_4px_0_#59BBAF] transition-all flex flex-col justify-between group"
-            >
-              <div>
-                <div className="flex items-center justify-between gap-2 mb-3">
-                  <span
-                    className={`text-[11px] font-black px-2.5 py-0.5 rounded-full ${
-                      proj.userRole === "manager" || proj.userRole === "owner"
-                        ? "bg-ecosystem-light dark:bg-ecosystem-darker/60 text-ecosystem-darker dark:text-ecosystem-light"
-                        : "bg-gray-100 dark:bg-gray-800 text-ink-normal/70 dark:text-gray-300"
-                    }`}
-                  >
-                    {proj.userRole === "owner"
-                      ? "مالک کل"
-                      : proj.userRole === "manager"
-                      ? "مدیر پروژه"
-                      : "عضو"}
-                  </span>
+          {projects.map((proj) => {
+            const canManage =
+              proj.userRole === "manager" ||
+              proj.userRole === "owner" ||
+              !proj.userRole;
 
-                  {proj.isArchived && (
-                    <span className="text-[11px] font-black px-2.5 py-0.5 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
-                      آرشیو شده
+            return (
+              <Link
+                key={proj.id}
+                href={`/rotello/projects/${proj.id}`}
+                className="bg-white dark:bg-[#151C28] p-6 sm:p-7 rounded-3xl border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] hover:border-primary hover:shadow-[4px_4px_0_#59BBAF] transition-all flex flex-col justify-between group relative"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-3">
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`text-[11px] font-black px-2.5 py-0.5 rounded-full ${
+                          proj.userRole === "manager" || proj.userRole === "owner"
+                            ? "bg-ecosystem-light dark:bg-ecosystem-darker/60 text-ecosystem-darker dark:text-ecosystem-light"
+                            : "bg-gray-100 dark:bg-gray-800 text-ink-normal/70 dark:text-gray-300"
+                        }`}
+                      >
+                        {proj.userRole === "owner"
+                          ? "مالک کل"
+                          : proj.userRole === "manager"
+                          ? "مدیر پروژه"
+                          : "عضو"}
+                      </span>
+
+                      {proj.isArchived && (
+                        <span className="text-[11px] font-black px-2.5 py-0.5 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
+                          آرشیو شده
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Quick Edit & Delete Actions */}
+                    {canManage && (
+                      <div className="flex items-center gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
+                        <button
+                          type="button"
+                          title="ویرایش پروژه"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setEditProject(proj);
+                            setEditName(proj.name || "");
+                            setEditDescription(proj.description || "");
+                            setEditError(null);
+                          }}
+                          className="p-1.5 rounded-lg text-gray-500 hover:text-primary hover:bg-ecosystem-light/60 dark:hover:bg-ecosystem-darker/50 dark:text-gray-400 transition-colors"
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          title="حذف پروژه"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setDeleteProject(proj);
+                            setDeleteError(null);
+                          }}
+                          className="p-1.5 rounded-lg text-gray-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 dark:text-gray-400 transition-colors"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  <h2 className="text-base sm:text-lg font-black text-sec dark:text-white group-hover:text-primary transition-colors">
+                    {proj.name}
+                  </h2>
+                  <p className="text-xs sm:text-sm text-ink-normal/70 dark:text-gray-400 mt-1.5 line-clamp-2 leading-relaxed">
+                    {proj.description || "بدون توضیحات تکمیلی"}
+                  </p>
+                </div>
+
+                <div className="pt-4 mt-4 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between text-xs text-ink-normal/70 dark:text-gray-400 font-medium">
+                  <div className="flex items-center gap-3">
+                    <span className="flex items-center gap-1">
+                      <Users className="w-3.5 h-3.5 text-primary" />
+                      <span>{toPersianDigits(proj.membersCount || 0)} عضو</span>
                     </span>
-                  )}
-                </div>
+                    <span className="flex items-center gap-1">
+                      <Layers className="w-3.5 h-3.5 text-sec dark:text-gray-300" />
+                      <span>{toPersianDigits(proj.activeTasksCount || 0)} تسک</span>
+                    </span>
+                  </div>
 
-                <h2 className="text-base sm:text-lg font-black text-sec dark:text-white group-hover:text-primary transition-colors">
-                  {proj.name}
-                </h2>
-                <p className="text-xs sm:text-sm text-ink-normal/70 dark:text-gray-400 mt-1.5 line-clamp-2 leading-relaxed">
-                  {proj.description || "بدون توضیحات تکمیلی"}
-                </p>
-              </div>
-
-              <div className="pt-4 mt-4 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between text-xs text-ink-normal/70 dark:text-gray-400 font-medium">
-                <div className="flex items-center gap-3">
-                  <span className="flex items-center gap-1">
-                    <Users className="w-3.5 h-3.5 text-primary" />
-                    <span>{toPersianDigits(proj.membersCount)} عضو</span>
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Layers className="w-3.5 h-3.5 text-sec dark:text-gray-300" />
-                    <span>{toPersianDigits(proj.activeTasksCount)} تسک</span>
-                  </span>
+                  <div className="flex items-center gap-1 text-primary font-bold group-hover:translate-x-[-3px] transition-transform">
+                    <span>ورود به بورد</span>
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                  </div>
                 </div>
-
-                <div className="flex items-center gap-1 text-primary font-bold group-hover:translate-x-[-3px] transition-transform">
-                  <span>ورود به بورد</span>
-                  <ArrowLeft className="w-3.5 h-3.5" />
-                </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
         </div>
       )}
 
@@ -253,6 +363,107 @@ export default function ProjectsListPage() {
             </button>
           </div>
         </form>
+      </Modal>
+
+      {/* Edit Project Modal */}
+      <Modal
+        isOpen={Boolean(editProject)}
+        onClose={() => {
+          setEditProject(null);
+          setEditError(null);
+        }}
+        title="ویرایش مشخصات پروژه"
+        maxWidth="md"
+      >
+        <form onSubmit={handleUpdateProject} className="space-y-4">
+          {editError && (
+            <div className="p-3.5 bg-female-light dark:bg-female-darker/40 border border-female-normal/30 rounded-2xl text-xs font-bold text-female-darker dark:text-female-light">
+              ⚠️ {editError}
+            </div>
+          )}
+
+          <div>
+            <label className="block text-xs font-black text-sec dark:text-white mb-1.5">نام پروژه:</label>
+            <input
+              type="text"
+              required
+              value={editName}
+              onChange={(e) => setEditName(e.target.value)}
+              className="w-full text-xs sm:text-sm p-3 rounded-2xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#1C2536] text-ink-normal dark:text-white focus:border-primary focus:outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-black text-sec dark:text-white mb-1.5">توضیحات (اختیاری):</label>
+            <textarea
+              rows={3}
+              value={editDescription}
+              onChange={(e) => setEditDescription(e.target.value)}
+              className="w-full text-xs sm:text-sm p-3 rounded-2xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#1C2536] text-ink-normal dark:text-white focus:border-primary focus:outline-none"
+            />
+          </div>
+
+          <div className="flex justify-end gap-2 pt-2">
+            <button
+              type="button"
+              onClick={() => setEditProject(null)}
+              className="px-4 py-2.5 text-xs font-bold text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl"
+            >
+              انصراف
+            </button>
+            <button
+              type="submit"
+              disabled={isUpdating || !editName.trim()}
+              className="rokad-btn-primary px-5 py-2.5 text-xs font-black rounded-xl shadow-sm"
+            >
+              {isUpdating ? "در حال ذخیره..." : "ذخیره تغییرات"}
+            </button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Delete Project Confirmation Modal */}
+      <Modal
+        isOpen={Boolean(deleteProject)}
+        onClose={() => {
+          setDeleteProject(null);
+          setDeleteError(null);
+        }}
+        title="حذف پروژه"
+        maxWidth="sm"
+      >
+        <div className="space-y-4">
+          {deleteError && (
+            <div className="p-3.5 bg-female-light dark:bg-female-darker/40 border border-female-normal/30 rounded-2xl text-xs font-bold text-female-darker dark:text-female-light">
+              ⚠️ {deleteError}
+            </div>
+          )}
+
+          <div className="p-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 rounded-2xl text-xs sm:text-sm text-red-700 dark:text-red-300 leading-relaxed font-medium">
+            آیا از حذف پروژه <span className="font-black text-red-900 dark:text-red-100">«{deleteProject?.name}»</span> اطمینان دارید؟
+            <br />
+            تمامی ستون‌ها، وظایف و اعضای منتسب به این بورد به‌طور دائمی حذف خواهند شد و این عملیات غیرقابل بازگشت است.
+          </div>
+
+          <div className="flex justify-end gap-2 pt-2">
+            <button
+              type="button"
+              disabled={isDeleting}
+              onClick={() => setDeleteProject(null)}
+              className="px-4 py-2.5 text-xs font-bold text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl"
+            >
+              انصراف
+            </button>
+            <button
+              type="button"
+              disabled={isDeleting}
+              onClick={handleDeleteProject}
+              className="px-5 py-2.5 text-xs font-black rounded-xl bg-red-600 hover:bg-red-700 text-white shadow-[2px_2px_0_#991B1B] transition-all disabled:opacity-50"
+            >
+              {isDeleting ? "در حال حذف..." : "بله، حذف پروژه"}
+            </button>
+          </div>
+        </div>
       </Modal>
     </div>
   );

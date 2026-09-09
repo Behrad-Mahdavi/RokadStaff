@@ -245,18 +245,114 @@ export async function PATCH(
     const updateData: any = { updatedAt: new Date() };
 
     if (body.name !== undefined) updateData.name = body.name.trim();
-    if (body.description !== undefined) updateData.description = body.description;
+    if (body.description !== undefined) updateData.description = body.description ? body.description.trim() : null;
     if (body.isArchived !== undefined) updateData.isArchived = body.isArchived;
 
-    const [updated] = await db
-      .update(projects)
-      .set(updateData)
-      .where(eq(projects.id, projectId))
-      .returning();
+    try {
+      const [updated] = await db
+        .update(projects)
+        .set(updateData)
+        .where(eq(projects.id, projectId))
+        .returning();
 
-    return NextResponse.json({ success: true, project: updated });
+      // Also sync with mock store if exists
+      const { updateMockProject } = await import("@/lib/mockRotello");
+      updateMockProject(projectId, body);
+
+      return NextResponse.json({ success: true, project: updated });
+    } catch (dbErr) {
+      console.warn("DB update project failed, using mock store:", dbErr);
+      const { updateMockProject } = await import("@/lib/mockRotello");
+      const updatedMock = updateMockProject(projectId, body);
+      if (!updatedMock) {
+        return NextResponse.json({ error: "پروژه یافت نشد." }, { status: 404 });
+      }
+      return NextResponse.json({ success: true, project: updatedMock });
+    }
   } catch (error: any) {
     console.error("Update project error:", error);
     return NextResponse.json({ error: error.message || "Server error" }, { status: 500 });
+  }
+}
+
+// DELETE /api/rotello/projects/[id] - Delete project & all its tasks/columns
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const session = await getSession();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const projectId = params.id;
+  const db = getDb();
+
+  try {
+    // Only admin or project manager can delete
+    if (session.role !== "admin" && session.employeeId) {
+      const membership = await db
+        .select()
+        .from(projectMembers)
+        .where(
+          and(
+            eq(projectMembers.projectId, projectId),
+            eq(projectMembers.employeeId, session.employeeId),
+            eq(projectMembers.role, "manager")
+          )
+        )
+        .limit(1);
+
+      if (membership.length === 0) {
+        return NextResponse.json({ error: "تنها مدیر یا مالک پروژه مجاز به حذف است." }, { status: 403 });
+      }
+    }
+
+    try {
+      // Find all tasks in this project
+      const projectTasks = await db
+        .select({ id: tasks.id })
+        .from(tasks)
+        .where(eq(tasks.projectId, projectId));
+
+      const taskIds = projectTasks.map((t: any) => t.id);
+
+      if (taskIds.length > 0) {
+        const taskChecklists = await db
+          .select({ id: checklists.id })
+          .from(checklists)
+          .where(inArray(checklists.taskId, taskIds));
+
+        const checklistIds = taskChecklists.map((c: any) => c.id);
+        if (checklistIds.length > 0) {
+          await db.delete(checklistItems).where(inArray(checklistItems.checklistId, checklistIds));
+          await db.delete(checklists).where(inArray(checklists.id, checklistIds));
+        }
+
+        await db.delete(taskAssignees).where(inArray(taskAssignees.taskId, taskIds));
+        await db.delete(tasks).where(eq(tasks.projectId, projectId));
+      }
+
+      await db.delete(boardColumns).where(eq(boardColumns.projectId, projectId));
+      await db.delete(projectMembers).where(eq(projectMembers.projectId, projectId));
+      await db.delete(projects).where(eq(projects.id, projectId));
+
+      // Also delete from mock store if present
+      const { deleteMockProject } = await import("@/lib/mockRotello");
+      deleteMockProject(projectId);
+
+      return NextResponse.json({ success: true, message: "پروژه با موفقیت حذف شد." });
+    } catch (dbErr) {
+      console.warn("DB delete project failed, using mock store:", dbErr);
+      const { deleteMockProject } = await import("@/lib/mockRotello");
+      const deleted = deleteMockProject(projectId);
+      if (!deleted) {
+        return NextResponse.json({ error: "پروژه یافت نشد." }, { status: 404 });
+      }
+      return NextResponse.json({ success: true, message: "پروژه با موفقیت حذف شد." });
+    }
+  } catch (error: any) {
+    console.error("Delete project error:", error);
+    return NextResponse.json({ error: error.message || "خطای سرور" }, { status: 500 });
   }
 }

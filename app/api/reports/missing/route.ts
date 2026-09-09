@@ -51,21 +51,11 @@ export async function GET(req: NextRequest) {
       missingEmployees: serialized,
     });
   } catch (error: any) {
-    console.warn("Missing reports falling back to mock data (database offline):", error);
+    console.warn("Missing reports error / DB offline:", error);
     return NextResponse.json({
       date: dateParam,
-      totalMissing: 1,
-      missingEmployees: [
-        {
-          id: "emp-3",
-          fullName: "محمد حسینی",
-          department: "پسرانه",
-          position: "مدیر پروژه",
-          telegramChatId: null,
-          isLinked: false,
-          isActive: true,
-        },
-      ],
+      totalMissing: 0,
+      missingEmployees: [],
     });
   }
 }
