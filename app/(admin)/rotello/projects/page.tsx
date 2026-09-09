@@ -74,15 +74,15 @@ export default function ProjectsListPage() {
   return (
     <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-300">
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 bg-gradient-to-r from-ecosystem-light via-white to-club-light/40 p-6 sm:p-7 rounded-3xl border-2 border-primary/20 shadow-[3px_3px_0_#59BBAF]">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 bg-gradient-to-r from-ecosystem-light via-white to-club-light/40 dark:from-[#151C28] dark:via-[#161E2C] dark:to-[#151C28] p-6 sm:p-7 rounded-3xl border-2 border-primary/20 dark:border-gray-800 shadow-[3px_3px_0_#59BBAF]">
         <div>
           <div className="flex items-center gap-2 text-sm font-black text-primary mb-1.5">
             <Kanban className="w-4 h-4" />
-            <span>ماژول مدیریت پروژه‌ها و بورد کانبان (Rotello)</span>
+            <span>مدیریت پروژه‌ها و بوردها</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-sec tracking-tight">پروژه‌ها و بوردهای سازمانی</h1>
-          <p className="text-xs sm:text-sm text-ink-normal/70 mt-1 font-medium">
-            ایجاد بورد، پیگیری پیشرفت مرحله‌ای تسک‌ها و همکاری تیمی اعضا
+          <h1 className="text-2xl sm:text-3xl font-black text-sec dark:text-white tracking-tight">پروژه‌ها و بوردهای کاری</h1>
+          <p className="text-xs sm:text-sm text-ink-normal/70 dark:text-gray-400 mt-1 font-medium">
+            ایجاد بورد، پیگیری پیشرفت مرحله‌ای وظایف و همکاری تیمی اعضا
           </p>
         </div>
 
@@ -91,8 +91,8 @@ export default function ProjectsListPage() {
             onClick={() => setShowArchived(!showArchived)}
             className={`px-4 py-3 text-xs sm:text-sm rounded-xl font-bold border transition-colors flex items-center gap-1.5 ${
               showArchived
-                ? "bg-gray-200 text-sec border-gray-300"
-                : "bg-white text-ink-normal/70 border-gray-200 hover:bg-gray-50"
+                ? "bg-gray-200 dark:bg-gray-700 text-sec dark:text-white border-gray-300 dark:border-gray-600"
+                : "bg-white dark:bg-[#161D2A] text-ink-normal/70 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
             }`}
           >
             <Archive className="w-4 h-4" />
@@ -113,14 +113,14 @@ export default function ProjectsListPage() {
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-48 bg-white rounded-3xl border animate-pulse p-6" />
+            <div key={i} className="h-48 bg-white dark:bg-[#151C28] rounded-3xl border dark:border-gray-800 animate-pulse p-6" />
           ))}
         </div>
       ) : projects.length === 0 ? (
-        <div className="text-center py-16 bg-white rounded-3xl border border-dashed border-gray-300 p-8">
-          <FolderKanban className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <h3 className="text-base font-black text-sec">هیچ پروژه‌ای یافت نشد</h3>
-          <p className="text-xs sm:text-sm text-ink-normal/60 mt-1">
+        <div className="text-center py-16 bg-white dark:bg-[#151C28] rounded-3xl border border-dashed border-gray-300 dark:border-gray-700 p-8">
+          <FolderKanban className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
+          <h3 className="text-base font-black text-sec dark:text-white">هیچ پروژه‌ای یافت نشد</h3>
+          <p className="text-xs sm:text-sm text-ink-normal/60 dark:text-gray-400 mt-1">
             شما هنوز عضو پروژه‌ای نیستید یا پروژه‌ای تعریف نشده است. با دکمه بالا اولین پروژه را ایجاد کنید.
           </p>
         </div>
@@ -130,15 +130,15 @@ export default function ProjectsListPage() {
             <Link
               key={proj.id}
               href={`/rotello/projects/${proj.id}`}
-              className="bg-white p-6 sm:p-7 rounded-3xl border border-[#EAEAEA] shadow-[3px_3px_0_#202A5A] hover:border-primary hover:shadow-[4px_4px_0_#59BBAF] transition-all flex flex-col justify-between group"
+              className="bg-white dark:bg-[#151C28] p-6 sm:p-7 rounded-3xl border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] hover:border-primary hover:shadow-[4px_4px_0_#59BBAF] transition-all flex flex-col justify-between group"
             >
               <div>
                 <div className="flex items-center justify-between gap-2 mb-3">
                   <span
                     className={`text-[11px] font-black px-2.5 py-0.5 rounded-full ${
                       proj.userRole === "manager" || proj.userRole === "owner"
-                        ? "bg-ecosystem-light text-ecosystem-darker"
-                        : "bg-gray-100 text-ink-normal/70"
+                        ? "bg-ecosystem-light dark:bg-ecosystem-darker/60 text-ecosystem-darker dark:text-ecosystem-light"
+                        : "bg-gray-100 dark:bg-gray-800 text-ink-normal/70 dark:text-gray-300"
                     }`}
                   >
                     {proj.userRole === "owner"
@@ -149,16 +149,16 @@ export default function ProjectsListPage() {
                   </span>
 
                   {proj.isArchived && (
-                    <span className="text-[11px] font-black px-2.5 py-0.5 rounded-full bg-gray-200 text-gray-700">
+                    <span className="text-[11px] font-black px-2.5 py-0.5 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
                       آرشیو شده
                     </span>
                   )}
                 </div>
 
-                <h2 className="text-lg font-black text-sec group-hover:text-primary transition-colors">
+                <h2 className="text-lg font-black text-sec dark:text-white group-hover:text-primary transition-colors">
                   {proj.name}
                 </h2>
-                <p className="text-xs sm:text-sm text-ink-normal/70 mt-1.5 line-clamp-2 leading-relaxed">
+                <p className="text-xs sm:text-sm text-ink-normal/70 dark:text-gray-400 mt-1.5 line-clamp-2 leading-relaxed">
                   {proj.description || "بدون توضیحات تکمیلی"}
                 </p>
               </div>

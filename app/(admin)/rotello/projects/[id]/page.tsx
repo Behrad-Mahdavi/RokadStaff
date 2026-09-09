@@ -266,25 +266,25 @@ export default function ProjectBoardPage() {
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       {/* Board Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 sm:p-6 rounded-3xl border border-[#EAEAEA] shadow-[3px_3px_0_#202A5A]">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-[#151C28] p-5 sm:p-6 rounded-3xl border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF]">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <Link
               href="/rotello/projects"
-              className="text-xs font-bold text-ink-normal/60 hover:text-primary transition-colors flex items-center gap-1"
+              className="text-xs font-bold text-ink-normal/60 dark:text-gray-400 hover:text-primary transition-colors flex items-center gap-1"
             >
               <ArrowRight className="w-3.5 h-3.5" />
               <span>بازگشت به پروژه‌ها</span>
             </Link>
-            <span className="text-gray-300">•</span>
-            <span className="text-xs font-black text-primary px-2 py-0.5 bg-ecosystem-light rounded-full">
-              بورد کانبان
+            <span className="text-gray-300 dark:text-gray-700">•</span>
+            <span className="text-xs font-black text-primary px-2 py-0.5 bg-ecosystem-light dark:bg-ecosystem-darker/60 rounded-full">
+              بورد پروژه
             </span>
           </div>
 
-          <h1 className="text-xl sm:text-2xl font-black text-sec">{project?.name}</h1>
+          <h1 className="text-xl sm:text-2xl font-black text-sec dark:text-white">{project?.name}</h1>
           {project?.description && (
-            <p className="text-xs sm:text-sm text-ink-normal/60 mt-0.5 font-medium">{project.description}</p>
+            <p className="text-xs sm:text-sm text-ink-normal/60 dark:text-gray-400 mt-0.5 font-medium">{project.description}</p>
           )}
         </div>
 
@@ -292,7 +292,7 @@ export default function ProjectBoardPage() {
           {/* Members Avatars Button */}
           <button
             onClick={() => setIsMembersModalOpen(true)}
-            className="px-3.5 py-2 rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 text-xs font-bold text-sec flex items-center gap-2 transition-colors"
+            className="px-3.5 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/80 hover:bg-gray-100 dark:hover:bg-gray-800 text-xs font-bold text-sec dark:text-gray-200 flex items-center gap-2 transition-colors"
           >
             <Users className="w-4 h-4 text-primary" />
             <span>اعضای پروژه ({toPersianDigits(members.length)})</span>
@@ -312,7 +312,7 @@ export default function ProjectBoardPage() {
       </div>
 
       {/* Kanban Board Columns Horizontal Layout */}
-      <div className="flex items-start gap-5 overflow-x-auto pb-8 pt-2 min-h-[calc(100vh-280px)]">
+      <div className="flex items-start gap-4 sm:gap-5 overflow-x-auto pb-8 pt-2 min-h-[calc(100vh-280px)] overscroll-x-contain touch-pan-x">
         {columns.map((column: any) => {
           const colTasks = tasks.filter((t: any) => t.columnId === column.id);
 
@@ -321,22 +321,22 @@ export default function ProjectBoardPage() {
               key={column.id}
               onDragOver={(e) => e.preventDefault()}
               onDrop={() => handleDropOnColumn(column.id)}
-              className="w-80 sm:w-84 shrink-0 bg-[#F7F9F9] rounded-3xl border border-gray-200/80 p-4 flex flex-col max-h-[calc(100vh-260px)] shadow-sm"
+              className="w-[85vw] sm:w-80 md:w-84 shrink-0 bg-[#F7F9F9] dark:bg-[#161D2A] rounded-3xl border border-gray-200/80 dark:border-gray-800 p-4 flex flex-col max-h-[calc(100vh-260px)] shadow-sm"
             >
               {/* Column Header */}
-              <div className="flex items-center justify-between pb-3 mb-3 border-b border-gray-200 px-1">
+              <div className="flex items-center justify-between pb-3 mb-3 border-b border-gray-200 dark:border-gray-800 px-1">
                 <div className="flex items-center gap-2">
-                  <span className="font-black text-sm text-sec">{column.name}</span>
+                  <span className="font-black text-sm text-sec dark:text-white">{column.name}</span>
                   {column.isDoneColumn && (
                     <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-accent-green/10 text-accent-green border border-accent-green/20">
                       <span>✅</span>
                       <span>تکمیل‌شده</span>
                       {!boardData?.isAdmin && (
-                        <span className="text-ink-normal/50 text-[9px] mr-0.5">(فقط مدیر)</span>
+                        <span className="text-ink-normal/50 dark:text-gray-400 text-[9px] mr-0.5">(فقط مدیر)</span>
                       )}
                     </span>
                   )}
-                  <span className="w-5 h-5 rounded-full bg-gray-200 text-ink-normal/70 text-[11px] font-bold flex items-center justify-center">
+                  <span className="w-5 h-5 rounded-full bg-gray-200 dark:bg-gray-700 text-ink-normal/70 dark:text-gray-300 text-[11px] font-bold flex items-center justify-center">
                     {toPersianDigits(colTasks.length)}
                   </span>
                 </div>
@@ -356,7 +356,7 @@ export default function ProjectBoardPage() {
                       draggable
                       onDragStart={() => handleDragStart(task.id)}
                       onClick={() => setSelectedTaskId(task.id)}
-                      className="bg-white p-4 rounded-2xl border border-gray-200/90 hover:border-primary hover:shadow-[3px_3px_0_#59BBAF] transition-all cursor-pointer space-y-3 group select-none"
+                      className="bg-white dark:bg-[#1C2536] p-4 rounded-2xl border border-gray-200/90 dark:border-gray-700 hover:border-primary hover:shadow-[3px_3px_0_#59BBAF] transition-all cursor-pointer space-y-3 group select-none"
                     >
                       {/* Priority & Overdue tags */}
                       <div className="flex items-center justify-between gap-1">

@@ -48,16 +48,21 @@ export default function MemberLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F8F8] flex flex-col justify-center items-center p-4 sm:p-6 font-vazirmatn text-right" dir="rtl">
-      <div className="w-full max-w-md bg-white rounded-3xl p-7 sm:p-9 border-2 border-primary/20 shadow-[4px_4px_0_#59BBAF]">
+    <div className="min-h-screen bg-[#F5F8F8] dark:bg-[#0B0F17] flex flex-col justify-center items-center p-4 sm:p-6 font-vazirmatn text-right transition-colors duration-200" dir="rtl">
+      <div className="w-full max-w-md bg-white dark:bg-[#151C28] rounded-3xl p-7 sm:p-9 border-2 border-primary/20 dark:border-gray-800 shadow-[4px_4px_0_#59BBAF]">
         {/* Header & Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-ecosystem-dark p-3.5 shadow-[3px_3px_0_#202A5A] mb-4">
-            <RokadLogo className="w-full h-full text-white" />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl overflow-hidden shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] border border-primary/40 mb-4 bg-primary/20">
+            <img src="/icon.png" alt="لوگوی روتلو" className="w-full h-full object-cover" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-sec tracking-tight">سامانه رُکاد‌استاف (Rotello)</h1>
-          <p className="text-xs sm:text-sm text-ink-normal/70 mt-1.5 font-medium">
-            ورود اختصاصی همکاران به میز کار از طریق ربات تلگرام
+          <div className="flex items-center justify-center gap-2">
+            <h1 className="text-2xl sm:text-3xl font-black text-sec dark:text-white tracking-tight">روتلو</h1>
+            <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-primary/15 dark:bg-primary/25 text-primary border border-primary/30">
+              عوامل
+            </span>
+          </div>
+          <p className="text-xs sm:text-sm text-ink-normal/70 dark:text-gray-400 mt-1.5 font-medium">
+            مدیریت پروژه‌ها و کارها • ورود همکاران از طریق تلگرام
           </p>
         </div>
 
@@ -82,7 +87,7 @@ export default function MemberLoginPage() {
         {/* Magic Link Form */}
         <form onSubmit={handleRequestMagicLink} className="space-y-5">
           <div>
-            <label className="block text-xs sm:text-sm font-black text-sec mb-2">
+            <label className="block text-xs sm:text-sm font-black text-sec dark:text-white mb-2">
               نام و نام خانوادگی یا کد اتصال شما:
             </label>
             <input
@@ -91,7 +96,7 @@ export default function MemberLoginPage() {
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
               placeholder="مثال: بهراد مهدوی یا کد ۶ رقمی"
-              className="w-full px-4 py-3.5 rounded-2xl border border-gray-300 focus:border-primary focus:outline-none text-xs sm:text-sm font-bold bg-[#FAFAFA] focus:bg-white transition-colors"
+              className="w-full px-4 py-3.5 rounded-2xl border border-gray-300 dark:border-gray-700 focus:border-primary focus:outline-none text-xs sm:text-sm font-bold bg-[#FAFAFA] dark:bg-[#121824] dark:text-white focus:bg-white dark:focus:bg-[#161D2A] transition-colors"
             />
           </div>
 
@@ -106,12 +111,12 @@ export default function MemberLoginPage() {
         </form>
 
         {/* How it works info */}
-        <div className="mt-8 pt-6 border-t border-gray-100 space-y-3">
-          <div className="flex items-center gap-2 text-xs font-black text-sec">
+        <div className="mt-8 pt-6 border-t border-gray-100 dark:border-gray-800 space-y-3">
+          <div className="flex items-center gap-2 text-xs font-black text-sec dark:text-white">
             <ShieldCheck className="w-4 h-4 text-primary" />
             <span>راهنمای ورود بدون رمز:</span>
           </div>
-          <p className="text-xs text-ink-normal/60 leading-relaxed font-medium">
+          <p className="text-xs text-ink-normal/60 dark:text-gray-400 leading-relaxed font-medium">
             با زدن دکمه بالا، یک لینک ورود یکبارمصرف (۱۰ دقیقه‌ای) به ربات تلگرام شما ارسال می‌شود. کافی است روی آن کلیک کنید تا مستقیماً وارد میز کار خود شوید.
           </p>
         </div>
@@ -120,9 +125,9 @@ export default function MemberLoginPage() {
         <div className="mt-6 text-center pt-2">
           <Link
             href="/admin-login"
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-ink-normal/50 hover:text-sec transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-ink-normal/50 dark:text-gray-400 hover:text-sec dark:hover:text-white transition-colors"
           >
-            <Lock className="w-3.5 h-3.5 text-ink-normal/40" />
+            <Lock className="w-3.5 h-3.5 text-ink-normal/40 dark:text-gray-500" />
             <span>ورود مدیران و سرپرستان سیستم</span>
           </Link>
         </div>

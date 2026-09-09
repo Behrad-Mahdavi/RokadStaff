@@ -53,15 +53,15 @@ export default function Modal({
       {/* Modal Box */}
       <div
         className={cn(
-          "relative bg-white w-full rounded-3xl border-2 border-primary/40 shadow-[4px_4px_0_#202A5A] p-5 sm:p-7 z-10 animate-in fade-in zoom-in-95 duration-150 max-h-[92vh] overflow-y-auto",
+          "relative bg-white dark:bg-[#151C28] w-full rounded-3xl border-2 border-primary/40 shadow-[4px_4px_0_#202A5A] dark:shadow-[4px_4px_0_#59BBAF] p-4 sm:p-6 md:p-7 z-10 animate-in fade-in zoom-in-95 duration-150 max-h-[90dvh] overflow-y-auto text-ink-normal dark:text-gray-100",
           maxWidthClass
         )}
       >
-        <div className="flex items-center justify-between pb-4 border-b border-gray-100 mb-5">
-          <h3 className="text-lg font-black text-sec">{title}</h3>
+        <div className="flex items-center justify-between pb-3.5 sm:pb-4 border-b border-gray-100 dark:border-gray-800 mb-4 sm:mb-5">
+          <h3 className="text-base sm:text-lg font-black text-sec dark:text-white truncate">{title}</h3>
           <button
             onClick={onClose}
-            className="w-9 h-9 rounded-xl text-ink-normal/60 hover:text-ink-normal hover:bg-gray-100 flex items-center justify-center transition-colors"
+            className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl text-ink-normal/60 dark:text-gray-400 hover:text-ink-normal dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center transition-colors shrink-0"
           >
             <X className="w-5 h-5" />
           </button>

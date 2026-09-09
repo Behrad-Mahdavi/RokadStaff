@@ -15,18 +15,16 @@ import {
   Layers,
   ChevronLeft,
   X,
-  LogOut,
   FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import RokadLogo from "@/components/RokadLogo";
 
 const EMPLOYEE_NAV_GROUPS = [
   {
-    title: "میز کار و پروژه‌ها (Rotello)",
+    title: "میز کار و پروژه‌ها",
     items: [
       {
-        title: "میز کار و تسک‌های من",
+        title: "میز کار و وظایف من",
         href: "/rotello/my-tasks",
         icon: Briefcase,
         badge: null,
@@ -35,8 +33,7 @@ const EMPLOYEE_NAV_GROUPS = [
         title: "پروژه‌ها و بوردها",
         href: "/rotello/projects",
         icon: Kanban,
-        badge: "کانبان",
-        badgeColor: "bg-ecosystem-light text-ecosystem-darker border border-primary/30",
+        badge: null,
       },
     ],
   },
@@ -44,14 +41,13 @@ const EMPLOYEE_NAV_GROUPS = [
 
 const ADMIN_NAV_GROUPS = [
   {
-    title: "مدیریت پروژه‌ها (Rotello)",
+    title: "مدیریت پروژه‌ها و کارها",
     items: [
       {
         title: "پروژه‌ها و بوردها",
         href: "/rotello/projects",
         icon: Kanban,
-        badge: "کانبان",
-        badgeColor: "bg-ecosystem-light text-ecosystem-darker border border-primary/30",
+        badge: null,
       },
       {
         title: "میز کار من",
@@ -60,7 +56,7 @@ const ADMIN_NAV_GROUPS = [
         badge: null,
       },
       {
-        title: "آنالیتیکس پروژه‌ها",
+        title: "آمار و پیشرفت پروژه‌ها",
         href: "/rotello/analytics",
         icon: Layers,
         badge: null,
@@ -68,24 +64,12 @@ const ADMIN_NAV_GROUPS = [
     ],
   },
   {
-    title: "گزارش روزانه تلگرام (Rokad)",
+    title: "پایش عملکرد و گزارش‌ها",
     items: [
       {
         title: "داشبورد کل عملکرد",
         href: "/dashboard",
         icon: LayoutDashboard,
-        badge: null,
-      },
-      {
-        title: "آنالیتیکس و اکسل",
-        href: "/analytics",
-        icon: BarChart3,
-        badge: null,
-      },
-      {
-        title: "مدیریت کارکنان",
-        href: "/employees",
-        icon: Users,
         badge: null,
       },
       {
@@ -95,21 +79,38 @@ const ADMIN_NAV_GROUPS = [
         badge: null,
       },
       {
-        title: "گزارش جامع همکاران",
+        title: "کارنامه جامع همکاران",
         href: "/reports/employee",
         icon: FileText,
         badge: "جامع",
-        badgeColor: "bg-ecosystem-light text-ecosystem-darker border border-primary/30",
+        badgeColor: "bg-ecosystem-light dark:bg-ecosystem-darker/70 text-ecosystem-darker dark:text-ecosystem-light border border-primary/30",
       },
       {
-        title: "غایبان در گزارش",
+        title: "پیگیری عدم ثبت گزارش",
         href: "/reports/missing",
         icon: AlertTriangle,
         badge: "امروز",
-        badgeColor: "bg-college-light text-college-darker border border-college-normal/30",
+        badgeColor: "bg-college-light dark:bg-college-darker/70 text-college-darker dark:text-college-light border border-college-normal/30",
       },
       {
-        title: "شبیه‌ساز بات تلگرام",
+        title: "تحلیل آماری و فایل اکسل",
+        href: "/analytics",
+        icon: BarChart3,
+        badge: null,
+      },
+    ],
+  },
+  {
+    title: "سازمان و ابزارها",
+    items: [
+      {
+        title: "مدیریت همکاران",
+        href: "/employees",
+        icon: Users,
+        badge: null,
+      },
+      {
+        title: "راهنما و آزمون ربات",
         href: "/bot-guide",
         icon: Bot,
         badge: null,
@@ -141,18 +142,23 @@ export default function Sidebar({ onCloseMobile }: SidebarProps) {
   const navGroups = isEmployee ? EMPLOYEE_NAV_GROUPS : ADMIN_NAV_GROUPS;
 
   return (
-    <aside className="w-72 bg-white border-l border-[#EAEAEA] min-h-screen flex flex-col justify-between shrink-0 shadow-[2px_0_10px_rgba(0,0,0,0.03)] z-50">
+    <aside className="w-72 bg-white dark:bg-[#121824] border-l border-[#EAEAEA] dark:border-gray-800 min-h-screen flex flex-col justify-between shrink-0 shadow-[2px_0_10px_rgba(0,0,0,0.03)] dark:shadow-none z-50 transition-colors duration-200">
       <div>
         {/* Brand Header */}
-        <div className="h-20 px-6 flex items-center justify-between border-b border-[#EAEAEA]">
+        <div className="h-20 px-6 flex items-center justify-between border-b border-[#EAEAEA] dark:border-gray-800">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-primary to-ecosystem-dark text-white flex items-center justify-center shadow-[2.5px_2.5px_0_#202A5A] p-2">
-              <RokadLogo className="w-full h-full text-white" />
+            <div className="w-11 h-11 rounded-2xl overflow-hidden shadow-[2.5px_2.5px_0_#202A5A] dark:shadow-[2.5px_2.5px_0_#59BBAF] border border-primary/40 shrink-0 bg-primary/20">
+              <img src="/icon.png" alt="لوگوی روتلو" className="w-full h-full object-cover" />
             </div>
             <div>
-              <div className="font-extrabold text-lg text-sec leading-none">رُکاد‌استاف</div>
-              <div className="text-xs text-ink-normal/60 mt-1 font-medium">
-                {isEmployee ? "میز کار همکاران" : "گزارش روزانه + Rotello"}
+              <div className="flex items-center gap-2">
+                <span className="font-extrabold text-xl text-sec dark:text-white tracking-tight">روتلو</span>
+                <span className="text-[11px] font-black px-2 py-0.5 rounded-full bg-primary/15 dark:bg-primary/25 text-primary border border-primary/30">
+                  عوامل
+                </span>
+              </div>
+              <div className="text-[11px] text-ink-normal/60 dark:text-gray-400 mt-1 font-medium">
+                مدیریت پروژه‌ها و کارها
               </div>
             </div>
           </div>
@@ -161,37 +167,18 @@ export default function Sidebar({ onCloseMobile }: SidebarProps) {
           {onCloseMobile && (
             <button
               onClick={onCloseMobile}
-              className="lg:hidden p-2 rounded-xl text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+              className="lg:hidden p-2 rounded-xl text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
           )}
         </div>
 
-        {/* User Info Capsule */}
-        {currentUser && (
-          <div className="p-3 mx-4 mt-4 bg-gray-50 rounded-2xl border border-gray-200 flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-ecosystem-light text-ecosystem-darker font-black flex items-center justify-center text-xs">
-                {currentUser.fullName?.slice(0, 1) || "ک"}
-              </div>
-              <div>
-                <div className="text-xs font-black text-sec">{currentUser.fullName}</div>
-                <div className="text-[10px] text-ink-normal/50">
-                  {currentUser.role === "admin"
-                    ? "سوپر ادمین سیستم"
-                    : currentUser.department || "همکار"}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Navigation Sections */}
         <div className="p-4 space-y-6">
           {navGroups.map((group, gIdx) => (
             <div key={gIdx} className="space-y-1.5">
-              <div className="text-xs font-black text-ink-normal/40 px-3 py-1">
+              <div className="text-xs font-black text-ink-normal/40 dark:text-gray-400 px-3 py-1">
                 {group.title}
               </div>
               {group.items.map((item) => {
@@ -212,15 +199,15 @@ export default function Sidebar({ onCloseMobile }: SidebarProps) {
                     className={cn(
                       "flex items-center justify-between px-4 py-2.5 rounded-2xl text-[14px] font-bold transition-all duration-150 group",
                       isActive
-                        ? "bg-ecosystem-light text-ecosystem-darker border border-primary/40 shadow-[2px_2px_0_#59BBAF]"
-                        : "text-ink-normal/80 hover:bg-[#F5F7F9] hover:text-ink-normal"
+                        ? "bg-ecosystem-light dark:bg-ecosystem-darker/60 text-ecosystem-darker dark:text-ecosystem-light border border-primary/40 shadow-[2px_2px_0_#59BBAF]"
+                        : "text-ink-normal/80 dark:text-gray-300 hover:bg-[#F5F7F9] dark:hover:bg-gray-800/60 hover:text-ink-normal dark:hover:text-white"
                     )}
                   >
                     <div className="flex items-center gap-3">
                       <Icon
                         className={cn(
                           "w-4 h-4 transition-colors",
-                          isActive ? "text-primary" : "text-ink-normal/50 group-hover:text-primary"
+                          isActive ? "text-primary" : "text-ink-normal/50 dark:text-gray-400 group-hover:text-primary"
                         )}
                       />
                       <span>{item.title}</span>
@@ -247,11 +234,13 @@ export default function Sidebar({ onCloseMobile }: SidebarProps) {
       </div>
 
       {/* Brand Footer Card */}
-      <div className="p-4 m-4 rounded-2xl bg-gradient-to-br from-ecosystem-light via-white to-college-light/30 border border-primary/20 shadow-sm text-center">
-      
-        <div className="text-xs font-black text-sec">اکوسیستم رُکاد‌استاف</div>
-        <div className="text-[11px] text-ink-normal/60 mt-0.5">
-          {isEmployee ? "میز کار اختصاصی Rotello" : "مدیریت تسک‌ها + اتصال تلگرام"}
+      <div className="p-4 m-4 rounded-2xl bg-gradient-to-br from-ecosystem-light/60 via-white to-ecosystem-light/30 dark:from-gray-800/80 dark:via-gray-800/50 dark:to-gray-800/80 border border-primary/20 dark:border-gray-700 shadow-sm text-center">
+        <div className="text-xs font-black text-sec dark:text-gray-200 flex items-center justify-center gap-1.5">
+          <span>سامانه روتلو</span>
+          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-primary/20 text-primary font-bold">عوامل</span>
+        </div>
+        <div className="text-[11px] text-ink-normal/60 dark:text-gray-400 mt-1">
+          مدیریت پروژه‌ها و کارها
         </div>
       </div>
     </aside>

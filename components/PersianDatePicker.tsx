@@ -172,21 +172,21 @@ export default function PersianDatePicker({
         onClick={() => !disabled && setIsOpen(!isOpen)}
         className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl border transition-all cursor-pointer select-none ${
           disabled
-            ? "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed"
+            ? "bg-gray-100 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 text-gray-400 cursor-not-allowed"
             : isOpen
-            ? "border-primary ring-2 ring-primary/20 bg-white shadow-sm"
-            : "border-[#DFDFDF] hover:border-primary/60 bg-white"
+            ? "border-primary ring-2 ring-primary/20 bg-white dark:bg-[#151C28] shadow-sm"
+            : "border-[#DFDFDF] dark:border-gray-700 hover:border-primary/60 bg-white dark:bg-[#151C28]"
         }`}
       >
         <div className="flex items-center gap-2.5 overflow-hidden">
           <CalendarIcon
             className={`w-4 h-4 shrink-0 transition-colors ${
-              displayText ? "text-primary font-bold" : "text-ink-normal/40"
+              displayText ? "text-primary font-bold" : "text-ink-normal/40 dark:text-gray-500"
             }`}
           />
           <span
             className={`text-xs sm:text-sm font-bold truncate ${
-              displayText ? "text-sec" : "text-ink-normal/40 font-medium"
+              displayText ? "text-sec dark:text-white" : "text-ink-normal/40 dark:text-gray-500 font-medium"
             }`}
           >
             {displayText || placeholder}
@@ -198,7 +198,7 @@ export default function PersianDatePicker({
             <button
               type="button"
               onClick={handleClear}
-              className="p-1 rounded-lg text-ink-normal/40 hover:text-female-normal hover:bg-female-light transition-colors"
+              className="p-1 rounded-lg text-ink-normal/40 dark:text-gray-400 hover:text-female-normal hover:bg-female-light dark:hover:bg-female-normal/20 transition-colors"
               title="پاک کردن تاریخ"
             >
               <X className="w-3.5 h-3.5" />
@@ -209,19 +209,19 @@ export default function PersianDatePicker({
 
       {/* Calendar Dropdown Popup */}
       {isOpen && (
-        <div className="absolute top-full right-0 mt-2 z-50 bg-white rounded-2xl border-2 border-primary/30 shadow-[4px_4px_0_#202A5A] p-4 w-72 sm:w-80 animate-in fade-in zoom-in-95 duration-150">
+        <div className="absolute top-full right-0 mt-2 z-50 bg-white dark:bg-[#161D2A] rounded-2xl border-2 border-primary/30 shadow-[4px_4px_0_#202A5A] dark:shadow-[4px_4px_0_#59BBAF] dark:border-gray-700 p-3.5 sm:p-4 w-[min(320px,calc(100vw-2.5rem))] sm:w-80 animate-in fade-in zoom-in-95 duration-150">
           {/* Header Month / Year controls */}
-          <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-100">
+          <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-100 dark:border-gray-800">
             <button
               type="button"
               onClick={handlePrevMonth}
-              className="w-8 h-8 rounded-xl border border-gray-200 hover:border-primary hover:bg-ecosystem-light text-sec flex items-center justify-center transition-colors"
+              className="w-8 h-8 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-primary hover:bg-ecosystem-light dark:hover:bg-gray-800 text-sec dark:text-gray-200 flex items-center justify-center transition-colors"
               title="ماه قبل"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
 
-            <div className="flex items-center gap-2 text-sm font-black text-sec">
+            <div className="flex items-center gap-2 text-sm font-black text-sec dark:text-white">
               <span>{PERSIAN_MONTH_NAMES[viewMonth - 1]}</span>
               <span>{toPersianDigits(viewYear)}</span>
             </div>
@@ -229,7 +229,7 @@ export default function PersianDatePicker({
             <button
               type="button"
               onClick={handleNextMonth}
-              className="w-8 h-8 rounded-xl border border-gray-200 hover:border-primary hover:bg-ecosystem-light text-sec flex items-center justify-center transition-colors"
+              className="w-8 h-8 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-primary hover:bg-ecosystem-light dark:hover:bg-gray-800 text-sec dark:text-gray-200 flex items-center justify-center transition-colors"
               title="ماه بعد"
             >
               <ChevronLeft className="w-4 h-4" />

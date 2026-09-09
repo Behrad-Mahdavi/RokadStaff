@@ -12,7 +12,7 @@ export default function AdminShell({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen flex bg-[#F8F9FA] relative overflow-x-hidden">
+    <div className="min-h-screen flex bg-[#F8F9FA] dark:bg-[#0B0F17] text-ink-normal dark:text-gray-100 relative overflow-x-hidden transition-colors duration-200">
       {/* Desktop Sidebar (hidden on mobile, visible on lg+) */}
       <div className="hidden lg:block shrink-0">
         <Sidebar />
@@ -21,7 +21,7 @@ export default function AdminShell({
       {/* Mobile Drawer Backdrop */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden transition-opacity"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden transition-opacity"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}

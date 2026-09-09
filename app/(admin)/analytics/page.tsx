@@ -136,7 +136,7 @@ export default function AnalyticsPage() {
           className="rokad-btn-primary px-5 py-3.5 text-xs sm:text-sm rounded-xl flex items-center gap-2 font-bold shadow-[2.5px_2.5px_0_#1F413D] self-start md:self-auto"
         >
           <FileSpreadsheet className="w-5 h-5" />
-          <span>دانلود خروجی اکسل (Excel)</span>
+          <span>دریافت فایل اکسل</span>
         </button>
       </div>
 
@@ -324,7 +324,7 @@ export default function AnalyticsPage() {
                   <div className="text-sm font-black text-college-darker">
                     {toPersianDigits(employeeHistory.summary.streak)} روز متوالی
                   </div>
-                  <div className="text-xs text-ink-normal/60 font-medium">ثبت بدون وقفه (Streak)</div>
+                  <div className="text-xs text-ink-normal/60 font-medium">توالی ثبت بدون وقفه</div>
                 </div>
               </div>
             </div>

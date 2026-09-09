@@ -178,7 +178,7 @@ export default function EmployeesPage() {
 
   // Copy Telegram instructions to clipboard
   const handleCopyInvitation = (code: string, name: string) => {
-    const text = `سلام ${name} گرامی 🌿\nبه سامانه گزارش‌دهی رُکاد‌استاف خوش آمدید.\nلطفاً به ربات تلگرام پیام دهید و دستور زیر را ارسال کنید:\n\n/link ${code}\n\nسپس هر روز پایان ساعت کاری گزارش کار خود را با دستور /report ثبت نمایید.`;
+    const text = `سلام ${name} گرامی 🌿\nبه سامانه روتلو خوش آمدید.\nلطفاً به ربات تلگرام پیام دهید و دستور زیر را ارسال کنید:\n\n/link ${code}\n\nسپس هر روز پایان ساعت کاری گزارش کار خود را با دستور /report ثبت نمایید.`;
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
@@ -189,8 +189,8 @@ export default function EmployeesPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-sec">مدیریت کارکنان</h1>
-          <p className="text-xs text-ink-normal/60 mt-1">
+          <h1 className="text-2xl font-black text-sec dark:text-white">مدیریت کارکنان</h1>
+          <p className="text-xs text-ink-normal/60 dark:text-gray-400 mt-1">
             مشاهده، افزودن، صدور کد اتصال تلگرام و مدیریت دسترسی کارمندان
           </p>
         </div>
@@ -205,7 +205,7 @@ export default function EmployeesPage() {
       </div>
 
       {/* Filter Bar */}
-      <div className="bg-white p-4 rounded-2xl border border-[#EAEAEA] shadow-sm flex flex-col md:flex-row items-center gap-3">
+      <div className="bg-white dark:bg-[#151C28] p-4 rounded-2xl border border-[#EAEAEA] dark:border-gray-800 shadow-sm flex flex-col md:flex-row items-center gap-3">
         {/* Search */}
         <div className="relative flex-1 w-full">
           <input
@@ -213,7 +213,7 @@ export default function EmployeesPage() {
             placeholder="جستجوی نام کارمند..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-3 pr-10 py-2 rounded-xl border border-gray-200 text-xs focus:border-primary focus:outline-none bg-[#FAFAFA] focus:bg-white"
+            className="w-full pl-3 pr-10 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-xs focus:border-primary focus:outline-none bg-[#FAFAFA] dark:bg-[#1C2536] dark:text-white focus:bg-white dark:focus:bg-[#1C2536]"
           />
           <Search className="w-4 h-4 text-gray-400 absolute right-3.5 top-2.5" />
         </div>
@@ -223,7 +223,7 @@ export default function EmployeesPage() {
           <select
             value={selectedDept}
             onChange={(e) => setSelectedDept(e.target.value)}
-            className="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs bg-[#FAFAFA] focus:border-primary focus:outline-none font-bold text-sec"
+            className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-xs bg-[#FAFAFA] dark:bg-[#1C2536] dark:text-white focus:border-primary focus:outline-none font-bold text-sec"
           >
             <option value="all">همه دپارتمان‌ها</option>
             {DEPARTMENTS.map((d) => (
@@ -237,7 +237,7 @@ export default function EmployeesPage() {
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
-            className="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs bg-[#FAFAFA] focus:border-primary focus:outline-none font-bold text-sec"
+            className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-xs bg-[#FAFAFA] dark:bg-[#1C2536] dark:text-white focus:border-primary focus:outline-none font-bold text-sec"
           >
             <option value="all">همه وضعیت‌ها</option>
             <option value="true">فعال</option>
@@ -247,10 +247,10 @@ export default function EmployeesPage() {
       </div>
 
       {/* Employees Table */}
-      <div className="bg-white rounded-2xl border border-[#EAEAEA] shadow-[3px_3px_0_#202A5A] overflow-hidden">
+      <div className="bg-white dark:bg-[#151C28] rounded-2xl border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-right text-xs">
-            <thead className="bg-[#F8F9FA] border-b border-gray-200 text-ink-normal/70 font-bold">
+          <table className="w-full text-right text-xs min-w-[650px]">
+            <thead className="bg-[#F8F9FA] dark:bg-[#1C2536] border-b border-gray-200 dark:border-gray-800 text-ink-normal/70 dark:text-gray-300 font-bold">
               <tr>
                 <th className="py-3.5 px-4">نام و نام خانوادگی</th>
                 <th className="py-3.5 px-4">دپارتمان / سمت</th>
@@ -260,7 +260,7 @@ export default function EmployeesPage() {
                 <th className="py-3.5 px-4 text-center">عملیات</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
               {loading ? (
                 <tr>
                   <td colSpan={6} className="text-center py-10 text-gray-400">
@@ -275,22 +275,22 @@ export default function EmployeesPage() {
                 </tr>
               ) : (
                 employees.map((emp) => (
-                  <tr key={emp.id} className="hover:bg-gray-50/70 transition-colors">
-                    <td className="py-3.5 px-4 font-bold text-sec">
+                  <tr key={emp.id} className="hover:bg-gray-50/70 dark:hover:bg-[#1C2536]/50 transition-colors">
+                    <td className="py-3.5 px-4 font-bold text-sec dark:text-white">
                       {emp.fullName}
                     </td>
-                    <td className="py-3.5 px-4 text-ink-normal/70">
-                      <div className="font-bold text-sec">{emp.department || "پسرانه"}</div>
-                      <div className="text-[11px] text-ink-normal/50">{emp.position || "همکار"}</div>
+                    <td className="py-3.5 px-4 text-ink-normal/70 dark:text-gray-300">
+                      <div className="font-bold text-sec dark:text-white">{emp.department || "پسرانه"}</div>
+                      <div className="text-[11px] text-ink-normal/50 dark:text-gray-400">{emp.position || "همکار"}</div>
                     </td>
                     <td className="py-3.5 px-4">
                       {emp.isLinked ? (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-ecosystem-light text-ecosystem-darker border border-primary/30 font-bold text-[11px]">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-ecosystem-light dark:bg-ecosystem-darker/40 text-ecosystem-darker dark:text-ecosystem-light border border-primary/30 font-bold text-[11px]">
                           <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
                           متصل شد
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-college-light text-college-darker border border-college-normal/30 font-bold text-[11px]">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-college-light dark:bg-college-darker/40 text-college-darker dark:text-college-light border border-college-normal/30 font-bold text-[11px]">
                           <AlertCircle className="w-3.5 h-3.5 text-college-normal" />
                           در انتظار اتصال
                         </span>
@@ -300,14 +300,14 @@ export default function EmployeesPage() {
                       {emp.isLinked ? (
                         <span className="text-gray-400 text-[11px]">-</span>
                       ) : emp.linkCode ? (
-                        <div className="flex items-center gap-1.5 font-bold text-sec">
-                          <span className="bg-gray-100 px-2 py-0.5 rounded border border-gray-300">
+                        <div className="flex items-center gap-1.5 font-bold text-sec dark:text-white">
+                          <span className="bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded border border-gray-300 dark:border-gray-700">
                             {emp.linkCode}
                           </span>
                           <button
                             onClick={() => handleCopyInvitation(emp.linkCode, emp.fullName)}
                             title="کپی متن دعوت"
-                            className="p-1 hover:bg-gray-200 rounded text-gray-600"
+                            className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-gray-600 dark:text-gray-300"
                           >
                             <Copy className="w-3.5 h-3.5" />
                           </button>
@@ -332,7 +332,7 @@ export default function EmployeesPage() {
                         <Link
                           href={`/reports/employee/${emp.id}`}
                           title="مشاهده کارنامه جامع عملکرد"
-                          className="p-1.5 text-gray-500 hover:text-primary hover:bg-ecosystem-light rounded-lg transition-colors"
+                          className="p-1.5 text-gray-500 hover:text-primary hover:bg-ecosystem-light dark:hover:bg-ecosystem-darker/50 rounded-lg transition-colors"
                         >
                           <FileText className="w-4 h-4" />
                         </Link>
@@ -340,7 +340,7 @@ export default function EmployeesPage() {
                           <button
                             onClick={() => handleUnlink(emp)}
                             title="قطع اتصال تلگرام"
-                            className="p-1.5 text-gray-500 hover:text-female-normal hover:bg-female-light rounded-lg transition-colors"
+                            className="p-1.5 text-gray-500 hover:text-female-normal hover:bg-female-light dark:hover:bg-female-darker/50 rounded-lg transition-colors"
                           >
                             <Unlink className="w-4 h-4" />
                           </button>
@@ -348,7 +348,7 @@ export default function EmployeesPage() {
                           <button
                             onClick={() => handleRegenerateCode(emp)}
                             title="صدور مجدد کد ۶ رقمی"
-                            className="p-1.5 text-gray-500 hover:text-primary hover:bg-ecosystem-light rounded-lg transition-colors"
+                            className="p-1.5 text-gray-500 hover:text-primary hover:bg-ecosystem-light dark:hover:bg-ecosystem-darker/50 rounded-lg transition-colors"
                           >
                             <RefreshCw className="w-4 h-4" />
                           </button>
@@ -359,7 +359,7 @@ export default function EmployeesPage() {
                             setIsEditModalOpen(true);
                           }}
                           title="ویرایش مشخصات"
-                          className="p-1.5 text-gray-500 hover:text-sec hover:bg-gray-100 rounded-lg transition-colors"
+                          className="p-1.5 text-gray-500 hover:text-sec dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
                         >
                           <Edit2 className="w-4 h-4" />
                         </button>
@@ -381,23 +381,23 @@ export default function EmployeesPage() {
       >
         <form onSubmit={handleAddEmployee} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold text-sec mb-1">نام و نام خانوادگی *</label>
+            <label className="block text-xs font-bold text-sec dark:text-gray-200 mb-1">نام و نام خانوادگی *</label>
             <input
               type="text"
               required
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               placeholder="مثال: علی رضایی"
-              className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs focus:border-primary focus:outline-none"
+              className="w-full px-3 py-2 rounded-xl border border-gray-300 dark:border-gray-700 text-xs focus:border-primary focus:outline-none dark:bg-[#1C2536] dark:text-white"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-sec mb-1">دپارتمان *</label>
+            <label className="block text-xs font-bold text-sec dark:text-gray-200 mb-1">دپارتمان *</label>
             <select
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
-              className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs focus:border-primary focus:outline-none font-bold text-sec bg-white"
+              className="w-full px-3 py-2 rounded-xl border border-gray-300 dark:border-gray-700 text-xs focus:border-primary focus:outline-none font-bold text-sec dark:text-white bg-white dark:bg-[#1C2536]"
             >
               {DEPARTMENTS.map((d) => (
                 <option key={d} value={d}>{d}</option>
@@ -406,21 +406,21 @@ export default function EmployeesPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-sec mb-1">سمت شغلی</label>
+            <label className="block text-xs font-bold text-sec dark:text-gray-200 mb-1">سمت شغلی</label>
             <input
               type="text"
               value={position}
               onChange={(e) => setPosition(e.target.value)}
               placeholder="مثال: معاون، دبیر، مربی"
-              className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs focus:border-primary focus:outline-none"
+              className="w-full px-3 py-2 rounded-xl border border-gray-300 dark:border-gray-700 text-xs focus:border-primary focus:outline-none dark:bg-[#1C2536] dark:text-white"
             />
           </div>
 
-          <div className="pt-3 border-t border-gray-100 flex items-center justify-end gap-2">
+          <div className="pt-3 border-t border-gray-100 dark:border-gray-800 flex items-center justify-end gap-2">
             <button
               type="button"
               onClick={() => setIsAddModalOpen(false)}
-              className="px-4 py-2 rounded-xl border border-gray-200 text-xs font-bold hover:bg-gray-50"
+              className="px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-xs font-bold hover:bg-gray-50 dark:hover:bg-[#1C2536] dark:text-gray-300"
             >
               انصراف
             </button>
@@ -444,22 +444,22 @@ export default function EmployeesPage() {
         {selectedEmployee && (
           <form onSubmit={handleEditEmployee} className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-sec mb-1">نام و نام خانوادگی</label>
+              <label className="block text-xs font-bold text-sec dark:text-gray-200 mb-1">نام و نام خانوادگی</label>
               <input
                 type="text"
                 required
                 value={selectedEmployee.fullName}
                 onChange={(e) => setSelectedEmployee({ ...selectedEmployee, fullName: e.target.value })}
-                className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs focus:border-primary focus:outline-none"
+                className="w-full px-3 py-2 rounded-xl border border-gray-300 dark:border-gray-700 text-xs focus:border-primary focus:outline-none dark:bg-[#1C2536] dark:text-white"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-sec mb-1">دپارتمان</label>
+              <label className="block text-xs font-bold text-sec dark:text-gray-200 mb-1">دپارتمان</label>
               <select
                 value={selectedEmployee.department || "پسرانه"}
                 onChange={(e) => setSelectedEmployee({ ...selectedEmployee, department: e.target.value })}
-                className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs focus:border-primary focus:outline-none font-bold text-sec bg-white"
+                className="w-full px-3 py-2 rounded-xl border border-gray-300 dark:border-gray-700 text-xs focus:border-primary focus:outline-none font-bold text-sec dark:text-white bg-white dark:bg-[#1C2536]"
               >
                 {DEPARTMENTS.map((d) => (
                   <option key={d} value={d}>{d}</option>
@@ -468,12 +468,12 @@ export default function EmployeesPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-sec mb-1">سمت شغلی</label>
+              <label className="block text-xs font-bold text-sec dark:text-gray-200 mb-1">سمت شغلی</label>
               <input
                 type="text"
                 value={selectedEmployee.position || ""}
                 onChange={(e) => setSelectedEmployee({ ...selectedEmployee, position: e.target.value })}
-                className="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs focus:border-primary focus:outline-none"
+                className="w-full px-3 py-2 rounded-xl border border-gray-300 dark:border-gray-700 text-xs focus:border-primary focus:outline-none dark:bg-[#1C2536] dark:text-white"
               />
             </div>
 
@@ -485,16 +485,16 @@ export default function EmployeesPage() {
                 onChange={(e) => setSelectedEmployee({ ...selectedEmployee, isActive: e.target.checked })}
                 className="w-4 h-4 text-primary rounded"
               />
-              <label htmlFor="isActiveCheck" className="text-xs font-bold text-sec cursor-pointer">
+              <label htmlFor="isActiveCheck" className="text-xs font-bold text-sec dark:text-gray-200 cursor-pointer">
                 حساب کاربری فعال است
               </label>
             </div>
 
-            <div className="pt-3 border-t border-gray-100 flex items-center justify-end gap-2">
+            <div className="pt-3 border-t border-gray-100 dark:border-gray-800 flex items-center justify-end gap-2">
               <button
                 type="button"
                 onClick={() => setIsEditModalOpen(false)}
-                className="px-4 py-2 rounded-xl border border-gray-200 text-xs font-bold hover:bg-gray-50"
+                className="px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-xs font-bold hover:bg-gray-50 dark:hover:bg-[#1C2536] dark:text-gray-300"
               >
                 انصراف
               </button>
@@ -518,22 +518,22 @@ export default function EmployeesPage() {
       >
         {createdCodeInfo && (
           <div className="space-y-4 text-center">
-            <div className="p-4 rounded-2xl bg-ecosystem-light border border-primary/30">
-              <div className="text-xs text-ink-normal/70 mb-1">
+            <div className="p-4 rounded-2xl bg-ecosystem-light dark:bg-ecosystem-darker/40 border border-primary/30">
+              <div className="text-xs text-ink-normal/70 dark:text-gray-300 mb-1">
                 کد یکبارمصرف ۶ رقمی برای {createdCodeInfo.name}:
               </div>
-              <div className="text-3xl font-black font-mono tracking-widest text-sec my-2">
+              <div className="text-3xl font-black font-mono tracking-widest text-sec dark:text-white my-2">
                 {createdCodeInfo.code}
               </div>
-              <div className="text-[11px] text-ink-normal/50">
+              <div className="text-[11px] text-ink-normal/50 dark:text-gray-400">
                 این کد تا ۲۴ ساعت آینده معتبر است.
               </div>
             </div>
 
-            <div className="text-right bg-gray-50 p-3 rounded-xl border border-gray-200 text-xs text-ink-normal/80 space-y-1">
-              <div className="font-bold text-sec">راهنمای کارمند:</div>
-              <div>۱. ورود به ربات تلگرام رُکاد‌استاف</div>
-              <div>۲. ارسال دستور: <code className="font-mono bg-white px-1 py-0.5 border rounded">/link {createdCodeInfo.code}</code></div>
+            <div className="text-right bg-gray-50 dark:bg-[#1C2536] p-3 rounded-xl border border-gray-200 dark:border-gray-800 text-xs text-ink-normal/80 dark:text-gray-300 space-y-1">
+              <div className="font-bold text-sec dark:text-white">راهنمای کارمند:</div>
+              <div>۱. ورود به ربات تلگرام روتلو</div>
+              <div>۲. ارسال دستور: <code className="font-mono bg-white dark:bg-[#151C28] dark:text-gray-200 px-1 py-0.5 border dark:border-gray-700 rounded">/link {createdCodeInfo.code}</code></div>
             </div>
 
             <div className="pt-2">

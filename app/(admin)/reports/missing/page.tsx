@@ -85,14 +85,14 @@ export default function MissingReportsPage() {
   return (
     <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-300">
       {/* Page Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 bg-gradient-to-r from-college-light via-white to-female-light/30 p-6 sm:p-7 rounded-3xl border-2 border-college-normal/30 shadow-[3px_3px_0_#F8A41D]">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 bg-gradient-to-r from-college-light via-white to-female-light/30 dark:from-[#2a2115] dark:via-[#151C28] dark:to-[#28151b] p-6 sm:p-7 rounded-3xl border-2 border-college-normal/30 shadow-[3px_3px_0_#F8A41D]">
         <div>
-          <div className="flex items-center gap-2 text-sm font-black text-college-darker mb-1.5">
+          <div className="flex items-center gap-2 text-sm font-black text-college-darker dark:text-college-light mb-1.5">
             <AlertTriangle className="w-4 h-4 text-college-normal" />
             <span>پایش عدم ثبت گزارش کار</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-sec tracking-tight">لیست غایبان در ثبت گزارش</h1>
-          <p className="text-xs sm:text-sm text-ink-normal/70 mt-1 font-medium">
+          <h1 className="text-2xl sm:text-3xl font-black text-sec dark:text-white tracking-tight">لیست غایبان در ثبت گزارش</h1>
+          <p className="text-xs sm:text-sm text-ink-normal/70 dark:text-gray-300 mt-1 font-medium">
             کارمندان فعالی که در تاریخ {formatToJalali(selectedDate)} چک‌لیست روزانه ثبت نکرده‌اند
           </p>
         </div>
@@ -100,7 +100,7 @@ export default function MissingReportsPage() {
         <button
           onClick={handleSendReminderAll}
           disabled={sendingReminder || missingList.length === 0}
-          className="rokad-btn-sec px-5 py-3 text-xs sm:text-sm rounded-xl font-bold self-start md:self-auto"
+          className="rokad-btn-sec px-5 py-3 text-xs sm:text-sm rounded-xl font-bold self-start md:self-auto dark:bg-college-dark dark:border-college-normal"
         >
           <Bell className="w-4 h-4 text-primary" />
           <span>{sendingReminder ? "در حال ارسال..." : "ارسال یادآوری به همه غایبان"}</span>
@@ -108,14 +108,14 @@ export default function MissingReportsPage() {
       </div>
 
       {notificationMsg && (
-        <div className="p-4 sm:p-5 rounded-2xl bg-ecosystem-light border border-primary/40 text-xs sm:text-sm font-bold text-ecosystem-darker flex items-center justify-between shadow-sm">
+        <div className="p-4 sm:p-5 rounded-2xl bg-ecosystem-light dark:bg-ecosystem-darker/40 border border-primary/40 text-xs sm:text-sm font-bold text-ecosystem-darker dark:text-ecosystem-light flex items-center justify-between shadow-sm">
           <span>🌿 {notificationMsg}</span>
           <button onClick={() => setNotificationMsg(null)} className="text-xs font-black underline">بستن</button>
         </div>
       )}
 
       {/* Filter Bar */}
-      <div className="bg-white p-4 sm:p-5 rounded-3xl border border-[#EAEAEA] shadow-sm flex flex-col md:flex-row items-center gap-3">
+      <div className="bg-white dark:bg-[#151C28] p-4 sm:p-5 rounded-3xl border border-[#EAEAEA] dark:border-gray-800 shadow-sm flex flex-col md:flex-row items-center gap-3">
         {/* Search */}
         <div className="relative flex-1 w-full">
           <input
@@ -123,7 +123,7 @@ export default function MissingReportsPage() {
             placeholder="جستجوی نام کارمند..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-3 pr-11 py-2.5 rounded-xl border border-gray-200 text-xs sm:text-sm focus:border-primary focus:outline-none bg-[#FAFAFA] focus:bg-white font-medium"
+            className="w-full pl-3 pr-11 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-xs sm:text-sm focus:border-primary focus:outline-none bg-[#FAFAFA] dark:bg-[#1C2536] dark:text-white focus:bg-white dark:focus:bg-[#1C2536] font-medium"
           />
           <Search className="w-4 h-4 text-gray-400 absolute right-4 top-3.5" />
         </div>
@@ -142,7 +142,7 @@ export default function MissingReportsPage() {
           <select
             value={selectedDept}
             onChange={(e) => setSelectedDept(e.target.value)}
-            className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-xs sm:text-sm bg-[#FAFAFA] focus:border-primary focus:outline-none font-bold text-sec"
+            className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-xs sm:text-sm bg-[#FAFAFA] dark:bg-[#1C2536] dark:text-white focus:border-primary focus:outline-none font-bold text-sec"
           >
             <option value="all">همه دپارتمان‌ها</option>
             <option value="پسرانه">پسرانه</option>
@@ -152,10 +152,10 @@ export default function MissingReportsPage() {
       </div>
 
       {/* Missing Table */}
-      <div className="bg-white rounded-3xl border border-[#EAEAEA] shadow-[3px_3px_0_#202A5A] overflow-hidden">
+      <div className="bg-white dark:bg-[#151C28] rounded-3xl border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-right text-xs sm:text-sm">
-            <thead className="bg-[#F8F9FA] border-b border-gray-200 text-ink-normal/70 font-bold">
+            <thead className="bg-[#F8F9FA] dark:bg-[#1C2536] border-b border-gray-200 dark:border-gray-800 text-ink-normal/70 dark:text-gray-300 font-bold">
               <tr>
                 <th className="py-4 px-4 sm:px-6">نام کارمند</th>
                 <th className="py-4 px-4">دپارتمان</th>
@@ -164,7 +164,7 @@ export default function MissingReportsPage() {
                 <th className="py-4 px-4 sm:px-6 text-center">امکان ارسال پیام</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
               {loading ? (
                 <tr>
                   <td colSpan={5} className="text-center py-12 text-sm text-gray-400">
@@ -179,24 +179,24 @@ export default function MissingReportsPage() {
                 </tr>
               ) : (
                 filteredList.map((emp) => (
-                  <tr key={emp.id} className="hover:bg-gray-50/70 transition-colors">
-                    <td className="py-4 px-4 sm:px-6 font-black text-sm sm:text-base text-sec">
+                  <tr key={emp.id} className="hover:bg-gray-50/70 dark:hover:bg-[#1C2536]/50 transition-colors">
+                    <td className="py-4 px-4 sm:px-6 font-black text-sm sm:text-base text-sec dark:text-white">
                       {emp.fullName}
                     </td>
-                    <td className="py-4 px-4 font-bold text-ink-normal/80">
+                    <td className="py-4 px-4 font-bold text-ink-normal/80 dark:text-gray-300">
                       {emp.department || "پسرانه"}
                     </td>
-                    <td className="py-4 px-4 text-ink-normal/60 font-medium">
+                    <td className="py-4 px-4 text-ink-normal/60 dark:text-gray-400 font-medium">
                       {emp.position || "همکار"}
                     </td>
                     <td className="py-4 px-4">
                       {emp.isLinked ? (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-ecosystem-light text-ecosystem-darker border border-primary/30 font-bold text-xs">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-ecosystem-light dark:bg-ecosystem-darker/40 text-ecosystem-darker dark:text-ecosystem-light border border-primary/30 font-bold text-xs">
                           <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
                           متصل به ربات
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-female-light text-female-darker border border-female-normal/30 font-bold text-xs">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-female-light dark:bg-female-darker/40 text-female-darker dark:text-female-light border border-female-normal/30 font-bold text-xs">
                           <AlertTriangle className="w-3.5 h-3.5 text-female-normal" />
                           عدم اتصال تلگرام
                         </span>

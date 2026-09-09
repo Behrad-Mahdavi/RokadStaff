@@ -51,15 +51,15 @@ export default function RotelloAnalyticsPage() {
   return (
     <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-300">
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 bg-gradient-to-r from-ecosystem-light via-white to-club-light/40 p-6 sm:p-7 rounded-3xl border-2 border-primary/20 shadow-[3px_3px_0_#59BBAF]">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 bg-gradient-to-r from-ecosystem-light via-white to-club-light/40 dark:from-[#151C28] dark:via-[#161E2C] dark:to-[#151C28] p-6 sm:p-7 rounded-3xl border-2 border-primary/20 dark:border-gray-800 shadow-[3px_3px_0_#59BBAF]">
         <div>
           <div className="flex items-center gap-2 text-sm font-black text-primary mb-1.5">
             <Layers className="w-4 h-4" />
             <span>داشبورد نظارتی و شاخص‌های سلامت پروژه‌ها</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-sec tracking-tight">آنالیتیکس پروژه‌های Rotello</h1>
-          <p className="text-xs sm:text-sm text-ink-normal/70 mt-1 font-medium">
-            پایش بار کاری تیم، تسک‌های در گردش و سرعت تکمیل پروژه‌ها
+          <h1 className="text-2xl sm:text-3xl font-black text-sec dark:text-white tracking-tight">آمار و پیشرفت پروژه‌ها</h1>
+          <p className="text-xs sm:text-sm text-ink-normal/70 dark:text-gray-400 mt-1 font-medium">
+            پایش بار کاری تیم، وظایف در گردش و سرعت تکمیل پروژه‌ها
           </p>
         </div>
       </div>
@@ -67,33 +67,33 @@ export default function RotelloAnalyticsPage() {
       {/* KPI Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <StatCard
-          title="تسک‌های باز در دست اقدام"
-          value={`${toPersianDigits(summary.totalOpen)} تسک`}
+          title="وظایف باز در دست اقدام"
+          value={`${toPersianDigits(summary.totalOpen)} وظیفه`}
           subtitle="در تمام پروژه‌های فعال سازمان"
           icon={Kanban}
           theme="ecosystem"
         />
 
         <StatCard
-          title="تسک‌های عقب‌افتاده (Overdue)"
-          value={`${toPersianDigits(summary.overdueCount)} تسک`}
+          title="وظایف عقب‌افتاده"
+          value={`${toPersianDigits(summary.overdueCount)} وظیفه`}
           subtitle="نیازمند پیگیری و اقدام فوری"
           icon={AlertCircle}
           theme="college"
         />
 
         <StatCard
-          title="کل تسک‌های تکمیل‌شده"
-          value={`${toPersianDigits(summary.totalCompleted)} تسک`}
-          subtitle="تکمیل موفقیت‌آمیز در ستون Done"
+          title="کل وظایف تکمیل‌شده"
+          value={`${toPersianDigits(summary.totalCompleted)} وظیفه`}
+          subtitle="تکمیل موفقیت‌آمیز در ستون نهایی"
           icon={CheckCircle2}
           theme="club"
         />
 
         <StatCard
-          title="میانگین زمان تکمیل (Cycle Time)"
+          title="میانگین چرخه تکمیل کارها"
           value={`${toPersianDigits(summary.avgCycleDays)} روز`}
-          subtitle="از زمان ایجاد تا رسیدن به Done"
+          subtitle="از زمان ایجاد تا رسیدن به مرحله تکمیل"
           icon={Clock}
           theme="male"
         />
@@ -102,27 +102,27 @@ export default function RotelloAnalyticsPage() {
       {/* Two Columns Grid: Priority Breakdown & Team Workload */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Priority Breakdown Card */}
-        <div className="bg-white rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] shadow-[3px_3px_0_#202A5A] space-y-5">
+        <div className="bg-white dark:bg-[#151C28] rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] space-y-5">
           <div>
-            <h2 className="text-lg font-black text-sec">توزیع تسک‌های باز بر اساس اولویت</h2>
-            <p className="text-xs sm:text-sm text-ink-normal/60 mt-0.5 font-medium">
+            <h2 className="text-lg font-black text-sec dark:text-white">توزیع وظایف باز بر اساس اولویت</h2>
+            <p className="text-xs sm:text-sm text-ink-normal/60 dark:text-gray-400 mt-0.5 font-medium">
               تفکیک وظایف فعال بر اساس درجه حساسیت
             </p>
           </div>
 
           <div className="space-y-4">
             {/* Urgent */}
-            <div className="p-4 bg-female-light/40 rounded-2xl border border-female-normal/20 space-y-2">
+            <div className="p-4 bg-female-light/40 dark:bg-female-darker/30 rounded-2xl border border-female-normal/20 dark:border-female-normal/30 space-y-2">
               <div className="flex items-center justify-between text-xs sm:text-sm font-black">
-                <span className="text-female-darker flex items-center gap-1.5">
+                <span className="text-female-darker dark:text-female-light flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-female-normal" />
-                  <span>فوری (Urgent)</span>
+                  <span>فوری</span>
                 </span>
-                <span className="text-female-darker">
-                  {toPersianDigits(openByPriority.urgent)} تسک
+                <span className="text-female-darker dark:text-female-light">
+                  {toPersianDigits(openByPriority.urgent)} وظیفه
                 </span>
               </div>
-              <div className="w-full h-2.5 bg-female-light rounded-full overflow-hidden">
+              <div className="w-full h-2.5 bg-female-light dark:bg-female-darker/50 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-female-normal rounded-full"
                   style={{
@@ -133,17 +133,17 @@ export default function RotelloAnalyticsPage() {
             </div>
 
             {/* Important */}
-            <div className="p-4 bg-college-light/40 rounded-2xl border border-college-normal/20 space-y-2">
+            <div className="p-4 bg-college-light/40 dark:bg-college-darker/30 rounded-2xl border border-college-normal/20 dark:border-college-normal/30 space-y-2">
               <div className="flex items-center justify-between text-xs sm:text-sm font-black">
-                <span className="text-college-darker flex items-center gap-1.5">
+                <span className="text-college-darker dark:text-college-light flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-college-normal" />
-                  <span>مهم (Important)</span>
+                  <span>مهم</span>
                 </span>
-                <span className="text-college-darker">
-                  {toPersianDigits(openByPriority.important)} تسک
+                <span className="text-college-darker dark:text-college-light">
+                  {toPersianDigits(openByPriority.important)} وظیفه
                 </span>
               </div>
-              <div className="w-full h-2.5 bg-college-light rounded-full overflow-hidden">
+              <div className="w-full h-2.5 bg-college-light dark:bg-college-darker/50 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-college-normal rounded-full"
                   style={{
@@ -154,15 +154,15 @@ export default function RotelloAnalyticsPage() {
             </div>
 
             {/* Normal */}
-            <div className="p-4 bg-gray-50 rounded-2xl border border-gray-200 space-y-2">
+            <div className="p-4 bg-gray-50 dark:bg-gray-800/60 rounded-2xl border border-gray-200 dark:border-gray-700 space-y-2">
               <div className="flex items-center justify-between text-xs sm:text-sm font-black">
-                <span className="text-ink-normal/70 flex items-center gap-1.5">
+                <span className="text-ink-normal/70 dark:text-gray-300 flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-gray-400" />
-                  <span>عادی (Normal)</span>
+                  <span>عادی</span>
                 </span>
-                <span className="text-sec">{toPersianDigits(openByPriority.normal)} تسک</span>
+                <span className="text-sec dark:text-white">{toPersianDigits(openByPriority.normal)} وظیفه</span>
               </div>
-              <div className="w-full h-2.5 bg-gray-200 rounded-full overflow-hidden">
+              <div className="w-full h-2.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-primary rounded-full"
                   style={{
@@ -175,18 +175,18 @@ export default function RotelloAnalyticsPage() {
         </div>
 
         {/* Team Workload Distribution Card */}
-        <div className="bg-white rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] shadow-[3px_3px_0_#202A5A] space-y-5">
+        <div className="bg-white dark:bg-[#151C28] rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] space-y-5">
           <div>
-            <h2 className="text-lg font-black text-sec">توزیع بار کاری تیم (Workload)</h2>
-            <p className="text-xs sm:text-sm text-ink-normal/60 mt-0.5 font-medium">
-              تعداد تسک‌های باز واگذارشده به هر همکار
+            <h2 className="text-lg font-black text-sec dark:text-white">توزیع بار کاری همکاران</h2>
+            <p className="text-xs sm:text-sm text-ink-normal/60 dark:text-gray-400 mt-0.5 font-medium">
+              تعداد وظایف باز واگذارشده به هر همکار
             </p>
           </div>
 
           <div className="space-y-3 max-h-72 overflow-y-auto pr-1">
             {workload.length === 0 ? (
               <div className="text-center py-10 text-xs sm:text-sm text-gray-400">
-                هیچ تسک واگذارشده‌ای یافت نشد.
+                هیچ وظیفه واگذارشده‌ای یافت نشد.
               </div>
             ) : (
               workload.map((staff: any) => {
@@ -195,17 +195,17 @@ export default function RotelloAnalyticsPage() {
                 return (
                   <div
                     key={staff.employeeId}
-                    className="p-3.5 bg-gray-50 rounded-2xl border border-gray-200 space-y-2"
+                    className="p-3.5 bg-gray-50 dark:bg-gray-800/60 rounded-2xl border border-gray-200 dark:border-gray-700 space-y-2"
                   >
                     <div className="flex items-center justify-between text-xs sm:text-sm font-black">
-                      <span className="text-sec">
+                      <span className="text-sec dark:text-white">
                         {staff.fullName} ({staff.department})
                       </span>
                       <span className="text-primary">
-                        {toPersianDigits(staff.count)} تسک باز (٪{toPersianDigits(percent)})
+                        {toPersianDigits(staff.count)} وظیفه باز (٪{toPersianDigits(percent)})
                       </span>
                     </div>
-                    <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                       <div
                         className="h-full bg-primary rounded-full"
                         style={{ width: `${percent}%` }}

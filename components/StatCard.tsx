@@ -58,20 +58,20 @@ export default function StatCard({
   return (
     <div
       className={cn(
-        "bg-white rounded-2xl p-5 sm:p-6 border transition-all duration-200 hover:-translate-y-1",
+        "bg-white dark:bg-[#151C28] rounded-2xl p-5 sm:p-6 border dark:border-gray-800 transition-all duration-200 hover:-translate-y-1",
         themeStyles.border,
         themeStyles.shadow
       )}
     >
       <div className="flex items-center justify-between gap-2">
-        <span className="text-sm font-bold text-ink-normal/70 leading-snug">{title}</span>
+        <span className="text-sm font-bold text-ink-normal/70 dark:text-gray-400 leading-snug">{title}</span>
         <div className={cn("w-11 h-11 rounded-2xl flex items-center justify-center shrink-0", themeStyles.iconBg)}>
           <Icon className="w-5 h-5" />
         </div>
       </div>
 
       <div className="mt-4 flex items-baseline justify-between gap-2 flex-wrap">
-        <div className="text-2xl sm:text-3xl font-black text-ink-darker tracking-tight">{value}</div>
+        <div className="text-2xl sm:text-3xl font-black text-ink-darker dark:text-white tracking-tight">{value}</div>
         {trend && (
           <span
             className={cn(
@@ -86,7 +86,7 @@ export default function StatCard({
         )}
       </div>
 
-      {subtitle && <div className="text-xs sm:text-sm text-ink-normal/60 mt-2 font-medium leading-relaxed">{subtitle}</div>}
+      {subtitle && <div className="text-xs sm:text-sm text-ink-normal/60 dark:text-gray-400 mt-2 font-medium leading-relaxed">{subtitle}</div>}
     </div>
   );
 }

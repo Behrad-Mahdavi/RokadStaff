@@ -230,36 +230,36 @@ export default function QuickTaskModal({
         ) : (
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Task Type Switcher */}
-            <div className="flex items-center p-1.5 bg-gray-100/80 rounded-2xl border border-gray-200">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center p-1.5 bg-gray-100/80 dark:bg-gray-800/80 rounded-2xl border border-gray-200 dark:border-gray-700 gap-1.5 sm:gap-0">
               <button
                 type="button"
                 onClick={() => setTaskType("project")}
-                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-black transition-all ${
+                className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-black transition-all ${
                   taskType === "project"
-                    ? "bg-white text-primary shadow-sm border border-gray-200/80"
-                    : "text-ink-normal/60 hover:text-sec"
+                    ? "bg-white dark:bg-[#151C28] text-primary shadow-sm border border-gray-200/80 dark:border-gray-700"
+                    : "text-ink-normal/60 dark:text-gray-400 hover:text-sec dark:hover:text-white"
                 }`}
               >
-                <FolderKanban className="w-4 h-4" />
-                <span>تسک پروژه‌ای (روی بورد کانبان)</span>
+                <FolderKanban className="w-4 h-4 shrink-0" />
+                <span>وظیفه پروژه‌ای (روی بورد پروژه)</span>
               </button>
               <button
                 type="button"
                 onClick={() => setTaskType("individual")}
-                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-black transition-all ${
+                className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-black transition-all ${
                   taskType === "individual"
-                    ? "bg-white text-primary shadow-sm border border-gray-200/80"
-                    : "text-ink-normal/60 hover:text-sec"
+                    ? "bg-white dark:bg-[#151C28] text-primary shadow-sm border border-gray-200/80 dark:border-gray-700"
+                    : "text-ink-normal/60 dark:text-gray-400 hover:text-sec dark:hover:text-white"
                 }`}
               >
-                <User className="w-4 h-4" />
-                <span>تسک فردی (واگذاری مستقیم به همکار)</span>
+                <User className="w-4 h-4 shrink-0" />
+                <span>وظیفه فردی (واگذاری مستقیم به همکار)</span>
               </button>
             </div>
 
             {/* Error Message */}
             {errorMessage && (
-              <div className="flex items-center gap-2 p-3.5 rounded-2xl bg-college-light border border-college-normal/30 text-college-darker text-xs font-bold">
+              <div className="flex items-center gap-2 p-3.5 rounded-2xl bg-college-light dark:bg-college-darker/60 border border-college-normal/30 text-college-darker dark:text-college-light text-xs font-bold">
                 <AlertCircle className="w-4 h-4 shrink-0" />
                 <span>{errorMessage}</span>
               </div>
@@ -268,23 +268,23 @@ export default function QuickTaskModal({
             {/* Project Selector (If Project Task) */}
             {taskType === "project" && (
               <div>
-                <label className="block text-xs font-bold text-ink-normal/70 mb-1.5 flex items-center gap-1.5">
+                <label className="block text-xs font-bold text-ink-normal/70 dark:text-gray-300 mb-1.5 flex items-center gap-1.5">
                   <FolderKanban className="w-3.5 h-3.5 text-primary" />
                   <span>انتخاب پروژه مقصد:</span>
                   <span className="text-college-normal">*</span>
                 </label>
                 {projects.length === 0 ? (
-                  <div className="p-3 bg-gray-50 rounded-xl border border-gray-200 text-xs text-gray-400">
+                  <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 text-xs text-gray-400">
                     هیچ پروژه فعالی یافت نشد. ابتدا یک پروژه ایجاد کنید.
                   </div>
                 ) : (
                   <select
                     value={selectedProjectId}
                     onChange={(e) => setSelectedProjectId(e.target.value)}
-                    className="w-full text-xs font-bold p-3 rounded-xl border border-gray-200 bg-white focus:border-primary focus:outline-none text-sec"
+                    className="w-full text-xs font-bold p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#161D2A] focus:border-primary focus:outline-none text-sec dark:text-white"
                   >
                     {projects.map((p) => (
-                      <option key={p.id} value={p.id}>
+                      <option key={p.id} value={p.id} className="dark:bg-[#161D2A]">
                         {p.name}
                       </option>
                     ))}
@@ -295,72 +295,72 @@ export default function QuickTaskModal({
 
             {/* Task Title */}
             <div>
-              <label className="block text-xs font-bold text-ink-normal/70 mb-1.5">
-                عنوان تسک: <span className="text-college-normal">*</span>
+              <label className="block text-xs font-bold text-ink-normal/70 dark:text-gray-300 mb-1.5">
+                عنوان وظیفه: <span className="text-college-normal">*</span>
               </label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="مثال: طراحی صفحه اصلی / بررسی قراردادها..."
-                className="w-full text-sm font-bold text-sec p-3 rounded-xl border border-gray-200 focus:border-primary focus:outline-none placeholder:text-gray-300"
+                placeholder="مثال: طراحی صفحه اصلی / بررسی مستندات..."
+                className="w-full text-sm font-bold text-sec dark:text-white p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#161D2A] focus:border-primary focus:outline-none placeholder:text-gray-300 dark:placeholder:text-gray-500"
               />
             </div>
 
             {/* Task Description */}
             <div>
-              <label className="block text-xs font-bold text-ink-normal/70 mb-1.5">
+              <label className="block text-xs font-bold text-ink-normal/70 dark:text-gray-300 mb-1.5">
                 توضیحات تکمیلی (اختیاری):
               </label>
               <textarea
                 rows={2}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="شرح جزئیات یا نیازمندی‌های این تسک..."
-                className="w-full text-xs font-medium text-ink-darker p-3 rounded-xl border border-gray-200 focus:border-primary focus:outline-none placeholder:text-gray-300 leading-relaxed"
+                placeholder="شرح جزئیات یا نیازمندی‌های این وظیفه..."
+                className="w-full text-xs font-medium text-ink-darker dark:text-gray-200 p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#161D2A] focus:border-primary focus:outline-none placeholder:text-gray-300 dark:placeholder:text-gray-500 leading-relaxed"
               />
             </div>
 
             {/* Priority & Deadline Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-200">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-gray-50 dark:bg-[#161D2A] rounded-2xl border border-gray-200 dark:border-gray-700">
               <div>
-                <label className="block text-xs font-bold text-ink-normal/60 mb-1.5 flex items-center gap-1">
+                <label className="block text-xs font-bold text-ink-normal/60 dark:text-gray-400 mb-1.5 flex items-center gap-1">
                   <AlertCircle className="w-3.5 h-3.5 text-college-normal" />
                   <span>اولویت:</span>
                 </label>
                 <select
                   value={priority}
                   onChange={(e) => setPriority(e.target.value)}
-                  className="w-full text-xs font-bold p-2.5 rounded-xl border border-gray-200 bg-white focus:border-primary focus:outline-none text-sec"
+                  className="w-full text-xs font-bold p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#121824] focus:border-primary focus:outline-none text-sec dark:text-white"
                 >
-                  <option value="normal">عادی (Normal)</option>
-                  <option value="important">مهم (Important)</option>
-                  <option value="urgent">فوری (Urgent)</option>
+                  <option value="normal" className="dark:bg-[#121824]">عادی</option>
+                  <option value="important" className="dark:bg-[#121824]">مهم</option>
+                  <option value="urgent" className="dark:bg-[#121824]">فوری</option>
                 </select>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-ink-normal/60 mb-1.5 flex items-center gap-1">
+                <label className="block text-xs font-bold text-ink-normal/60 dark:text-gray-400 mb-1.5 flex items-center gap-1">
                   <Calendar className="w-3.5 h-3.5 text-primary" />
-                  <span>مهلت انجام (ددلاین شمسی):</span>
+                  <span>مهلت انجام:</span>
                 </label>
                 <PersianDatePicker
                   value={deadline}
                   onChange={(newDate) => setDeadline(newDate || "")}
-                  placeholder="انتخاب مهلت شمسی..."
+                  placeholder="انتخاب مهلت..."
                 />
               </div>
             </div>
 
             {/* Multi-Assignee Selection */}
             <div>
-              <label className="block text-xs font-bold text-ink-normal/70 mb-2 flex items-center justify-between">
+              <label className="block text-xs font-bold text-ink-normal/70 dark:text-gray-300 mb-2 flex items-center justify-between">
                 <span className="flex items-center gap-1.5">
                   <Users className="w-4 h-4 text-primary" />
-                  <span>همکاران مسئول تسک (Assignees):</span>
+                  <span>همکاران مسئول:</span>
                   {taskType === "individual" && <span className="text-college-normal">*</span>}
                 </span>
-                <span className="text-xs text-ink-normal/50 font-normal">
+                <span className="text-xs text-ink-normal/50 dark:text-gray-400 font-normal">
                   {toPersianDigits(selectedAssignees.length)} نفر انتخاب شده
                 </span>
               </label>
@@ -368,7 +368,7 @@ export default function QuickTaskModal({
               {employees.length === 0 ? (
                 <p className="text-xs text-gray-400">در حال بارگذاری لیست کارکنان...</p>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-40 overflow-y-auto p-2 bg-gray-50 rounded-2xl border border-gray-200">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 max-h-40 overflow-y-auto p-2 bg-gray-50 dark:bg-[#161D2A] rounded-2xl border border-gray-200 dark:border-gray-700">
                   {employees.map((emp) => {
                     const isSelected = selectedAssignees.includes(emp.id);
                     return (
@@ -379,14 +379,14 @@ export default function QuickTaskModal({
                         className={`flex items-center gap-2 p-2 rounded-xl text-xs font-bold text-right transition border ${
                           isSelected
                             ? "bg-primary text-white border-primary shadow-sm"
-                            : "bg-white text-ink-dark border-gray-200 hover:border-primary/50"
+                            : "bg-white dark:bg-[#121824] text-ink-dark dark:text-gray-200 border-gray-200 dark:border-gray-700 hover:border-primary/50"
                         }`}
                       >
                         <div
                           className={`w-4 h-4 rounded flex items-center justify-center shrink-0 border ${
                             isSelected
                               ? "bg-white text-primary border-white"
-                              : "border-gray-300"
+                              : "border-gray-300 dark:border-gray-600"
                           }`}
                         >
                           {isSelected && <span className="text-[10px]">✓</span>}
@@ -400,25 +400,25 @@ export default function QuickTaskModal({
             </div>
 
             {/* Submit Actions */}
-            <div className="flex items-center justify-end gap-3 pt-3 border-t border-gray-200">
+            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 pt-3 border-t border-gray-200 dark:border-gray-800">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-5 py-2.5 rounded-xl border border-gray-200 text-xs font-bold text-ink-dark hover:bg-gray-50 transition"
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-xs font-bold text-ink-dark dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition text-center"
               >
                 انصراف
               </button>
               <button
                 type="submit"
                 disabled={submitting}
-                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-primary to-ecosystem-dark text-white text-xs font-black hover:opacity-95 transition shadow-[2px_2px_0_#202A5A] disabled:opacity-50 flex items-center gap-2"
+                className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-primary to-ecosystem-dark text-white text-xs font-black hover:opacity-95 transition shadow-[2px_2px_0_#202A5A] dark:shadow-[2px_2px_0_#1F413D] disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {submitting ? (
-                  <span>در حال ایجاد تسک...</span>
+                  <span>در حال ایجاد وظیفه...</span>
                 ) : (
                   <>
                     <Plus className="w-4 h-4" />
-                    <span>ایجاد تسک</span>
+                    <span>ایجاد وظیفه</span>
                   </>
                 )}
               </button>

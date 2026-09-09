@@ -70,7 +70,7 @@ export default function UnifiedEmployeeReportPage() {
   return (
     <div className="p-4 sm:p-8 max-w-7xl mx-auto font-vazirmatn space-y-6">
       {/* Top Navigation & Breadcrumb */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <Link
           href="/reports/employee"
           className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-ink-normal/60 hover:text-primary transition"
@@ -81,7 +81,7 @@ export default function UnifiedEmployeeReportPage() {
 
         <button
           onClick={handleExportExcel}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-accent-green text-white text-xs sm:text-sm font-black shadow-sm hover:opacity-95 transition"
+          className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-accent-green text-white text-xs sm:text-sm font-black shadow-sm hover:opacity-95 transition w-full sm:w-auto"
         >
           <Download className="w-4 h-4" />
           <span>خروجی اکسل چند شیت</span>
@@ -89,14 +89,14 @@ export default function UnifiedEmployeeReportPage() {
       </div>
 
       {/* Employee Profile Header & Date Range */}
-      <div className="p-6 bg-white rounded-3xl border border-gray-200 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+      <div className="p-5 sm:p-6 bg-white rounded-3xl border border-gray-200 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-5 sm:gap-6">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-ecosystem-dark text-white flex items-center justify-center font-black text-2xl shadow-[3px_3px_0_#202A5A] shrink-0">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-primary to-ecosystem-dark text-white flex items-center justify-center font-black text-xl sm:text-2xl shadow-[3px_3px_0_#202A5A] shrink-0">
             {data?.employee?.fullName ? data.employee.fullName.slice(0, 1) : "ک"}
           </div>
           <div>
             <div className="flex items-center gap-2.5">
-              <h1 className="text-xl sm:text-2xl font-black text-sec">
+              <h1 className="text-lg sm:text-2xl font-black text-sec">
                 {data?.employee?.fullName || "در حال دریافت..."}
               </h1>
               <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-ecosystem-light text-ecosystem-darker border border-primary/20">
@@ -114,10 +114,10 @@ export default function UnifiedEmployeeReportPage() {
         </div>
 
         {/* Jalali Date Filter */}
-        <div className="flex flex-wrap items-center gap-3 p-3 bg-gray-50 rounded-2xl border border-gray-200">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-gray-50 rounded-2xl border border-gray-200 w-full lg:w-auto">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-ink-normal/60">از تاریخ:</span>
-            <div className="w-40">
+            <span className="text-xs font-bold text-ink-normal/60 shrink-0">از تاریخ:</span>
+            <div className="flex-1 sm:w-40">
               <PersianDatePicker
                 value={fromDate}
                 onChange={(val) => setFromDate(val || defaultFrom)}
@@ -126,8 +126,8 @@ export default function UnifiedEmployeeReportPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-ink-normal/60">تا تاریخ:</span>
-            <div className="w-40">
+            <span className="text-xs font-bold text-ink-normal/60 shrink-0">تا تاریخ:</span>
+            <div className="flex-1 sm:w-40">
               <PersianDatePicker
                 value={toDate}
                 onChange={(val) => setToDate(val || defaultTo)}
@@ -138,41 +138,41 @@ export default function UnifiedEmployeeReportPage() {
       </div>
 
       {/* Tabs Navigation */}
-      <div className="flex items-center gap-2 border-b border-gray-200">
+      <div className="flex items-center gap-2 border-b border-gray-200 dark:border-gray-800 overflow-x-auto pb-1 scrollbar-none">
         <button
           onClick={() => setActiveTab("snapshot")}
-          className={`flex items-center gap-2 px-5 py-3 text-xs sm:text-sm font-black border-b-2 transition-all ${
+          className={`flex items-center gap-2 px-4 sm:px-5 py-3 text-xs sm:text-sm font-black border-b-2 transition-all shrink-0 whitespace-nowrap ${
             activeTab === "snapshot"
-              ? "border-primary text-primary bg-primary/5 rounded-t-xl"
-              : "border-transparent text-ink-normal/60 hover:text-sec"
+              ? "border-primary text-primary bg-primary/5 dark:bg-primary/10 rounded-t-xl"
+              : "border-transparent text-ink-normal/60 dark:text-gray-400 hover:text-sec dark:hover:text-white"
           }`}
         >
           <Layers className="w-4 h-4" />
-          <span>وضعیت لحظه‌ای تسک‌ها (Snapshot)</span>
+          <span>وضعیت لحظه‌ای وظایف</span>
         </button>
 
         <button
           onClick={() => setActiveTab("rotello")}
-          className={`flex items-center gap-2 px-5 py-3 text-xs sm:text-sm font-black border-b-2 transition-all ${
+          className={`flex items-center gap-2 px-4 sm:px-5 py-3 text-xs sm:text-sm font-black border-b-2 transition-all shrink-0 whitespace-nowrap ${
             activeTab === "rotello"
-              ? "border-primary text-primary bg-primary/5 rounded-t-xl"
-              : "border-transparent text-ink-normal/60 hover:text-sec"
+              ? "border-primary text-primary bg-primary/5 dark:bg-primary/10 rounded-t-xl"
+              : "border-transparent text-ink-normal/60 dark:text-gray-400 hover:text-sec dark:hover:text-white"
           }`}
         >
           <FolderKanban className="w-4 h-4" />
-          <span>فعالیت پروژه‌ها و تسک‌ها (Rotello)</span>
+          <span>عملکرد وظایف در بازه انتخابی</span>
         </button>
 
         <button
           onClick={() => setActiveTab("daily")}
-          className={`flex items-center gap-2 px-5 py-3 text-xs sm:text-sm font-black border-b-2 transition-all ${
+          className={`flex items-center gap-2 px-4 sm:px-5 py-3 text-xs sm:text-sm font-black border-b-2 transition-all shrink-0 whitespace-nowrap ${
             activeTab === "daily"
-              ? "border-primary text-primary bg-primary/5 rounded-t-xl"
-              : "border-transparent text-ink-normal/60 hover:text-sec"
+              ? "border-primary text-primary bg-primary/5 dark:bg-primary/10 rounded-t-xl"
+              : "border-transparent text-ink-normal/60 dark:text-gray-400 hover:text-sec dark:hover:text-white"
           }`}
         >
           <FileText className="w-4 h-4" />
-          <span>گزارش‌های روزانه تلگرام (Rokad)</span>
+          <span>گزارش‌های روزانه تلگرام</span>
         </button>
       </div>
 
@@ -182,7 +182,7 @@ export default function UnifiedEmployeeReportPage() {
           در حال پردازش داده‌های یکپارچه همکار...
         </div>
       ) : !data ? (
-        <div className="p-12 bg-white rounded-3xl border border-gray-200 text-center text-xs text-gray-400">
+        <div className="p-12 bg-white dark:bg-[#151C28] rounded-3xl border border-gray-200 dark:border-gray-800 text-center text-xs text-gray-400">
           اطلاعاتی یافت نشد.
         </div>
       ) : (
@@ -192,30 +192,30 @@ export default function UnifiedEmployeeReportPage() {
             <div className="space-y-6">
               {/* KPI Cards */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <div className="p-5 bg-white rounded-3xl border border-gray-200 shadow-sm">
-                  <div className="text-xs text-ink-normal/60 font-bold mb-1">کل تسک‌های باز</div>
-                  <div className="text-2xl font-black text-sec">
+                <div className="p-5 bg-white dark:bg-[#151C28] rounded-3xl border border-gray-200 dark:border-gray-800 shadow-sm">
+                  <div className="text-xs text-ink-normal/60 dark:text-gray-400 font-bold mb-1">کل وظایف باز</div>
+                  <div className="text-2xl font-black text-sec dark:text-white">
                     {toPersianDigits(data.currentTasksSnapshot.totalOpen)}
                   </div>
                 </div>
 
-                <div className="p-5 bg-white rounded-3xl border border-college-normal/30 bg-college-light/30 shadow-sm">
-                  <div className="text-xs text-college-darker font-bold mb-1">تسک‌های فوری (Urgent)</div>
+                <div className="p-5 bg-white dark:bg-[#151C28] rounded-3xl border border-college-normal/30 bg-college-light/30 dark:bg-college-darker/20 shadow-sm">
+                  <div className="text-xs text-college-darker dark:text-college-light font-bold mb-1">وظایف فوری</div>
                   <div className="text-2xl font-black text-college-normal">
                     {toPersianDigits(data.currentTasksSnapshot.priorityBreakdown.urgent)}
                   </div>
                 </div>
 
-                <div className="p-5 bg-white rounded-3xl border border-female-normal/30 bg-female-light/30 shadow-sm">
-                  <div className="text-xs text-female-darker font-bold mb-1">تسک‌های مهم (Important)</div>
+                <div className="p-5 bg-white dark:bg-[#151C28] rounded-3xl border border-female-normal/30 bg-female-light/30 dark:bg-female-darker/20 shadow-sm">
+                  <div className="text-xs text-female-darker dark:text-female-light font-bold mb-1">وظایف مهم</div>
                   <div className="text-2xl font-black text-female-normal">
                     {toPersianDigits(data.currentTasksSnapshot.priorityBreakdown.important)}
                   </div>
                 </div>
 
-                <div className="p-5 bg-white rounded-3xl border border-red-200 bg-red-50/40 shadow-sm">
-                  <div className="text-xs text-red-600 font-bold mb-1">عقب‌افتاده از ددلاین</div>
-                  <div className="text-2xl font-black text-red-600">
+                <div className="p-5 bg-white dark:bg-[#151C28] rounded-3xl border border-red-200 dark:border-red-900/60 bg-red-50/40 dark:bg-red-950/20 shadow-sm">
+                  <div className="text-xs text-red-600 dark:text-red-400 font-bold mb-1">گذشته از مهلت مقرر</div>
+                  <div className="text-2xl font-black text-red-600 dark:text-red-400">
                     {toPersianDigits(data.currentTasksSnapshot.overdueCount)}
                   </div>
                 </div>

@@ -307,13 +307,13 @@ export default function TaskModal({
       ) : taskData ? (
         <div className="space-y-6 text-right">
           {/* Navigation Tabs */}
-          <div className="flex items-center gap-2 border-b border-gray-200 pb-3">
+          <div className="flex items-center gap-2 border-b border-gray-200 dark:border-gray-800 pb-3 overflow-x-auto scrollbar-none">
             <button
               onClick={() => setActiveTab("details")}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center gap-2 ${
+              className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center gap-2 shrink-0 whitespace-nowrap ${
                 activeTab === "details"
-                  ? "bg-ecosystem-light text-ecosystem-darker border border-primary/30 shadow-sm"
-                  : "text-ink-normal/60 hover:text-ink-normal"
+                  ? "bg-ecosystem-light dark:bg-ecosystem-darker/60 text-ecosystem-darker dark:text-ecosystem-light border border-primary/30 shadow-sm"
+                  : "text-ink-normal/60 dark:text-gray-400 hover:text-ink-normal dark:hover:text-white"
               }`}
             >
               <CheckSquare className="w-4 h-4" />
@@ -322,14 +322,14 @@ export default function TaskModal({
 
             <button
               onClick={() => setActiveTab("timeline")}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center gap-2 ${
+              className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all flex items-center gap-2 shrink-0 whitespace-nowrap ${
                 activeTab === "timeline"
-                  ? "bg-ecosystem-light text-ecosystem-darker border border-primary/30 shadow-sm"
-                  : "text-ink-normal/60 hover:text-ink-normal"
+                  ? "bg-ecosystem-light dark:bg-ecosystem-darker/60 text-ecosystem-darker dark:text-ecosystem-light border border-primary/30 shadow-sm"
+                  : "text-ink-normal/60 dark:text-gray-400 hover:text-ink-normal dark:hover:text-white"
               }`}
             >
               <Activity className="w-4 h-4" />
-              <span>تایم‌لاین گزارش‌ها و وقایع ({toPersianDigits(timelineItems.length)})</span>
+              <span>تاریخچه گزارش‌ها و رویدادها ({toPersianDigits(timelineItems.length)})</span>
             </button>
           </div>
 
@@ -338,36 +338,36 @@ export default function TaskModal({
               {/* Task Title & Description */}
               <div className="space-y-3">
                 <div>
-                  <label className="block text-xs font-bold text-ink-normal/60 mb-1">عنوان تسک:</label>
+                  <label className="block text-xs font-bold text-ink-normal/60 dark:text-gray-400 mb-1">عنوان وظیفه:</label>
                   <input
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     onBlur={() => updateTaskField({ title })}
-                    className="w-full text-base sm:text-lg font-black text-sec p-3 rounded-xl border border-gray-200 focus:border-primary focus:outline-none"
+                    className="w-full text-base sm:text-lg font-black text-sec dark:text-white p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#161D2A] focus:border-primary focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-ink-normal/60 mb-1">توضیحات تکمیلی:</label>
+                  <label className="block text-xs font-bold text-ink-normal/60 dark:text-gray-400 mb-1">توضیحات تکمیلی:</label>
                   <textarea
                     rows={3}
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     onBlur={() => updateTaskField({ description })}
-                    placeholder="شرح جزئیات یا نیازمندی‌های این تسک..."
-                    className="w-full text-xs sm:text-sm font-medium text-ink-darker p-3 rounded-xl border border-gray-200 focus:border-primary focus:outline-none leading-relaxed"
+                    placeholder="شرح جزئیات یا نیازمندی‌های این وظیفه..."
+                    className="w-full text-xs sm:text-sm font-medium text-ink-darker dark:text-gray-200 p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#161D2A] focus:border-primary focus:outline-none leading-relaxed"
                   />
                 </div>
               </div>
 
               {/* Meta Grid (Column, Priority, Deadline) */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 p-4 bg-gray-50 rounded-2xl border border-gray-200">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 p-4 bg-gray-50 dark:bg-[#161D2A] rounded-2xl border border-gray-200 dark:border-gray-700">
                 {/* Column (for Project Tasks) or Status (for Individual Tasks) */}
                 <div>
                   {taskData.task.projectId ? (
                     <>
-                      <label className="block text-xs font-bold text-ink-normal/60 mb-1.5 flex items-center gap-1">
+                      <label className="block text-xs font-bold text-ink-normal/60 dark:text-gray-400 mb-1.5 flex items-center gap-1">
                         <Layers className="w-3.5 h-3.5 text-primary" />
                         <span>ستون فعلی:</span>
                       </label>
@@ -377,18 +377,18 @@ export default function TaskModal({
                           const newColId = e.target.value;
                           const targetCol = boardColumns.find((c: any) => c.id === newColId);
                           if (targetCol?.isDoneColumn && !effectiveIsAdmin) {
-                            alert("تنها مدیر سیستم مجاز به انتقال تسک به ستون انجام‌شده است.");
+                            alert("تنها مدیر سیستم مجاز به انتقال وظیفه به ستون انجام‌شده است.");
                             return;
                           }
                           setColumnId(newColId);
                           updateTaskField({ columnId: newColId });
                         }}
-                        className="w-full text-xs font-bold p-2.5 rounded-xl border border-gray-200 bg-white focus:border-primary focus:outline-none text-sec"
+                        className="w-full text-xs font-bold p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#121824] focus:border-primary focus:outline-none text-sec dark:text-white"
                       >
                         {boardColumns.map((col: any) => {
                           const isLocked = col.isDoneColumn && !effectiveIsAdmin;
                           return (
-                            <option key={col.id} value={col.id} disabled={isLocked}>
+                            <option key={col.id} value={col.id} disabled={isLocked} className="dark:bg-[#121824]">
                               {col.name} {col.isDoneColumn ? (isLocked ? "🔒 (فقط مدیر)" : "✅") : ""}
                             </option>
                           );
@@ -397,9 +397,9 @@ export default function TaskModal({
                     </>
                   ) : (
                     <>
-                      <label className="block text-xs font-bold text-ink-normal/60 mb-1.5 flex items-center gap-1">
+                      <label className="block text-xs font-bold text-ink-normal/60 dark:text-gray-400 mb-1.5 flex items-center gap-1">
                         <Layers className="w-3.5 h-3.5 text-primary" />
-                        <span>وضعیت تسک فردی:</span>
+                        <span>وضعیت وظیفه فردی:</span>
                       </label>
                       <select
                         value={status}
@@ -413,12 +413,12 @@ export default function TaskModal({
                           });
                           if (onTaskUpdated) onTaskUpdated();
                         }}
-                        className="w-full text-xs font-bold p-2.5 rounded-xl border border-gray-200 bg-white focus:border-primary focus:outline-none text-sec"
+                        className="w-full text-xs font-bold p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#121824] focus:border-primary focus:outline-none text-sec dark:text-white"
                       >
-                        <option value="todo">برای انجام (To Do)</option>
-                        <option value="in_progress">در حال انجام (In Progress)</option>
-                        <option value="done">انجام‌شده (Done) ✅</option>
-                        <option value="cancelled">لغوشده (Cancelled) ❌</option>
+                        <option value="todo" className="dark:bg-[#121824]">برای انجام</option>
+                        <option value="in_progress" className="dark:bg-[#121824]">در حال انجام</option>
+                        <option value="done" className="dark:bg-[#121824]">انجام‌شده ✅</option>
+                        <option value="cancelled" className="dark:bg-[#121824]">لغوشده ❌</option>
                       </select>
                     </>
                   )}
@@ -426,7 +426,7 @@ export default function TaskModal({
 
                 {/* Priority */}
                 <div>
-                  <label className="block text-xs font-bold text-ink-normal/60 mb-1.5 flex items-center gap-1">
+                  <label className="block text-xs font-bold text-ink-normal/60 dark:text-gray-400 mb-1.5 flex items-center gap-1">
                     <AlertCircle className="w-3.5 h-3.5 text-college-normal" />
                     <span>اولویت:</span>
                   </label>
@@ -437,19 +437,19 @@ export default function TaskModal({
                       setPriority(newPri);
                       updateTaskField({ priority: newPri });
                     }}
-                    className="w-full text-xs font-bold p-2.5 rounded-xl border border-gray-200 bg-white focus:border-primary focus:outline-none text-sec"
+                    className="w-full text-xs font-bold p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#121824] focus:border-primary focus:outline-none text-sec dark:text-white"
                   >
-                    <option value="normal">عادی (Normal)</option>
-                    <option value="important">مهم (Important)</option>
-                    <option value="urgent">فوری (Urgent)</option>
+                    <option value="normal" className="dark:bg-[#121824]">عادی</option>
+                    <option value="important" className="dark:bg-[#121824]">مهم</option>
+                    <option value="urgent" className="dark:bg-[#121824]">فوری</option>
                   </select>
                 </div>
 
                 {/* Deadline */}
                 <div>
-                  <label className="block text-xs font-bold text-ink-normal/60 mb-1.5 flex items-center gap-1">
+                  <label className="block text-xs font-bold text-ink-normal/60 dark:text-gray-400 mb-1.5 flex items-center gap-1">
                     <Calendar className="w-3.5 h-3.5 text-primary" />
-                    <span>مهلت انجام (ددلاین):</span>
+                    <span>مهلت انجام:</span>
                   </label>
                   <PersianDatePicker
                     value={deadline}
@@ -458,19 +458,19 @@ export default function TaskModal({
                       setDeadline(val);
                       updateTaskField({ deadline: val || null });
                     }}
-                    placeholder="انتخاب مهلت شمسی..."
+                    placeholder="انتخاب مهلت..."
                   />
                 </div>
               </div>
 
               {/* Multi-Assignees Section */}
               <div>
-                <label className="block text-xs font-bold text-ink-normal/60 mb-2 flex items-center justify-between">
+                <label className="block text-xs font-bold text-ink-normal/60 dark:text-gray-400 mb-2 flex items-center justify-between">
                   <span className="flex items-center gap-1.5">
                     <Users className="w-4 h-4 text-primary" />
-                    <span>همکاران مسئول تسک (Assignees):</span>
+                    <span>همکاران مسئول وظیفه:</span>
                   </span>
-                  <span className="text-xs text-ink-normal/50">
+                  <span className="text-xs text-ink-normal/50 dark:text-gray-400">
                     {toPersianDigits(taskData.assignees.length)} نفر
                   </span>
                 </label>
@@ -478,12 +478,12 @@ export default function TaskModal({
                 {/* Assigned tags */}
                 <div className="flex flex-wrap items-center gap-2 mb-3">
                   {taskData.assignees.length === 0 ? (
-                    <span className="text-xs text-gray-400 italic">هنوز کسی به این تسک منتسب نشده است.</span>
+                    <span className="text-xs text-gray-400 italic">هنوز کسی به این وظیفه منتسب نشده است.</span>
                   ) : (
                     taskData.assignees.map((a: any) => (
                       <span
                         key={a.id}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-ecosystem-light text-ecosystem-darker text-xs font-bold border border-primary/30"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-ecosystem-light dark:bg-ecosystem-darker/60 text-ecosystem-darker dark:text-ecosystem-light text-xs font-bold border border-primary/30"
                       >
                         <User className="w-3.5 h-3.5" />
                         <span>{a.fullName}</span>
@@ -497,14 +497,14 @@ export default function TaskModal({
                   <button
                     type="button"
                     onClick={() => setIsAssigneeDropdownOpen(!isAssigneeDropdownOpen)}
-                    className="w-full p-2.5 rounded-xl border border-dashed border-gray-300 text-xs font-bold text-ink-normal/70 hover:border-primary flex items-center justify-between bg-white"
+                    className="w-full p-2.5 rounded-xl border border-dashed border-gray-300 dark:border-gray-700 text-xs font-bold text-ink-normal/70 dark:text-gray-300 hover:border-primary flex items-center justify-between bg-white dark:bg-[#161D2A]"
                   >
                     <span>مدیریت و انتخاب همکاران مسئول...</span>
                     <ChevronDown className="w-4 h-4" />
                   </button>
 
                   {isAssigneeDropdownOpen && (
-                    <div className="absolute top-full right-0 left-0 mt-1 bg-white border border-gray-200 rounded-2xl shadow-lg p-3 z-30 max-h-48 overflow-y-auto space-y-1">
+                    <div className="absolute top-full right-0 left-0 mt-1 bg-white dark:bg-[#161D2A] border border-gray-200 dark:border-gray-700 rounded-2xl shadow-lg p-3 z-30 max-h-48 overflow-y-auto space-y-1">
                       {organizationEmployees.map((member: any) => {
                         const isAssigned = selectedAssignees.includes(member.employeeId);
                         return (
@@ -514,8 +514,8 @@ export default function TaskModal({
                             onClick={() => handleToggleAssignee(member.employeeId)}
                             className={`w-full flex items-center justify-between p-2 rounded-xl text-xs font-bold transition-colors ${
                               isAssigned
-                                ? "bg-ecosystem-light text-ecosystem-darker"
-                                : "hover:bg-gray-100 text-ink-normal/80"
+                                ? "bg-ecosystem-light dark:bg-ecosystem-darker/60 text-ecosystem-darker dark:text-ecosystem-light"
+                                : "hover:bg-gray-100 dark:hover:bg-gray-800 text-ink-normal/80 dark:text-gray-300"
                             }`}
                           >
                             <span>{member.fullName} ({member.department || "پسرانه"})</span>
@@ -529,9 +529,9 @@ export default function TaskModal({
               </div>
 
               {/* Checklists Section */}
-              <div className="space-y-4 pt-2 border-t border-gray-100">
+              <div className="space-y-4 pt-2 border-t border-gray-100 dark:border-gray-800">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-black text-sec flex items-center gap-2">
+                  <h3 className="text-sm font-black text-sec dark:text-white flex items-center gap-2">
                     <CheckSquare className="w-4 h-4 text-primary" />
                     <span>چک‌لیست‌های مرحله‌ای</span>
                   </h3>
@@ -544,17 +544,17 @@ export default function TaskModal({
                   const percent = totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0;
 
                   return (
-                    <div key={chk.id} className="p-4 bg-gray-50 rounded-2xl border border-gray-200 space-y-3">
+                    <div key={chk.id} className="p-4 bg-gray-50 dark:bg-[#161D2A] rounded-2xl border border-gray-200 dark:border-gray-700 space-y-3">
                       {/* Header & Progress */}
                       <div className="flex items-center justify-between text-xs font-bold">
-                        <span className="text-sec font-black text-sm">{chk.title}</span>
-                        <span className="text-ink-normal/60">
+                        <span className="text-sec dark:text-white font-black text-sm">{chk.title}</span>
+                        <span className="text-ink-normal/60 dark:text-gray-400">
                           {toPersianDigits(doneCount)} از {toPersianDigits(totalCount)} (٪{toPersianDigits(percent)})
                         </span>
                       </div>
 
                       {/* Progress Bar */}
-                      <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                         <div
                           className="h-full bg-primary rounded-full transition-all duration-300"
                           style={{ width: `${percent}%` }}
@@ -567,21 +567,21 @@ export default function TaskModal({
                           <div
                             key={item.id}
                             onClick={() => handleToggleChecklistItem(item.id, item.isDone)}
-                            className="flex items-start gap-2.5 p-2 rounded-xl hover:bg-white cursor-pointer transition-colors"
+                            className="flex items-start gap-2.5 p-2 rounded-xl hover:bg-white dark:hover:bg-gray-800/80 cursor-pointer transition-colors"
                           >
                             <div className="mt-0.5 text-primary">
                               {item.isDone ? (
                                 <CheckSquare className="w-4 h-4 text-primary" />
                               ) : (
-                                <Square className="w-4 h-4 text-gray-300" />
+                                <Square className="w-4 h-4 text-gray-300 dark:text-gray-600" />
                               )}
                             </div>
                             <div className="flex-1 text-xs sm:text-sm font-medium">
-                              <span className={item.isDone ? "line-through text-ink-normal/40 font-normal" : "text-sec font-bold"}>
+                              <span className={item.isDone ? "line-through text-ink-normal/40 dark:text-gray-500 font-normal" : "text-sec dark:text-white font-bold"}>
                                 {item.title}
                               </span>
                               {item.doneByName && (
-                                <div className="text-[11px] text-ink-normal/40 mt-0.5">
+                                <div className="text-[11px] text-ink-normal/40 dark:text-gray-500 mt-0.5">
                                   {item.isDone ? "تیک‌خورده توسط" : "آخرین تعامل توسط"}: {item.doneByName}
                                 </div>
                               )}
@@ -591,7 +591,7 @@ export default function TaskModal({
                       </div>
 
                       {/* Add item input */}
-                      <div className="flex items-center gap-2 pt-2 border-t border-gray-200/60">
+                      <div className="flex items-center gap-2 pt-2 border-t border-gray-200/60 dark:border-gray-700/60">
                         <input
                           type="text"
                           placeholder="آیتم جدید برای این مرحله..."
@@ -608,12 +608,12 @@ export default function TaskModal({
                               handleAddChecklistItem(chk.id);
                             }
                           }}
-                          className="flex-1 text-xs p-2 rounded-xl border border-gray-200 bg-white focus:border-primary focus:outline-none"
+                          className="flex-1 text-xs p-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#121824] text-sec dark:text-white focus:border-primary focus:outline-none"
                         />
                         <button
                           type="button"
                           onClick={() => handleAddChecklistItem(chk.id)}
-                          className="px-3 py-2 bg-white hover:bg-ecosystem-light text-sec text-xs font-bold rounded-xl border border-gray-200 transition-colors"
+                          className="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-primary rounded-xl text-xs font-bold text-sec dark:text-white transition-colors"
                         >
                           افزودن
                         </button>
@@ -622,35 +622,38 @@ export default function TaskModal({
                   );
                 })}
 
-                {/* Add new checklist box */}
-                <form onSubmit={handleAddChecklist} className="flex items-center gap-2">
+                {/* Add new checklist button / form */}
+                <form
+                  onSubmit={handleAddChecklist}
+                  className="flex items-center gap-2 pt-2"
+                >
                   <input
                     type="text"
-                    placeholder="عنوان چک‌لیست جدید (مثلاً: مرحله تست و بازبینی)..."
                     value={newChecklistTitle}
                     onChange={(e) => setNewChecklistTitle(e.target.value)}
-                    className="flex-1 text-xs p-3 rounded-2xl border border-gray-300 focus:border-primary focus:outline-none bg-white"
+                    placeholder="عنوان مرحله جدید (مثلاً: تست نهایی، تحویل)..."
+                    className="flex-1 text-xs p-2.5 rounded-xl border border-dashed border-gray-300 dark:border-gray-700 bg-white dark:bg-[#161D2A] text-sec dark:text-white focus:border-primary focus:outline-none"
                   />
                   <button
                     type="submit"
-                    className="rokad-btn-outline px-4 py-3 text-xs font-black rounded-2xl flex items-center gap-1"
+                    className="rokad-btn-outline px-4 py-2.5 text-xs font-bold rounded-xl shrink-0"
                   >
-                    <Plus className="w-4 h-4" />
-                    <span>ایجاد چک‌لیست</span>
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>افزودن مرحله</span>
                   </button>
                 </form>
               </div>
 
               {/* Danger Zone: Delete task (Manager only) */}
               {taskData.permissions?.canDelete && (
-                <div className="pt-4 border-t border-gray-200 flex justify-end">
+                <div className="pt-4 border-t border-gray-200 dark:border-gray-800 flex justify-end">
                   <button
                     type="button"
                     onClick={handleDeleteTask}
-                    className="px-4 py-2 rounded-xl text-xs font-bold text-female-normal hover:bg-female-light transition-colors flex items-center gap-1.5"
+                    className="px-4 py-2 rounded-xl text-xs font-bold text-female-normal hover:bg-female-light dark:hover:bg-female-normal/10 transition-colors flex items-center gap-1.5"
                   >
                     <Trash2 className="w-4 h-4" />
-                    <span>حذف تسک</span>
+                    <span>حذف وظیفه</span>
                   </button>
                 </div>
               )}
@@ -659,24 +662,24 @@ export default function TaskModal({
             /* Timeline & Narrative Reports Tab */
             <div className="space-y-6">
               {/* Submit Append-only Report Form */}
-              <form onSubmit={handleSubmitReport} className="p-4 bg-gray-50 rounded-2xl border border-gray-200 space-y-3">
-                <label className="block text-xs font-black text-sec">ثبت گزارش کار روایی روی این تسک:</label>
+              <form onSubmit={handleSubmitReport} className="p-4 bg-gray-50 dark:bg-[#161D2A] rounded-2xl border border-gray-200 dark:border-gray-700 space-y-3">
+                <label className="block text-xs font-black text-sec dark:text-white">ثبت گزارش کار روایی روی این وظیفه:</label>
                 <textarea
                   rows={3}
                   required
                   value={reportContent}
                   onChange={(e) => setReportContent(e.target.value)}
-                  placeholder="شرح کارهای انجام‌شده، چالش‌ها یا پیشرفت تسک را اینجا بنویسید (غیرقابل حذف و ویرایش)..."
-                  className="w-full text-xs sm:text-sm p-3 rounded-xl border border-gray-300 focus:border-primary focus:outline-none bg-white leading-relaxed"
+                  placeholder="شرح کارهای انجام‌شده، چالش‌ها یا پیشرفت کار را اینجا بنویسید (غیرقابل حذف و ویرایش)..."
+                  className="w-full text-xs sm:text-sm p-3 rounded-xl border border-gray-300 dark:border-gray-700 focus:border-primary focus:outline-none bg-white dark:bg-[#121824] text-sec dark:text-white leading-relaxed"
                 />
                 <div className="flex justify-end">
                   <button
                     type="submit"
                     disabled={submittingReport || !reportContent.trim()}
-                    className="rokad-btn-primary px-5 py-2.5 text-xs font-black rounded-xl flex items-center gap-2 shadow-sm"
+                    className="w-full sm:w-auto rokad-btn-primary px-5 py-2.5 text-xs font-black rounded-xl flex items-center justify-center gap-2 shadow-sm"
                   >
                     <Send className="w-3.5 h-3.5" />
-                    <span>{submittingReport ? "در حال ثبت..." : "ثبت گزارش در تایم‌لاین"}</span>
+                    <span>{submittingReport ? "در حال ثبت..." : "ثبت گزارش در تاریخچه"}</span>
                   </button>
                 </div>
               </form>
@@ -685,7 +688,7 @@ export default function TaskModal({
               <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
                 {timelineItems.length === 0 ? (
                   <div className="text-center py-10 text-xs sm:text-sm text-gray-400">
-                    هنوز گزارش یا رویدادی روی این تسک ثبت نشده است.
+                    هنوز گزارش یا رویدادی روی این وظیفه ثبت نشده است.
                   </div>
                 ) : (
                   timelineItems.map((item, idx) => {
@@ -693,18 +696,18 @@ export default function TaskModal({
                       return (
                         <div
                           key={`rep-${item.id}`}
-                          className="p-4 rounded-2xl bg-ecosystem-light/50 border border-primary/20 space-y-2 text-xs sm:text-sm"
+                          className="p-4 rounded-2xl bg-ecosystem-light/50 dark:bg-ecosystem-darker/40 border border-primary/20 space-y-2 text-xs sm:text-sm"
                         >
-                          <div className="flex items-center justify-between text-xs">
-                            <span className="font-black text-sec flex items-center gap-1.5">
-                              <FileText className="w-3.5 h-3.5 text-primary" />
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs">
+                            <span className="font-black text-sec dark:text-white flex items-center gap-1.5">
+                              <FileText className="w-3.5 h-3.5 text-primary shrink-0" />
                               <span>{item.authorName} ({item.authorDepartment || "پسرانه"})</span>
                             </span>
-                            <span className="text-ink-normal/50 font-mono">
+                            <span className="text-ink-normal/50 dark:text-gray-400 font-mono text-[11px] sm:text-xs">
                               {formatTehranTime(item.createdAt)} • {formatToJalali(item.createdAt)}
                             </span>
                           </div>
-                          <p className="text-ink-darker font-medium leading-relaxed whitespace-pre-wrap">
+                          <p className="text-ink-darker dark:text-gray-200 font-medium leading-relaxed whitespace-pre-wrap">
                             {item.content}
                           </p>
                         </div>
@@ -713,16 +716,16 @@ export default function TaskModal({
                       return (
                         <div
                           key={`act-${item.id}`}
-                          className="p-3 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-between text-xs text-ink-normal/70"
+                          className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800/60 border border-gray-100 dark:border-gray-800 flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs text-ink-normal/70 dark:text-gray-300"
                         >
                           <div className="flex items-center gap-2">
-                            <Activity className="w-3.5 h-3.5 text-college-normal" />
+                            <Activity className="w-3.5 h-3.5 text-college-normal shrink-0" />
                             <span>
-                              <strong className="text-sec">{item.actorName}</strong>:{" "}
+                              <strong className="text-sec dark:text-white">{item.actorName}</strong>:{" "}
                               {item.actionType === "created"
-                                ? "تسک را ایجاد کرد."
+                                ? "وظیفه را ایجاد کرد."
                                 : item.actionType === "moved_column"
-                                ? `تسک را به ستون «${item.metadata?.toColumnName || "جدید"}» منتقل کرد.`
+                                ? `وظیفه را به ستون «${item.metadata?.toColumnName || "جدید"}» منتقل کرد.`
                                 : item.actionType === "checklist_item_checked"
                                 ? `آیتم «${item.metadata?.itemTitle || ""}» را ${item.metadata?.isDone ? "تیک زد." : "تیکش را برداشت."}`
                                 : item.actionType === "edited"

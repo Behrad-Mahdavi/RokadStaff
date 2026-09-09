@@ -77,15 +77,15 @@ class TelegramNotificationService {
    * 1. Magic Link Login Message
    */
   async sendMagicLink(chatId: number, fullName: string, loginUrl: string): Promise<boolean> {
-    const text = `🔐 *ورود به میز کار رُکاد‌استاف (Rotello)*
+    const text = `🔐 *ورود به میز کار روتلو*
 
 همکار گرامی *${fullName}*،
-برای ورود مستقیم به پنل مدیریت تسک‌ها و پروژه‌ها، روی لینک زیر کلیک کنید:
+برای ورود مستقیم به پنل مدیریت کارها و پروژه‌ها، روی لینک زیر کلیک کنید:
 
 👉 [ورود مستقیم به پنل کاربری](${loginUrl})
 
 ⏱ _این لینک اختصاصی است و به مدت ۱۰ دقیقه معتبر خواهد بود._
-🌿 _سامانه مدیریت پروژه رُکاد‌استاف_`;
+🌿 _سامانه روتلو عوامل_`;
 
     return await this.sendDirect(chatId, text, "Markdown", true);
   }
@@ -101,15 +101,15 @@ class TelegramNotificationService {
     assignedByName: string,
     deadlineJalali?: string
   ): Promise<boolean> {
-    let text = `📌 *تسک جدید به شما محول شد*
+    let text = `📌 *وظیفه جدید به شما محول شد*
 
 همکار گرامی *${fullName}*،
-تسک جدید زیر در پروژه *«${projectName}»* توسط *${assignedByName}* به شما واگذار گردید:
+کار جدید زیر در پروژه *«${projectName}»* توسط *${assignedByName}* به شما واگذار گردید:
 
 📝 *عنوان:* ${taskTitle}`;
 
     if (deadlineJalali) {
-      text += `\n⏰ *مهلت انجام (ددلاین):* ${deadlineJalali}`;
+      text += `\n⏰ *مهلت انجام:* ${deadlineJalali}`;
     }
 
     text += `\n\nبرای مشاهده جزئیات و ثبت گزارش کار، به میز کار خود در وب مراجعه کنید.`;

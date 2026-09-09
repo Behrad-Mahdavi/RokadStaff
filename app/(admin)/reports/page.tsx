@@ -69,35 +69,35 @@ export default function ReportsPage() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-sec tracking-tight">گزارش‌های روزانه کارکنان</h1>
-          <p className="text-xs sm:text-sm text-ink-normal/70 mt-1 font-medium">
+          <h1 className="text-2xl sm:text-3xl font-black text-sec dark:text-white tracking-tight">گزارش‌های روزانه کارکنان</h1>
+          <p className="text-xs sm:text-sm text-ink-normal/70 dark:text-gray-300 mt-1 font-medium">
             مشاهده، جستجو و بررسی گزارش‌های ثبت‌شده از طریق تلگرام
           </p>
         </div>
 
         {/* Date Navigator Quick Bar */}
-        <div className="flex items-center gap-2 bg-white p-1.5 rounded-2xl border border-gray-200 shadow-sm self-start md:self-auto">
+        <div className="flex items-center gap-2 bg-white dark:bg-[#151C28] p-1.5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm self-start md:self-auto">
           <button
             onClick={() => changeDateByDays(1)}
-            className="p-2 hover:bg-gray-100 rounded-xl text-sec transition-colors"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-[#1C2536] rounded-xl text-sec dark:text-gray-200 transition-colors"
             title="روز بعد"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
-          <div className="flex items-center gap-2 px-3 py-1 font-bold text-xs sm:text-sm text-sec">
+          <div className="flex items-center gap-2 px-3 py-1 font-bold text-xs sm:text-sm text-sec dark:text-white">
             <Calendar className="w-4 h-4 text-primary" />
             <span>{formatToJalali(selectedDate, { showMonthName: true, includeDayName: true })}</span>
           </div>
           <button
             onClick={() => changeDateByDays(-1)}
-            className="p-2 hover:bg-gray-100 rounded-xl text-sec transition-colors"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-[#1C2536] rounded-xl text-sec dark:text-gray-200 transition-colors"
             title="روز قبل"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
           <button
             onClick={() => setSelectedDate(getTehranDateString())}
-            className="px-3 py-1.5 bg-ecosystem-light text-ecosystem-darker rounded-xl text-xs sm:text-sm font-bold border border-primary/30 hover:bg-ecosystem-light-hover transition-colors"
+            className="px-3 py-1.5 bg-ecosystem-light dark:bg-ecosystem-darker/50 text-ecosystem-darker dark:text-ecosystem-light rounded-xl text-xs sm:text-sm font-bold border border-primary/30 hover:bg-ecosystem-light-hover transition-colors"
           >
             امروز
           </button>
@@ -105,7 +105,7 @@ export default function ReportsPage() {
       </div>
 
       {/* Filter Bar */}
-      <div className="bg-white p-4 sm:p-5 rounded-3xl border border-[#EAEAEA] shadow-sm flex flex-col md:flex-row items-center gap-3">
+      <div className="bg-white dark:bg-[#151C28] p-4 sm:p-5 rounded-3xl border border-[#EAEAEA] dark:border-gray-800 shadow-sm flex flex-col md:flex-row items-center gap-3">
         {/* Search Input */}
         <div className="relative flex-1 w-full">
           <input
@@ -113,7 +113,7 @@ export default function ReportsPage() {
             placeholder="جستجوی نام کارمند یا متن گزارش..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-3 pr-11 py-2.5 rounded-xl border border-gray-200 text-xs sm:text-sm focus:border-primary focus:outline-none bg-[#FAFAFA] focus:bg-white font-medium"
+            className="w-full pl-3 pr-11 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-xs sm:text-sm focus:border-primary focus:outline-none bg-[#FAFAFA] dark:bg-[#1C2536] dark:text-white focus:bg-white dark:focus:bg-[#1C2536] font-medium"
           />
           <Search className="w-4 h-4 text-gray-400 absolute right-4 top-3.5" />
         </div>
@@ -132,7 +132,7 @@ export default function ReportsPage() {
           <select
             value={selectedDept}
             onChange={(e) => setSelectedDept(e.target.value)}
-            className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-xs sm:text-sm bg-[#FAFAFA] focus:border-primary focus:outline-none font-bold text-sec"
+            className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-xs sm:text-sm bg-[#FAFAFA] dark:bg-[#1C2536] dark:text-white focus:border-primary focus:outline-none font-bold text-sec"
           >
             <option value="all">همه دپارتمان‌ها</option>
             <option value="پسرانه">پسرانه</option>
@@ -145,7 +145,7 @@ export default function ReportsPage() {
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
-            className="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-xs sm:text-sm bg-[#FAFAFA] focus:border-primary focus:outline-none font-bold text-sec"
+            className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-xs sm:text-sm bg-[#FAFAFA] dark:bg-[#1C2536] dark:text-white focus:border-primary focus:outline-none font-bold text-sec"
           >
             <option value="all">همه وضعیت‌ها</option>
             <option value="on_time">به‌موقع</option>
@@ -155,10 +155,10 @@ export default function ReportsPage() {
       </div>
 
       {/* Reports Table */}
-      <div className="bg-white rounded-3xl border border-[#EAEAEA] shadow-[3px_3px_0_#202A5A] overflow-hidden">
+      <div className="bg-white dark:bg-[#151C28] rounded-3xl border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-right text-xs sm:text-sm">
-            <thead className="bg-[#F8F9FA] border-b border-gray-200 text-ink-normal/70 font-bold">
+          <table className="w-full text-right text-xs sm:text-sm min-w-[650px]">
+            <thead className="bg-[#F8F9FA] dark:bg-[#1C2536] border-b border-gray-200 dark:border-gray-800 text-ink-normal/70 dark:text-gray-300 font-bold">
               <tr>
                 <th className="py-4 px-4 sm:px-6">کارمند</th>
                 <th className="py-4 px-4">دپارتمان</th>
@@ -168,7 +168,7 @@ export default function ReportsPage() {
                 <th className="py-4 px-4 sm:px-6 text-center">مشاهده کامل</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
               {loading ? (
                 <tr>
                   <td colSpan={6} className="text-center py-12 text-sm text-gray-400">
@@ -185,30 +185,30 @@ export default function ReportsPage() {
                 reports.map((report) => {
                   const cleanText = report.rawText.replace(/^\/report\s*/i, "").trim();
                   return (
-                    <tr key={report.id} className="hover:bg-gray-50/70 transition-colors">
-                      <td className="py-4 px-4 sm:px-6 font-bold text-sec">
-                        <div className="font-black text-sm sm:text-base text-sec">{report.employeeFullName}</div>
-                        <div className="text-xs text-ink-normal/50 mt-0.5">{report.employeePosition || "همکار"}</div>
+                    <tr key={report.id} className="hover:bg-gray-50/70 dark:hover:bg-[#1C2536]/50 transition-colors">
+                      <td className="py-4 px-4 sm:px-6 font-bold text-sec dark:text-white">
+                        <div className="font-black text-sm sm:text-base text-sec dark:text-white">{report.employeeFullName}</div>
+                        <div className="text-xs text-ink-normal/50 dark:text-gray-400 mt-0.5">{report.employeePosition || "همکار"}</div>
                       </td>
-                      <td className="py-4 px-4 font-bold text-ink-normal/80">
+                      <td className="py-4 px-4 font-bold text-ink-normal/80 dark:text-gray-300">
                         {report.employeeDepartment || "پسرانه"}
                       </td>
-                      <td className="py-4 px-4 font-mono font-bold text-sec text-xs sm:text-sm">
+                      <td className="py-4 px-4 font-mono font-bold text-sec dark:text-gray-200 text-xs sm:text-sm">
                         {formatTehranTime(report.submittedAt)}
                       </td>
                       <td className="py-4 px-4">
                         <span
                           className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-bold text-xs border ${
                             report.status === "on_time"
-                              ? "bg-ecosystem-light text-ecosystem-darker border-primary/30"
-                              : "bg-female-light text-female-darker border-female-normal/30"
+                              ? "bg-ecosystem-light dark:bg-ecosystem-darker/40 text-ecosystem-darker dark:text-ecosystem-light border-primary/30"
+                              : "bg-female-light dark:bg-female-darker/40 text-female-darker dark:text-female-light border-female-normal/30"
                           }`}
                         >
                           <Clock className="w-3.5 h-3.5" />
                           {report.status === "on_time" ? "به‌موقع" : "با تأخیر"}
                         </span>
                       </td>
-                      <td className="py-4 px-4 max-w-xs truncate text-ink-normal/70 font-medium">
+                      <td className="py-4 px-4 max-w-xs truncate text-ink-normal/70 dark:text-gray-400 font-medium">
                         {cleanText}
                       </td>
                       <td className="py-4 px-4 sm:px-6 text-center">
@@ -217,7 +217,7 @@ export default function ReportsPage() {
                             setSelectedReport(report);
                             setIsDetailModalOpen(true);
                           }}
-                          className="rokad-btn-outline px-3.5 py-1.5 text-xs sm:text-sm rounded-xl font-bold"
+                          className="rokad-btn-outline px-3.5 py-1.5 text-xs sm:text-sm rounded-xl font-bold dark:bg-[#1C2536] dark:border-gray-700 dark:text-gray-200"
                         >
                           <Eye className="w-4 h-4 text-primary" />
                           <span>مشاهده متن</span>
@@ -242,21 +242,21 @@ export default function ReportsPage() {
         {selectedReport && (
           <div className="space-y-5">
             {/* Header info */}
-            <div className="p-4 rounded-2xl bg-[#F8F9FA] border border-gray-200 flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm">
+            <div className="p-4 rounded-2xl bg-[#F8F9FA] dark:bg-[#1C2536] border border-gray-200 dark:border-gray-800 flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm">
               <div>
-                <span className="text-ink-normal/60">تاریخ گزارش: </span>
-                <span className="font-bold text-sec">{selectedReport.reportDateJalali}</span>
+                <span className="text-ink-normal/60 dark:text-gray-400">تاریخ گزارش: </span>
+                <span className="font-bold text-sec dark:text-white">{selectedReport.reportDateJalali}</span>
               </div>
               <div>
-                <span className="text-ink-normal/60">ساعت ثبت: </span>
-                <span className="font-bold text-sec font-mono">{selectedReport.submittedAtTime}</span>
+                <span className="text-ink-normal/60 dark:text-gray-400">ساعت ثبت: </span>
+                <span className="font-bold text-sec dark:text-white font-mono">{selectedReport.submittedAtTime}</span>
               </div>
               <div>
                 <span
                   className={`font-black px-2.5 py-0.5 rounded-full text-xs ${
                     selectedReport.status === "on_time"
-                      ? "bg-ecosystem-light text-ecosystem-darker"
-                      : "bg-female-light text-female-darker"
+                      ? "bg-ecosystem-light dark:bg-ecosystem-darker/40 text-ecosystem-darker dark:text-ecosystem-light"
+                      : "bg-female-light dark:bg-female-darker/40 text-female-darker dark:text-female-light"
                   }`}
                 >
                   {selectedReport.status === "on_time" ? "به‌موقع" : "با تأخیر"}
@@ -266,8 +266,8 @@ export default function ReportsPage() {
 
             {/* Report Content Box */}
             <div>
-              <h4 className="text-sm font-black text-sec mb-2">متن ارسال شده توسط همکار:</h4>
-              <div className="p-5 bg-gray-50 rounded-2xl border border-gray-200 text-xs sm:text-sm font-medium text-ink-darker leading-loose whitespace-pre-wrap max-h-96 overflow-y-auto">
+              <h4 className="text-sm font-black text-sec dark:text-white mb-2">متن ارسال شده توسط همکار:</h4>
+              <div className="p-5 bg-gray-50 dark:bg-[#111622] rounded-2xl border border-gray-200 dark:border-gray-800 text-xs sm:text-sm font-medium text-ink-darker dark:text-gray-200 leading-loose whitespace-pre-wrap max-h-96 overflow-y-auto">
                 {selectedReport.rawText.replace(/^\/report\s*/i, "").trim()}
               </div>
             </div>
