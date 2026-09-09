@@ -47,17 +47,17 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md bg-white dark:bg-[#151C28] rounded-3xl p-7 sm:p-9 border-2 border-primary/20 dark:border-gray-800 shadow-[4px_4px_0_#202A5A] dark:shadow-[4px_4px_0_#59BBAF]">
         {/* Header & Rotello Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl overflow-hidden shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] border border-primary/40 mb-4 bg-primary/20 p-1">
-            <img src="/icon.png" alt="لوگوی استودیو روتلو" className="w-full h-full object-contain" />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl overflow-hidden shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] border border-primary/30 mb-4 shrink-0">
+            <img src="/icon.png" alt="لوگوی روتلو" className="w-full h-full object-cover" />
           </div>
           <div className="flex items-center justify-center gap-2">
-            <h1 className="text-xl sm:text-2xl font-black text-sec dark:text-white tracking-tight">استودیو روتلو</h1>
+            <h1 className="text-xl sm:text-2xl font-black text-sec dark:text-white tracking-tight">روتلو</h1>
             <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-sec/10 dark:bg-primary/20 text-sec dark:text-primary border border-sec/20 dark:border-primary/30">
               مدیران
             </span>
           </div>
           <p className="text-xs sm:text-sm text-ink-normal/70 dark:text-gray-400 mt-1.5 font-medium">
-            سامانه یکپارچه پایش و مدیریت • ورود مدیران و سرپرستان
+            سامانه یکپارچه مدیریت پروژه‌ها و کارها
           </p>
         </div>
 

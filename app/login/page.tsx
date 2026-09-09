@@ -52,7 +52,7 @@ export default function MemberLoginPage() {
       <div className="w-full max-w-md bg-white dark:bg-[#151C28] rounded-3xl p-7 sm:p-9 border-2 border-primary/20 dark:border-gray-800 shadow-[4px_4px_0_#59BBAF]">
         {/* Header & Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl overflow-hidden shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] border border-primary/40 mb-4 bg-primary/20">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl overflow-hidden shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] border border-primary/30 mb-4 shrink-0">
             <img src="/icon.png" alt="لوگوی روتلو" className="w-full h-full object-cover" />
           </div>
           <div className="flex items-center justify-center gap-2">
@@ -128,7 +128,7 @@ export default function MemberLoginPage() {
             className="inline-flex items-center gap-1.5 text-xs font-bold text-ink-normal/50 dark:text-gray-400 hover:text-sec dark:hover:text-white transition-colors"
           >
             <Lock className="w-3.5 h-3.5 text-ink-normal/40 dark:text-gray-500" />
-            <span>ورود مدیران و سرپرستان سیستم</span>
+            <span>ورود به پنل مدیریت</span>
           </Link>
         </div>
       </div>

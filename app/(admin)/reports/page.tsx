@@ -504,8 +504,8 @@ function ReportsContent() {
         {/* Clean Modern Header */}
         <div className="border-b border-slate-200 pb-3.5 mb-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-xl border border-slate-200 flex items-center justify-center p-1 bg-white shrink-0">
-              <img src="/icon.png" alt="Logo" className="w-full h-full object-contain" />
+            <div className="w-11 h-11 rounded-xl overflow-hidden border border-slate-200 shrink-0">
+              <img src="/icon.png" alt="لوگوی روتلو" className="w-full h-full object-cover" />
             </div>
             <div>
               <h1 className="text-base font-black text-slate-950 leading-tight">
@@ -652,7 +652,7 @@ function ReportsContent() {
                       <td className="text-center font-bold text-slate-500">{toPersianDigits(idx + 1)}</td>
                       <td className="font-bold text-slate-900">{emp.fullName}</td>
                       <td className="text-center text-slate-600">{emp.department || "پسرانه"}</td>
-                      <td className="text-slate-700">{emp.position || "همکار استودیو"}</td>
+                      <td className="text-slate-700">{emp.position || "همکار روتلو"}</td>
                       <td className="text-center">
                         <span
                           className={`print-badge ${

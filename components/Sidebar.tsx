@@ -139,7 +139,7 @@ export default function Sidebar({ onCloseMobile }: SidebarProps) {
         {/* Brand Header */}
         <div className="h-20 px-6 flex items-center justify-between border-b border-[#EAEAEA] dark:border-gray-800">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl overflow-hidden shadow-[2.5px_2.5px_0_#202A5A] dark:shadow-[2.5px_2.5px_0_#59BBAF] border border-primary/40 shrink-0 bg-primary/20">
+            <div className="w-11 h-11 rounded-2xl overflow-hidden shadow-[2.5px_2.5px_0_#202A5A] dark:shadow-[2.5px_2.5px_0_#59BBAF] border border-primary/30 shrink-0">
               <img src="/icon.png" alt="لوگوی روتلو" className="w-full h-full object-cover" />
             </div>
             <div>

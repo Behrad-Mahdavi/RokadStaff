@@ -50,7 +50,7 @@ export async function getSession(): Promise<SessionPayload | null> {
         employeeId: "emp-1",
         email: "admin@rotello.ir",
         role: "admin",
-        fullName: "مدیر استودیو",
+        fullName: "مدیر روتلو",
         department: "مدیریت",
       };
     }
@@ -63,7 +63,7 @@ export async function getSession(): Promise<SessionPayload | null> {
       employeeId: "emp-1",
       email: "admin@rotello.ir",
       role: "admin",
-      fullName: "مدیر استودیو",
+      fullName: "مدیر روتلو",
       department: "مدیریت",
     };
   }

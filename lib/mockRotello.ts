@@ -60,7 +60,7 @@ const initialProjects: MockProject[] = [
   },
   {
     id: "proj-2",
-    name: "طراحی رابط کاربری و هویت بصری استودیو",
+    name: "طراحی رابط کاربری و هویت بصری روتلو",
     description: "طراحی دیزاین سیستم، تایپوگرافی، پالت دارک‌مود و انیمیشن‌های مینیمال",
     createdBy: "emp-1",
     isArchived: false,

@@ -415,15 +415,15 @@ export default function UnifiedEmployeeReportPage() {
           {/* Clean Modern Header */}
           <div className="border-b border-slate-200 pb-3.5 mb-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-xl border border-slate-200 flex items-center justify-center p-1 bg-white shrink-0">
-                <img src="/icon.png" alt="Logo" className="w-full h-full object-contain" />
+              <div className="w-11 h-11 rounded-xl overflow-hidden border border-slate-200 shrink-0">
+                <img src="/icon.png" alt="لوگوی روتلو" className="w-full h-full object-cover" />
               </div>
               <div>
                 <h1 className="text-base font-black text-slate-950 leading-tight">
                   روتلو • کارنامه عملکرد همکار
                 </h1>
                 <div className="text-[11px] text-slate-500 font-medium mt-0.5">
-                  {data?.employee?.fullName} • {data?.employee?.position || "همکار استودیو"} ({data?.employee?.department || "عمومی"})
+                  {data?.employee?.fullName} • {data?.employee?.position || "همکار روتلو"} ({data?.employee?.department || "عمومی"})
                 </div>
               </div>
             </div>
