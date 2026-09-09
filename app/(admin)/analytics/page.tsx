@@ -169,7 +169,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Filter & Range Bar */}
-      <div className="bg-white dark:bg-[#151C28] p-4 sm:p-5 rounded-3xl border border-[#EAEAEA] dark:border-gray-800 shadow-[2px_2px_0_#202A5A] flex flex-col lg:flex-row items-center justify-between gap-4 no-print">
+      <div className="bg-white dark:bg-[#151C28] p-4 sm:p-5 rounded-3xl border border-[#EAEAEA] dark:border-gray-800 shadow-[2px_2px_0_#202A5A] dark:shadow-[2px_2px_0_#59BBAF] flex flex-col lg:flex-row items-center justify-between gap-4 no-print">
         {/* Preset Range Buttons */}
         <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
           <span className="text-xs sm:text-sm font-black text-ink-normal/70 dark:text-gray-300 ml-2">بازه سریع:</span>
@@ -213,7 +213,7 @@ export default function AnalyticsPage() {
           <select
             value={selectedDept}
             onChange={(e) => setSelectedDept(e.target.value)}
-            className="px-3.5 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-xs sm:text-sm bg-gray-50 dark:bg-[#1C2536] dark:text-white focus:border-primary focus:outline-none font-bold text-sec"
+            className="px-3.5 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-xs sm:text-sm bg-gray-50 dark:bg-[#1C2536] dark:text-white focus:border-primary focus:outline-none font-bold text-sec dark:text-white"
           >
             <option value="all">تمام دپارتمان‌ها</option>
             <option value="پسرانه">پسرانه</option>
@@ -258,10 +258,10 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Interactive Trend Chart Card */}
-      <div className="bg-white dark:bg-[#151C28] rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A]">
+      <div className="bg-white dark:bg-[#151C28] rounded-3xl p-5 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF]">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
-            <h2 className="text-lg font-black text-sec dark:text-white">روند زمانی شاخص‌های مشارکت و نظم</h2>
+            <h2 className="text-base sm:text-lg font-black text-sec dark:text-white">روند زمانی شاخص‌های مشارکت و نظم</h2>
             <p className="text-xs sm:text-sm text-ink-normal/60 dark:text-gray-400 mt-0.5 font-medium">
               نمودار مقایسه‌ای نوسانات نرخ ثبت گزارش در طول بازه زمانی انتخابی
             </p>
@@ -338,36 +338,36 @@ export default function AnalyticsPage() {
         ) : employeeHistory ? (
           <div className="space-y-6">
             {/* Meta & Streak Banner */}
-            <div className="p-5 rounded-2xl bg-gradient-to-r from-ecosystem-light via-white to-college-light border border-primary/20 flex flex-wrap items-center justify-between gap-4">
+            <div className="p-5 rounded-2xl bg-gradient-to-r from-ecosystem-light via-white to-college-light dark:from-[#152422] dark:via-[#151C28] dark:to-[#241d1a] border border-primary/20 flex flex-wrap items-center justify-between gap-4">
               <div>
-                <h3 className="text-lg font-black text-sec">{employeeHistory.employee.fullName}</h3>
-                <div className="text-xs sm:text-sm text-ink-normal/60 mt-0.5 font-medium">
+                <h3 className="text-base sm:text-lg font-black text-sec dark:text-white">{employeeHistory.employee.fullName}</h3>
+                <div className="text-xs sm:text-sm text-ink-normal/60 dark:text-gray-400 mt-0.5 font-medium">
                   {employeeHistory.employee.department || "پسرانه"} • {employeeHistory.employee.position || "همکار"}
                 </div>
               </div>
 
-              <div className="flex items-center gap-2.5 bg-white px-4 py-2.5 rounded-2xl border border-college-normal/30 shadow-sm">
-                <Flame className="w-6 h-6 text-college-normal animate-pulse" />
+              <div className="flex items-center gap-2.5 bg-white dark:bg-[#151C28] px-4 py-2.5 rounded-2xl border border-college-normal/30 shadow-sm">
+                <Flame className="w-5 h-5 text-college-normal animate-pulse" />
                 <div className="text-right">
-                  <div className="text-sm font-black text-college-darker">
+                  <div className="text-xs sm:text-sm font-black text-college-darker dark:text-college-light">
                     {toPersianDigits(employeeHistory.summary.streak)} روز متوالی
                   </div>
-                  <div className="text-xs text-ink-normal/60 font-medium">توالی ثبت بدون وقفه</div>
+                  <div className="text-[11px] text-ink-normal/60 dark:text-gray-400 font-medium">توالی ثبت بدون وقفه</div>
                 </div>
               </div>
             </div>
 
             {/* Performance Stats */}
             <div className="grid grid-cols-2 gap-4 text-center">
-              <div className="p-4 bg-gray-50 rounded-2xl border">
-                <div className="text-xs sm:text-sm text-ink-normal/60 font-medium">تعداد کل گزارش‌ها</div>
-                <div className="text-xl font-black text-sec mt-1">
+              <div className="p-4 bg-gray-50 dark:bg-[#1C2536] rounded-2xl border border-gray-100 dark:border-gray-800">
+                <div className="text-xs sm:text-sm text-ink-normal/60 dark:text-gray-400 font-medium">تعداد کل گزارش‌ها</div>
+                <div className="text-lg sm:text-xl font-black text-sec dark:text-white mt-1">
                   {toPersianDigits(employeeHistory.summary.totalSubmitted)}
                 </div>
               </div>
-              <div className="p-4 bg-gray-50 rounded-2xl border">
-                <div className="text-xs sm:text-sm text-ink-normal/60 font-medium">درصد به‌موقع بودن</div>
-                <div className="text-xl font-black text-primary mt-1">
+              <div className="p-4 bg-gray-50 dark:bg-[#1C2536] rounded-2xl border border-gray-100 dark:border-gray-800">
+                <div className="text-xs sm:text-sm text-ink-normal/60 dark:text-gray-400 font-medium">درصد به‌موقع بودن</div>
+                <div className="text-lg sm:text-xl font-black text-primary mt-1">
                   ٪{toPersianDigits(employeeHistory.summary.onTimeRate)}
                 </div>
               </div>
@@ -375,27 +375,27 @@ export default function AnalyticsPage() {
 
             {/* Recent Reports List */}
             <div>
-              <h4 className="text-sm font-black text-sec mb-3">گزارش‌های ارسالی اخیر:</h4>
+              <h4 className="text-xs sm:text-sm font-black text-sec dark:text-white mb-3">گزارش‌های ارسالی اخیر:</h4>
               <div className="space-y-2.5 max-h-64 overflow-y-auto">
                 {employeeHistory.reports.length === 0 ? (
                   <div className="text-center py-6 text-sm text-gray-400">گزارشی در این بازه ثبت نشده است.</div>
                 ) : (
                   employeeHistory.reports.map((rep: any) => (
-                    <div key={rep.id} className="p-4 bg-white rounded-2xl border border-gray-200 text-xs sm:text-sm space-y-2">
+                    <div key={rep.id} className="p-4 bg-white dark:bg-[#151C28] rounded-2xl border border-gray-200 dark:border-gray-800 text-xs sm:text-sm space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="font-bold text-sec">{rep.reportDateJalali}</span>
+                        <span className="font-bold text-sec dark:text-white">{rep.reportDateJalali}</span>
                         <span
                           className={`text-xs font-black px-2.5 py-0.5 rounded-full ${
                             rep.status === "on_time"
-                              ? "bg-ecosystem-light text-ecosystem-darker"
-                              : "bg-female-light text-female-darker"
+                              ? "bg-ecosystem-light dark:bg-ecosystem-darker/60 text-ecosystem-darker dark:text-ecosystem-light border border-primary/30"
+                              : "bg-female-light dark:bg-female-darker/60 text-female-darker dark:text-female-light border border-female-normal/30"
                           }`}
                         >
                           {rep.status === "on_time" ? "به‌موقع" : "با تأخیر"}
                         </span>
                       </div>
-                      <p className="text-xs sm:text-sm text-ink-normal/80 line-clamp-2 leading-relaxed">
-                        {rep.rawText.replace(/^\/report\s*/i, "").trim()}
+                      <p className="text-xs sm:text-sm text-ink-normal/80 dark:text-gray-300 line-clamp-2 leading-relaxed">
+                        {(rep.rawText || "").replace(/^\/report\s*/i, "").trim()}
                       </p>
                     </div>
                   ))

@@ -56,7 +56,7 @@ export default function MemberLoginPage() {
             <img src="/icon.png" alt="لوگوی روتلو" className="w-full h-full object-cover" />
           </div>
           <div className="flex items-center justify-center gap-2">
-            <h1 className="text-2xl sm:text-3xl font-black text-sec dark:text-white tracking-tight">روتلو</h1>
+            <h1 className="text-xl sm:text-2xl font-black text-sec dark:text-white tracking-tight">روتلو</h1>
             <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-primary/15 dark:bg-primary/25 text-primary border border-primary/30">
               عوامل
             </span>

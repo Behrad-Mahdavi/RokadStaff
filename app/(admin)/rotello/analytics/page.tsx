@@ -57,7 +57,7 @@ export default function RotelloAnalyticsPage() {
             <Layers className="w-4 h-4" />
             <span>داشبورد نظارتی و شاخص‌های سلامت پروژه‌ها</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-sec dark:text-white tracking-tight">داشبورد مانیتورینگ</h1>
+          <h1 className="text-xl sm:text-2xl font-black text-sec dark:text-white tracking-tight">داشبورد مانیتورینگ</h1>
           <p className="text-xs sm:text-sm text-ink-normal/70 dark:text-gray-400 mt-1 font-medium">
             پایش بار کاری تیم، وظایف در گردش و سرعت تکمیل پروژه‌ها
           </p>
@@ -104,7 +104,7 @@ export default function RotelloAnalyticsPage() {
         {/* Priority Breakdown Card */}
         <div className="bg-white dark:bg-[#151C28] rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] space-y-5">
           <div>
-            <h2 className="text-lg font-black text-sec dark:text-white">توزیع وظایف باز بر اساس اولویت</h2>
+            <h2 className="text-base sm:text-lg font-black text-sec dark:text-white">توزیع وظایف باز بر اساس اولویت</h2>
             <p className="text-xs sm:text-sm text-ink-normal/60 dark:text-gray-400 mt-0.5 font-medium">
               تفکیک وظایف فعال بر اساس درجه حساسیت
             </p>
@@ -177,7 +177,7 @@ export default function RotelloAnalyticsPage() {
         {/* Team Workload Distribution Card */}
         <div className="bg-white dark:bg-[#151C28] rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] space-y-5">
           <div>
-            <h2 className="text-lg font-black text-sec dark:text-white">توزیع بار کاری همکاران</h2>
+            <h2 className="text-base sm:text-lg font-black text-sec dark:text-white">توزیع بار کاری همکاران</h2>
             <p className="text-xs sm:text-sm text-ink-normal/60 dark:text-gray-400 mt-0.5 font-medium">
               تعداد وظایف باز واگذارشده به هر همکار
             </p>

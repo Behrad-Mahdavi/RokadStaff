@@ -155,7 +155,7 @@ export default function ProjectsListPage() {
                   )}
                 </div>
 
-                <h2 className="text-lg font-black text-sec dark:text-white group-hover:text-primary transition-colors">
+                <h2 className="text-base sm:text-lg font-black text-sec dark:text-white group-hover:text-primary transition-colors">
                   {proj.name}
                 </h2>
                 <p className="text-xs sm:text-sm text-ink-normal/70 dark:text-gray-400 mt-1.5 line-clamp-2 leading-relaxed">
@@ -163,14 +163,14 @@ export default function ProjectsListPage() {
                 </p>
               </div>
 
-              <div className="pt-5 mt-5 border-t border-gray-100 flex items-center justify-between text-xs text-ink-normal/70 font-medium">
+              <div className="pt-4 mt-4 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between text-xs text-ink-normal/70 dark:text-gray-400 font-medium">
                 <div className="flex items-center gap-3">
                   <span className="flex items-center gap-1">
                     <Users className="w-3.5 h-3.5 text-primary" />
                     <span>{toPersianDigits(proj.membersCount)} عضو</span>
                   </span>
                   <span className="flex items-center gap-1">
-                    <Layers className="w-3.5 h-3.5 text-sec" />
+                    <Layers className="w-3.5 h-3.5 text-sec dark:text-gray-300" />
                     <span>{toPersianDigits(proj.activeTasksCount)} تسک</span>
                   </span>
                 </div>
@@ -194,29 +194,29 @@ export default function ProjectsListPage() {
       >
         <form onSubmit={handleCreateProject} className="space-y-4">
           <div>
-            <label className="block text-xs font-black text-sec mb-1.5">نام پروژه:</label>
+            <label className="block text-xs font-black text-sec dark:text-white mb-1.5">نام پروژه:</label>
             <input
               type="text"
               required
               placeholder="مثال: توسعه اپلیکیشن موبایل"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full text-xs sm:text-sm p-3 rounded-2xl border border-gray-300 focus:border-primary focus:outline-none"
+              className="w-full text-xs sm:text-sm p-3 rounded-2xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#1C2536] text-ink-normal dark:text-white focus:border-primary focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-black text-sec mb-1.5">توضیحات (اختیاری):</label>
+            <label className="block text-xs font-black text-sec dark:text-white mb-1.5">توضیحات (اختیاری):</label>
             <textarea
               rows={3}
               placeholder="توضیحاتی درباره اهداف و دامنه این پروژه..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full text-xs sm:text-sm p-3 rounded-2xl border border-gray-300 focus:border-primary focus:outline-none"
+              className="w-full text-xs sm:text-sm p-3 rounded-2xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#1C2536] text-ink-normal dark:text-white focus:border-primary focus:outline-none"
             />
           </div>
 
-          <div className="p-3 bg-gray-50 rounded-2xl border text-xs text-ink-normal/70 leading-relaxed">
+          <div className="p-3 bg-gray-50 dark:bg-[#1C2536] rounded-2xl border border-gray-200 dark:border-gray-800 text-xs text-ink-normal/70 dark:text-gray-300 leading-relaxed">
             💡 با ایجاد پروژه، ۴ ستون پیش‌فرض کانبان (برای انجام، در حال انجام، بازبینی و انجام‌شده) به‌طور خودکار ساخته می‌شوند.
           </div>
 
@@ -224,7 +224,7 @@ export default function ProjectsListPage() {
             <button
               type="button"
               onClick={() => setIsNewProjectModalOpen(false)}
-              className="px-4 py-2.5 text-xs font-bold text-gray-500 hover:bg-gray-100 rounded-xl"
+              className="px-4 py-2.5 text-xs font-bold text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl"
             >
               انصراف
             </button>

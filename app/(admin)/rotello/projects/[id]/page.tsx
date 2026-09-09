@@ -363,10 +363,10 @@ export default function ProjectBoardPage() {
                         <span
                           className={`text-[10px] font-black px-2 py-0.5 rounded-full border ${
                             task.priority === "urgent"
-                              ? "bg-female-light text-female-darker border-female-normal/30"
+                              ? "bg-female-light dark:bg-female-darker/60 text-female-darker dark:text-female-light border-female-normal/30"
                               : task.priority === "important"
-                              ? "bg-college-light text-college-darker border-college-normal/30"
-                              : "bg-gray-100 text-ink-normal/70 border-gray-200"
+                              ? "bg-college-light dark:bg-college-darker/60 text-college-darker dark:text-college-light border-college-normal/30"
+                              : "bg-gray-100 dark:bg-gray-800 text-ink-normal/70 dark:text-gray-300 border-gray-200 dark:border-gray-700"
                           }`}
                         >
                           {task.priority === "urgent"
@@ -385,7 +385,7 @@ export default function ProjectBoardPage() {
                       </div>
 
                       {/* Title */}
-                      <h4 className="text-xs sm:text-sm font-black text-sec group-hover:text-primary transition-colors leading-snug">
+                      <h4 className="text-xs sm:text-sm font-black text-sec dark:text-white group-hover:text-primary transition-colors leading-snug">
                         {task.title}
                       </h4>
 
@@ -412,17 +412,17 @@ export default function ProjectBoardPage() {
                       )}
 
                       {/* Footer: Assignees & Deadline */}
-                      <div className="pt-2 border-t border-gray-100 flex items-center justify-between text-[11px] text-ink-normal/60 font-medium">
+                      <div className="pt-2 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between text-[11px] text-ink-normal/60 dark:text-gray-400 font-medium">
                         {/* Assignee chips */}
                         <div className="flex items-center -space-x-1 space-x-reverse">
                           {task.assignees.length === 0 ? (
-                            <span className="text-gray-300 text-[10px]">بدون مسئول</span>
+                            <span className="text-gray-400 dark:text-gray-500 text-[10px]">بدون مسئول</span>
                           ) : (
                             task.assignees.slice(0, 3).map((a: any) => (
                               <div
                                 key={a.employeeId}
                                 title={a.fullName}
-                                className="w-6 h-6 rounded-full bg-ecosystem-light border border-white text-ecosystem-darker text-[10px] font-black flex items-center justify-center shadow-xs"
+                                className="w-6 h-6 rounded-full bg-ecosystem-light dark:bg-ecosystem-darker/70 border border-white dark:border-gray-700 text-ecosystem-darker dark:text-ecosystem-light text-[10px] font-black flex items-center justify-center shadow-xs"
                               >
                                 {a.fullName.slice(0, 1)}
                               </div>
@@ -520,18 +520,18 @@ export default function ProjectBoardPage() {
       >
         <form onSubmit={handleAddColumn} className="space-y-4">
           <div>
-            <label className="block text-xs font-black text-sec mb-1">نام ستون:</label>
+            <label className="block text-xs font-black text-sec dark:text-white mb-1">نام ستون:</label>
             <input
               type="text"
               required
               placeholder="مثال: در انتظار تأیید کارفرما"
               value={newColName}
               onChange={(e) => setNewColName(e.target.value)}
-              className="w-full text-xs sm:text-sm p-3 rounded-xl border border-gray-300 focus:border-primary focus:outline-none"
+              className="w-full text-xs sm:text-sm p-3 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#1C2536] text-ink-normal dark:text-white focus:border-primary focus:outline-none"
             />
           </div>
 
-          <label className="flex items-center gap-2 cursor-pointer p-3 bg-gray-50 rounded-xl border border-gray-200 text-xs font-bold text-sec">
+          <label className="flex items-center gap-2 cursor-pointer p-3 bg-gray-50 dark:bg-[#1C2536] rounded-xl border border-gray-200 dark:border-gray-700 text-xs font-bold text-sec dark:text-gray-200">
             <input
               type="checkbox"
               checked={newColIsDone}
@@ -570,13 +570,13 @@ export default function ProjectBoardPage() {
         <div className="space-y-6">
           {/* Add member form (Manager only) */}
           {isManager && (
-            <form onSubmit={handleAddMember} className="p-4 bg-gray-50 rounded-2xl border border-gray-200 space-y-3">
-              <label className="block text-xs font-black text-sec">افزودن همکار به این پروژه:</label>
+            <form onSubmit={handleAddMember} className="p-4 bg-gray-50 dark:bg-[#1C2536] rounded-2xl border border-gray-200 dark:border-gray-700 space-y-3">
+              <label className="block text-xs font-black text-sec dark:text-white">افزودن همکار به این پروژه:</label>
               <div className="flex flex-col sm:flex-row gap-2">
                 <select
                   value={selectedEmpToAdd}
                   onChange={(e) => setSelectedEmpToAdd(e.target.value)}
-                  className="flex-1 text-xs font-bold p-2.5 rounded-xl border border-gray-200 bg-white focus:border-primary focus:outline-none"
+                  className="flex-1 text-xs font-bold p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#151C28] text-ink-normal dark:text-white focus:border-primary focus:outline-none"
                 >
                   <option value="">انتخاب همکار...</option>
                   {allEmployees.map((emp: any) => (
@@ -589,7 +589,7 @@ export default function ProjectBoardPage() {
                 <select
                   value={selectedRoleToAdd}
                   onChange={(e) => setSelectedRoleToAdd(e.target.value)}
-                  className="text-xs font-bold p-2.5 rounded-xl border border-gray-200 bg-white focus:border-primary focus:outline-none"
+                  className="text-xs font-bold p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#151C28] text-ink-normal dark:text-white focus:border-primary focus:outline-none"
                 >
                   <option value="member">عضو مجری (Member)</option>
                   <option value="manager">مدیر پروژه (Manager)</option>
@@ -608,20 +608,20 @@ export default function ProjectBoardPage() {
 
           {/* Members list */}
           <div className="space-y-2">
-            <h4 className="text-xs font-black text-ink-normal/60">لیست اعضای فعلی:</h4>
+            <h4 className="text-xs font-black text-ink-normal/60 dark:text-gray-400">لیست اعضای فعلی:</h4>
             <div className="space-y-2 max-h-60 overflow-y-auto">
               {members.map((m: any) => (
                 <div
                   key={m.employeeId}
-                  className="p-3 bg-white rounded-2xl border border-gray-200 flex items-center justify-between text-xs font-bold"
+                  className="p-3 bg-white dark:bg-[#1C2536] rounded-2xl border border-gray-200 dark:border-gray-700 flex items-center justify-between text-xs font-bold"
                 >
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-full bg-ecosystem-light text-ecosystem-darker font-black flex items-center justify-center text-xs">
+                    <div className="w-8 h-8 rounded-full bg-ecosystem-light dark:bg-ecosystem-darker/60 text-ecosystem-darker dark:text-ecosystem-light font-black flex items-center justify-center text-xs">
                       {m.fullName.slice(0, 1)}
                     </div>
                     <div>
-                      <div className="text-sec font-black">{m.fullName}</div>
-                      <div className="text-[11px] text-ink-normal/50">
+                      <div className="text-sec dark:text-white font-black">{m.fullName}</div>
+                      <div className="text-[11px] text-ink-normal/50 dark:text-gray-400">
                         {m.department || "پسرانه"} • {m.role === "manager" ? "مدیر پروژه" : "عضو مجری"}
                       </div>
                     </div>
@@ -630,7 +630,7 @@ export default function ProjectBoardPage() {
                   {isManager && members.length > 1 && (
                     <button
                       onClick={() => handleRemoveMember(m.employeeId)}
-                      className="text-female-normal hover:bg-female-light px-2.5 py-1 rounded-lg text-xs"
+                      className="text-female-normal hover:bg-female-light dark:hover:bg-female-darker/40 px-2.5 py-1 rounded-lg text-xs"
                     >
                       حذف از پروژه
                     </button>

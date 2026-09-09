@@ -91,12 +91,12 @@
 }
 
 html {
-  font-size: 15px;
+  font-size: 14px;
 }
 
 @media (min-width: 640px) {
   html {
-    font-size: 16px;
+    font-size: 14.5px;
   }
 }
 
@@ -245,6 +245,19 @@ body {
   box-shadow: 3.5px 3.5px 0 #59BBAF;
 }
 
+.dark .rokad-btn-sec {
+  background-color: #2B3875;
+  color: #FFFFFF;
+  border-color: #3F50A0;
+  box-shadow: 2.5px 2.5px 0 #59BBAF;
+}
+
+.dark .rokad-btn-sec:hover {
+  background-color: #35448C;
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 #59BBAF;
+}
+
 .dark .rokad-btn-outline {
   background-color: #161D2A;
   color: #F1F5F9;
@@ -256,6 +269,12 @@ body {
   background-color: #1F293D;
   border-color: #59BBAF;
   box-shadow: 2.5px 2.5px 0 #59BBAF;
+}
+
+.dark input,
+.dark select,
+.dark textarea {
+  color-scheme: dark;
 }
 
 .dark ::-webkit-scrollbar-track {

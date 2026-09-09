@@ -242,7 +242,7 @@ export default function PersianDatePicker({
               <div
                 key={idx}
                 className={`text-[11px] font-black py-1 ${
-                  idx === 6 ? "text-female-normal" : "text-ink-normal/60"
+                  idx === 6 ? "text-female-normal" : "text-ink-normal/60 dark:text-gray-400"
                 }`}
               >
                 {name}
@@ -280,12 +280,12 @@ export default function PersianDatePicker({
                   onClick={() => handleSelectDay(day)}
                   className={`w-8 h-8 sm:w-9 sm:h-9 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center transition-all ${
                     isSelected
-                      ? "bg-primary text-white shadow-[2px_2px_0_#202A5A] font-black scale-105"
+                      ? "bg-primary text-white shadow-[2px_2px_0_#202A5A] dark:shadow-[2px_2px_0_#3F50A0] font-black scale-105"
                       : isToday
-                      ? "bg-ecosystem-light text-ecosystem-darker border border-primary/50 font-black"
+                      ? "bg-ecosystem-light dark:bg-ecosystem-darker/60 text-ecosystem-darker dark:text-ecosystem-light border border-primary/50 font-black"
                       : isFriday
-                      ? "text-female-normal hover:bg-female-light/60"
-                      : "text-sec hover:bg-gray-100 hover:text-ink-normal"
+                      ? "text-female-normal hover:bg-female-light/60 dark:hover:bg-female-darker/40"
+                      : "text-sec dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-ink-normal dark:hover:text-white"
                   }`}
                 >
                   {toPersianDigits(day)}
@@ -295,11 +295,11 @@ export default function PersianDatePicker({
           </div>
 
           {/* Footer Quick Actions */}
-          <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
+          <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
             <button
               type="button"
               onClick={handleSelectToday}
-              className="px-3 py-1.5 rounded-xl bg-ecosystem-light text-ecosystem-darker hover:bg-ecosystem-normal/20 text-xs font-black transition-colors flex items-center gap-1"
+              className="px-3 py-1.5 rounded-xl bg-ecosystem-light dark:bg-ecosystem-darker/60 text-ecosystem-darker dark:text-ecosystem-light hover:bg-ecosystem-normal/20 text-xs font-black transition-colors flex items-center gap-1"
             >
               <Sparkles className="w-3.5 h-3.5 text-primary" />
               <span>انتخاب امروز</span>
@@ -308,7 +308,7 @@ export default function PersianDatePicker({
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="px-3 py-1.5 rounded-xl text-xs font-bold text-ink-normal/60 hover:text-sec hover:bg-gray-100 transition-colors"
+              className="px-3 py-1.5 rounded-xl text-xs font-bold text-ink-normal/60 dark:text-gray-400 hover:text-sec dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             >
               بستن
             </button>

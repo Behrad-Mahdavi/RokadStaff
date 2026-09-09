@@ -48,15 +48,15 @@ export default function MemberLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F8F8] flex flex-col justify-center items-center p-4 sm:p-6 font-vazirmatn text-right" dir="rtl">
-      <div className="w-full max-w-md bg-white rounded-3xl p-7 sm:p-9 border-2 border-primary/20 shadow-[4px_4px_0_#59BBAF]">
+    <div className="min-h-screen bg-[#F5F8F8] dark:bg-[#0B0F17] flex flex-col justify-center items-center p-4 sm:p-6 font-vazirmatn text-right" dir="rtl">
+      <div className="w-full max-w-md bg-white dark:bg-[#151C28] rounded-3xl p-7 sm:p-9 border-2 border-primary/20 dark:border-gray-800 shadow-[4px_4px_0_#59BBAF]">
         {/* Header & Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-ecosystem-light border border-primary/30 shadow-sm mb-4">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-ecosystem-light dark:bg-ecosystem-darker/60 border border-primary/30 shadow-sm mb-4">
             <Send className="w-8 h-8 text-primary" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-sec tracking-tight">ورود همکاران به رُکاد‌استاف</h1>
-          <p className="text-xs sm:text-sm text-ink-normal/70 mt-1.5 font-medium">
+          <h1 className="text-xl sm:text-2xl font-black text-sec dark:text-white tracking-tight">ورود همکاران به رُکاد‌استاف</h1>
+          <p className="text-xs sm:text-sm text-ink-normal/70 dark:text-gray-400 mt-1.5 font-medium">
             ورود امن و بدون نیاز به رمز عبور از طریق ربات تلگرام
           </p>
         </div>
@@ -66,8 +66,8 @@ export default function MemberLoginPage() {
           <div
             className={`mb-6 p-4 rounded-2xl border text-xs sm:text-sm font-bold flex items-start gap-3 ${
               statusMessage.type === "success"
-                ? "bg-ecosystem-light border-primary/40 text-ecosystem-darker"
-                : "bg-female-light border-female-normal/40 text-female-darker"
+                ? "bg-ecosystem-light dark:bg-ecosystem-darker/40 border-primary/40 text-ecosystem-darker dark:text-ecosystem-light"
+                : "bg-female-light dark:bg-female-darker/40 border-female-normal/40 text-female-darker dark:text-female-light"
             }`}
           >
             {statusMessage.type === "success" ? (
@@ -82,7 +82,7 @@ export default function MemberLoginPage() {
         {/* Magic Link Form */}
         <form onSubmit={handleRequestMagicLink} className="space-y-5">
           <div>
-            <label className="block text-xs sm:text-sm font-black text-sec mb-2">
+            <label className="block text-xs sm:text-sm font-black text-sec dark:text-white mb-2">
               نام و نام خانوادگی یا کد اتصال شما:
             </label>
             <input
@@ -91,7 +91,7 @@ export default function MemberLoginPage() {
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
               placeholder="مثال: بهراد مهدوی یا کد ۶ رقمی"
-              className="w-full px-4 py-3.5 rounded-2xl border border-gray-300 focus:border-primary focus:outline-none text-xs sm:text-sm font-bold bg-[#FAFAFA] focus:bg-white transition-colors"
+              className="w-full px-4 py-3.5 rounded-2xl border border-gray-300 dark:border-gray-700 focus:border-primary focus:outline-none text-xs sm:text-sm font-bold bg-[#FAFAFA] dark:bg-[#1C2536] text-sec dark:text-white focus:bg-white dark:focus:bg-[#1C2536] transition-colors"
             />
           </div>
 
@@ -106,12 +106,12 @@ export default function MemberLoginPage() {
         </form>
 
         {/* How it works info */}
-        <div className="mt-8 pt-6 border-t border-gray-100 space-y-3">
-          <div className="flex items-center gap-2 text-xs font-black text-sec">
+        <div className="mt-8 pt-6 border-t border-gray-100 dark:border-gray-800 space-y-3">
+          <div className="flex items-center gap-2 text-xs font-black text-sec dark:text-white">
             <ShieldCheck className="w-4 h-4 text-primary" />
             <span>راهنمای ورود:</span>
           </div>
-          <p className="text-xs text-ink-normal/60 leading-relaxed font-medium">
+          <p className="text-xs text-ink-normal/60 dark:text-gray-400 leading-relaxed font-medium">
             با زدن دکمه بالا، یک لینک ورود یکبارمصرف (۱۰ دقیقه‌ای) به ربات تلگرام شما ارسال می‌شود. کافی است روی آن کلیک کنید تا بدون نیاز به رمز عبور مستقیماً وارد میز کار خود شوید.
           </p>
         </div>
@@ -120,7 +120,7 @@ export default function MemberLoginPage() {
         <div className="mt-6 text-center">
           <Link
             href="/login"
-            className="inline-flex items-center gap-1 text-xs font-bold text-ink-normal/60 hover:text-sec transition-colors"
+            className="inline-flex items-center gap-1 text-xs font-bold text-ink-normal/60 dark:text-gray-400 hover:text-sec dark:hover:text-white transition-colors"
           >
             <span>ورود مدیران و سرپرستان سیستم</span>
             <ArrowRight className="w-3.5 h-3.5 rotate-180" />

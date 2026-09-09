@@ -47,7 +47,7 @@ export default function BotGuidePage() {
           <Bot className="w-4 h-4" />
           <span>مستندات و محیط آزمایش تعاملی</span>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-black text-sec dark:text-white tracking-tight">راهنما و شبیه‌ساز ربات تلگرام</h1>
+        <h1 className="text-xl sm:text-2xl font-black text-sec dark:text-white tracking-tight">راهنما و شبیه‌ساز ربات تلگرام</h1>
         <p className="text-xs sm:text-sm text-ink-normal/70 dark:text-gray-300 mt-1 font-medium">
           بررسی ساختار پیام‌ها و تست زنده پردازش گزارش‌های ورودی
         </p>
@@ -56,7 +56,7 @@ export default function BotGuidePage() {
       {/* Interactive Simulator Card */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Input Editor */}
-        <div className="bg-white dark:bg-[#151C28] rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] flex flex-col justify-between">
+        <div className="bg-white dark:bg-[#151C28] rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-base font-black text-sec dark:text-white flex items-center gap-2">
@@ -89,7 +89,7 @@ export default function BotGuidePage() {
         </div>
 
         {/* Right Live Parser Result */}
-        <div className="bg-white dark:bg-[#151C28] rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A]">
+        <div className="bg-white dark:bg-[#151C28] rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF]">
           <h2 className="text-base font-black text-sec dark:text-white mb-4 flex items-center justify-between">
             <span className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-college-normal" />
@@ -115,7 +115,7 @@ export default function BotGuidePage() {
                 {parseResult.items.map((item, i) => (
                   <div
                     key={i}
-                    className="p-3.5 bg-gray-50 dark:bg-[#1C2536] rounded-2xl border border-gray-200 dark:border-gray-850 flex items-center justify-between text-xs sm:text-sm"
+                    className="p-3.5 bg-gray-50 dark:bg-[#1C2536] rounded-2xl border border-gray-200 dark:border-gray-800 flex items-center justify-between text-xs sm:text-sm"
                   >
                     <div className="flex items-center gap-2.5">
                       <span className="w-7 h-7 rounded-full bg-primary/20 text-primary font-black flex items-center justify-center text-xs">
@@ -138,26 +138,26 @@ export default function BotGuidePage() {
       {/* Guide Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Connection Flow Guide */}
-        <div className="bg-white dark:bg-[#151C28] rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A]">
+        <div className="bg-white dark:bg-[#151C28] rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF]">
           <h3 className="text-base sm:text-lg font-black text-sec dark:text-white mb-3.5 flex items-center gap-2">
             <ShieldCheck className="w-5 h-5 text-primary" />
             <span>مراحل احراز هویت و اتصال (`/link`)</span>
           </h3>
           <ol className="list-decimal list-inside space-y-2.5 text-xs sm:text-sm text-ink-normal/80 dark:text-gray-300 leading-relaxed font-medium">
             <li>مدیر در تب کارکنان، کارمند جدید را ثبت کرده و کد ۶ رقمی تصادفی صادر می‌کند.</li>
-            <li>کارمند در تلگرام دستور <code className="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded font-mono">/link [کد]</code> را ارسال می‌کند.</li>
+            <li>کارمند در تلگرام دستور <code className="bg-gray-100 dark:bg-gray-800 dark:text-primary px-1.5 py-0.5 rounded font-mono font-bold">/link [کد]</code> را ارسال می‌کند.</li>
             <li>سیستم حساب تلگرام او را متصل کرده و پیام خوش‌آمدگویی ارسال می‌کند.</li>
           </ol>
         </div>
 
         {/* Report Flow Guide */}
-        <div className="bg-white dark:bg-[#151C28] rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A]">
+        <div className="bg-white dark:bg-[#151C28] rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF]">
           <h3 className="text-base sm:text-lg font-black text-sec dark:text-white mb-3.5 flex items-center gap-2">
             <Info className="w-5 h-5 text-college-normal" />
             <span>نحوه ارسال گزارش کار (`/report`)</span>
           </h3>
           <ul className="list-disc list-inside space-y-2.5 text-xs sm:text-sm text-ink-normal/80 dark:text-gray-300 leading-relaxed font-medium">
-            <li>پیام با دستور <code className="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded font-mono">/report</code> شروع می‌شود.</li>
+            <li>پیام با دستور <code className="bg-gray-100 dark:bg-gray-800 dark:text-primary px-1.5 py-0.5 rounded font-mono font-bold">/report</code> شروع می‌شود.</li>
             <li>کارمند شرح کارهای روزانه را در خطوط بعدی به صورت شماره‌دار یا ساده می‌نویسد.</li>
             <li>هیچ نیازی به نوشتن وضعیت‌های پیچیده نیست.</li>
             <li>ارسال مجدد در همان روز، گزارش قبلی را به‌روزرسانی و در تاریخچه نگهداری می‌کند.</li>

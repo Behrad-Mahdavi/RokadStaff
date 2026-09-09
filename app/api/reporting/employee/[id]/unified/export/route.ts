@@ -248,7 +248,7 @@ export async function GET(
       });
     } else {
       dailyReportsRaw.forEach((rep, idx) => {
-        const cleanText = rep.rawText.replace(/^\/report\s*/i, "").trim();
+        const cleanText = (rep.rawText || "").replace(/^\/report\s*/i, "").trim();
         const row = sheet2.addRow({
           rowNum: idx + 1,
           dateJalali: formatToJalali(rep.reportDate),

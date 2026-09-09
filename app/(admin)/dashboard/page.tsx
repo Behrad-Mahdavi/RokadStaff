@@ -97,8 +97,8 @@ export default function DashboardPage() {
             <Sparkles className="w-4 h-4" />
             <span>گزارش جامع عملکرد امروز</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-sec dark:text-white tracking-tight">داشبورد عملکرد روزانه</h1>
-          <p className="text-sm text-ink-normal/70 dark:text-gray-300 mt-1 font-medium">
+          <h1 className="text-xl sm:text-2xl font-black text-sec dark:text-white tracking-tight">داشبورد عملکرد روزانه</h1>
+          <p className="text-xs sm:text-sm text-ink-normal/70 dark:text-gray-300 mt-1 font-medium">
             وضعیت دریافت گزارش کار پایان روز کارکنان در تاریخ {formatToJalali(new Date())}
           </p>
         </div>
@@ -106,7 +106,7 @@ export default function DashboardPage() {
         <div className="flex flex-wrap items-center gap-3">
           <Link
             href="/employees"
-            className="rokad-btn-primary px-4 sm:px-5 py-3 text-sm rounded-xl font-bold"
+            className="rokad-btn-primary px-4 sm:px-5 py-2.5 sm:py-3 text-xs sm:text-sm rounded-xl font-bold"
           >
             <UserPlus className="w-4 h-4" />
             <span>ثبت کارمند جدید</span>
@@ -114,7 +114,7 @@ export default function DashboardPage() {
           <button
             onClick={handleTestCron}
             disabled={cronTriggering}
-            className="rokad-btn-outline px-4 sm:px-5 py-3 text-sm rounded-xl font-bold dark:bg-[#151C28] dark:border-gray-700 dark:text-gray-200"
+            className="rokad-btn-outline px-4 sm:px-5 py-2.5 sm:py-3 text-xs sm:text-sm rounded-xl font-bold dark:bg-[#151C28] dark:border-gray-700 dark:text-gray-200"
           >
             <Send className="w-4 h-4 text-college-normal" />
             <span>{cronTriggering ? "در حال ارسال..." : "ارسال یادآوری به غایبان"}</span>
@@ -123,7 +123,7 @@ export default function DashboardPage() {
       </div>
 
       {cronResult && (
-        <div className="p-4 sm:p-5 rounded-2xl bg-college-light dark:bg-college-darker/30 border border-college-normal/40 text-sm font-bold text-college-darker dark:text-college-light flex items-center justify-between shadow-sm">
+        <div className="p-4 sm:p-5 rounded-2xl bg-college-light dark:bg-college-darker/30 border border-college-normal/40 text-xs sm:text-sm font-bold text-college-darker dark:text-college-light flex items-center justify-between shadow-sm">
           <span>🔔 نتیجه عملیات یادآوری: {cronResult}</span>
           <button onClick={() => setCronResult(null)} className="text-xs sm:text-sm underline font-black">بستن</button>
         </div>
@@ -138,43 +138,43 @@ export default function DashboardPage() {
           icon={TrendingUp}
           theme="ecosystem"
           trend={{
-            value: overview.participationRate >= 70 ? "عالی" : "نیاز به پیگیری",
+            value: `${toPersianDigits(overview.participationRate)}٪ کل`,
             isPositive: overview.participationRate >= 70,
           }}
         />
 
         <StatCard
-          title="گزارش‌های به‌موقع / با تأخیر"
-          value={`${toPersianDigits(overview.todayOnTime)} / ${toPersianDigits(overview.todayLate)}`}
-          subtitle="تفکیک بر اساس ساعت پایان کار (۱۸:۰۰)"
-          icon={Clock}
+          title="گزارش‌های ثبت‌شده"
+          value={toPersianDigits(overview.todaySubmitted)}
+          subtitle={`${toPersianDigits(overview.todayOnTime)} به‌موقع / ${toPersianDigits(overview.todayLate)} با تأخیر`}
+          icon={CheckCircle2}
           theme="male"
         />
 
         <StatCard
-          title="غایبان در ثبت گزارش امروز"
-          value={`${toPersianDigits(overview.todayMissing)} نفر`}
-          subtitle="کارمندان فعالی که هنوز ثبت نکرده‌اند"
+          title="ثبت‌نشده (غایبان)"
+          value={toPersianDigits(overview.todayMissing)}
+          subtitle="همکارانی که گزارش نداده‌اند"
           icon={AlertCircle}
-          theme="college"
+          theme="female"
         />
 
         <StatCard
-          title="کل کارکنان / متصل به تلگرام"
-          value={`${toPersianDigits(overview.activeStaff)} / ${toPersianDigits(overview.linkedStaff)}`}
-          subtitle={`${toPersianDigits(overview.activeStaff - overview.linkedStaff)} نفر در انتظار اتصال`}
+          title="کل همکاران فعال"
+          value={toPersianDigits(overview.activeStaff)}
+          subtitle={`${toPersianDigits(overview.linkedStaff)} متصل به ربات تلگرام`}
           icon={Users}
-          theme="club"
+          theme="college"
         />
       </div>
 
       {/* Department Participation Card */}
-      <div className="bg-white dark:bg-[#151C28] rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-850 shadow-[3px_3px_0_#202A5A]">
+      <div className="bg-white dark:bg-[#151C28] rounded-3xl p-5 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF]">
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-lg font-black text-sec dark:text-white">مشارکت ثبت گزارش به تفکیک دپارتمان</h2>
+          <h2 className="text-base sm:text-lg font-black text-sec dark:text-white">مشارکت ثبت گزارش به تفکیک دپارتمان</h2>
           <Link
             href="/reports"
-            className="text-sm font-bold text-primary hover:underline flex items-center gap-1"
+            className="text-xs sm:text-sm font-bold text-primary hover:underline flex items-center gap-1"
           >
             <span>مشاهده همه گزارش‌ها</span>
             <ChevronLeft className="w-4 h-4" />
@@ -188,14 +188,14 @@ export default function DashboardPage() {
             Object.entries(departments).map(([dept, info]: any) => {
               const percent = info.total > 0 ? Math.round((info.submitted / info.total) * 100) : 0;
               return (
-                <div key={dept} className="p-5 rounded-2xl border border-gray-100 dark:border-gray-800 hover:border-primary/40 transition-colors bg-[#FCFDFD] dark:bg-[#1C2536]">
-                  <div className="flex items-center justify-between text-sm font-bold mb-3">
-                    <span className="text-sec dark:text-white font-black text-base">{dept}</span>
+                <div key={dept} className="p-4 sm:p-5 rounded-2xl border border-gray-100 dark:border-gray-800 hover:border-primary/40 transition-colors bg-[#FCFDFD] dark:bg-[#1C2536]">
+                  <div className="flex items-center justify-between text-xs sm:text-sm font-bold mb-3">
+                    <span className="text-sec dark:text-white font-black text-sm sm:text-base">{dept}</span>
                     <span className="text-ink-normal/70 dark:text-gray-300">
                       {toPersianDigits(info.submitted)} از {toPersianDigits(info.total)} نفر (٪{toPersianDigits(percent)})
                     </span>
                   </div>
-                  <div className="w-full h-3.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <div className="w-full h-3 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                     <div
                       className="h-full bg-gradient-to-r from-primary to-ecosystem-dark rounded-full transition-all duration-500"
                       style={{ width: `${percent}%` }}
@@ -209,10 +209,10 @@ export default function DashboardPage() {
       </div>
 
       {/* Recent Submitted Reports Feed */}
-      <div className="bg-white dark:bg-[#151C28] rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-850 shadow-[3px_3px_0_#202A5A]">
+      <div className="bg-white dark:bg-[#151C28] rounded-3xl p-5 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF]">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
           <div>
-            <h2 className="text-lg font-black text-sec dark:text-white">آخرین گزارش‌های دریافتی امروز</h2>
+            <h2 className="text-base sm:text-lg font-black text-sec dark:text-white">آخرین گزارش‌های دریافتی امروز</h2>
             <p className="text-xs sm:text-sm text-ink-normal/60 dark:text-gray-400 mt-0.5">دریافت مستقیم و زنده از ربات تلگرام</p>
           </div>
           <Link
@@ -232,7 +232,7 @@ export default function DashboardPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {recentReports.map((report: any) => {
-              const cleanText = report.rawText.replace(/^\/report\s*/i, "").trim();
+              const cleanText = (report.rawText || "").replace(/^\/report\s*/i, "").trim();
               return (
                 <div
                   key={report.id}

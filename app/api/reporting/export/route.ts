@@ -105,7 +105,7 @@ export async function GET(req: NextRequest) {
       });
     } else {
       filteredReports.forEach((rep, idx) => {
-        const cleanText = rep.rawText.replace(/^\/report\s*/i, "").trim();
+        const cleanText = (rep.rawText || "").replace(/^\/report\s*/i, "").trim();
         const row = sheet1.addRow({
           rowNum: idx + 1,
           fullName: rep.employeeFullName,

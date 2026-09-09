@@ -121,7 +121,7 @@ export default function UnifiedEmployeeReportPage() {
       {/* Employee Profile Header & Date Range */}
       <div className="p-5 sm:p-6 bg-white dark:bg-[#151C28] rounded-3xl border border-gray-200 dark:border-gray-800 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-5 sm:gap-6">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-primary to-ecosystem-dark text-white flex items-center justify-center font-black text-xl sm:text-2xl shadow-[3px_3px_0_#202A5A] shrink-0">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-primary to-ecosystem-dark text-white flex items-center justify-center font-black text-lg sm:text-xl shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] shrink-0">
             {data?.employee?.fullName ? data.employee.fullName.slice(0, 1) : "ک"}
           </div>
           <div>
@@ -487,7 +487,7 @@ export default function UnifiedEmployeeReportPage() {
                           </div>
                         ) : (
                           <p className="text-xs text-ink-normal leading-relaxed whitespace-pre-wrap">
-                            {rep.rawText.replace(/^\/report\s*/i, "").trim()}
+                            {(rep.rawText || "").replace(/^\/report\s*/i, "").trim()}
                           </p>
                         )}
                       </div>

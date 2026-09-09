@@ -200,13 +200,13 @@ export default function QuickTaskModal({
       <div className="font-vazirmatn space-y-6">
         {/* Success Banner */}
         {createdResult ? (
-          <div className="p-6 bg-ecosystem-light rounded-3xl border-2 border-primary/30 text-center space-y-4 shadow-sm animate-in fade-in">
-            <div className="w-14 h-14 bg-primary text-white rounded-2xl flex items-center justify-center mx-auto shadow-md">
-              <CheckCircle2 className="w-8 h-8" />
+          <div className="p-6 bg-ecosystem-light dark:bg-[#152422] rounded-3xl border-2 border-primary/30 text-center space-y-4 shadow-sm animate-in fade-in">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-primary text-white rounded-2xl flex items-center justify-center mx-auto shadow-md">
+              <CheckCircle2 className="w-7 h-7" />
             </div>
             <div>
-              <h3 className="text-lg font-black text-sec">تسک جدید با موفقیت ایجاد شد!</h3>
-              <p className="text-xs text-ink-normal/70 mt-1">
+              <h3 className="text-base sm:text-lg font-black text-sec dark:text-white">تسک جدید با موفقیت ایجاد شد!</h3>
+              <p className="text-xs sm:text-sm text-ink-normal/70 dark:text-gray-300 mt-1 font-medium">
                 تسک «{createdResult.task.title}» در بخش {createdResult.projectName} ثبت گردید و برای همکاران منتسب ارسال شد.
               </p>
             </div>
@@ -221,7 +221,7 @@ export default function QuickTaskModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-5 py-2.5 rounded-xl bg-white border border-gray-200 text-xs font-bold text-ink-dark hover:bg-gray-50 transition"
+                className="px-5 py-2.5 rounded-xl bg-white dark:bg-[#1C2536] border border-gray-200 dark:border-gray-700 text-xs font-bold text-ink-dark dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
               >
                 بستن پنجره
               </button>

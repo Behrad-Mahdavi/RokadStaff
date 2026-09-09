@@ -235,7 +235,7 @@ function ReportsContent() {
           <select
             value={selectedDept}
             onChange={(e) => setSelectedDept(e.target.value)}
-            className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-xs sm:text-sm bg-[#FAFAFA] dark:bg-[#1C2536] dark:text-white focus:border-primary focus:outline-none font-bold text-sec"
+            className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-xs sm:text-sm bg-[#FAFAFA] dark:bg-[#1C2536] dark:text-white focus:border-primary focus:outline-none font-bold text-sec dark:text-white"
           >
             <option value="all">همه دپارتمان‌ها</option>
             <option value="پسرانه">پسرانه</option>
@@ -249,7 +249,7 @@ function ReportsContent() {
             <select
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
-              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-xs sm:text-sm bg-[#FAFAFA] dark:bg-[#1C2536] dark:text-white focus:border-primary focus:outline-none font-bold text-sec"
+              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-xs sm:text-sm bg-[#FAFAFA] dark:bg-[#1C2536] dark:text-white focus:border-primary focus:outline-none font-bold text-sec dark:text-white"
             >
               <option value="all">همه وضعیت‌ها</option>
               <option value="on_time">به‌موقع</option>
@@ -280,7 +280,7 @@ function ReportsContent() {
 
       {/* TAB 1: Submitted Reports Table */}
       {activeTab === "submitted" && (
-        <div className="bg-white dark:bg-[#151C28] rounded-3xl border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] overflow-hidden">
+        <div className="bg-white dark:bg-[#151C28] rounded-3xl border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-right text-xs sm:text-sm min-w-[650px]">
               <thead className="bg-[#F8F9FA] dark:bg-[#1C2536] border-b border-gray-200 dark:border-gray-800 text-ink-normal/70 dark:text-gray-300 font-bold">
@@ -308,7 +308,7 @@ function ReportsContent() {
                   </tr>
                 ) : (
                   reports.map((report) => {
-                    const cleanText = report.rawText.replace(/^\/report\s*/i, "").trim();
+                    const cleanText = (report.rawText || "").replace(/^\/report\s*/i, "").trim();
                     return (
                       <tr key={report.id} className="hover:bg-gray-50/70 dark:hover:bg-[#1C2536]/50 transition-colors">
                         <td className="py-3.5 px-4 sm:px-6 font-bold text-sec dark:text-white">
@@ -360,7 +360,7 @@ function ReportsContent() {
 
       {/* TAB 2: Missing Employees Table */}
       {activeTab === "missing" && (
-        <div className="bg-white dark:bg-[#151C28] rounded-3xl border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] overflow-hidden">
+        <div className="bg-white dark:bg-[#151C28] rounded-3xl border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-right text-xs sm:text-sm">
               <thead className="bg-[#F8F9FA] dark:bg-[#1C2536] border-b border-gray-200 dark:border-gray-800 text-ink-normal/70 dark:text-gray-300 font-bold">
@@ -466,7 +466,7 @@ function ReportsContent() {
             <div>
               <h4 className="text-sm font-black text-sec dark:text-white mb-2">متن ارسال شده توسط همکار:</h4>
               <div className="p-5 bg-gray-50 dark:bg-[#111622] rounded-2xl border border-gray-200 dark:border-gray-800 text-xs sm:text-sm font-medium text-ink-darker dark:text-gray-200 leading-loose whitespace-pre-wrap max-h-96 overflow-y-auto">
-                {selectedReport.rawText.replace(/^\/report\s*/i, "").trim()}
+                {(selectedReport.rawText || "").replace(/^\/report\s*/i, "").trim()}
               </div>
             </div>
           </div>

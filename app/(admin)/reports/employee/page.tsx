@@ -42,8 +42,8 @@ export default function EmployeeReportsHubPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-sec dark:text-white tracking-tight flex items-center gap-2.5">
-            <Users className="w-8 h-8 text-primary" />
+          <h1 className="text-xl sm:text-2xl font-black text-sec dark:text-white tracking-tight flex items-center gap-2.5">
+            <Users className="w-7 h-7 text-primary" />
             <span>گزارش جامع و کارنامه همکاران</span>
           </h1>
           <p className="text-xs sm:text-sm text-ink-normal/60 dark:text-gray-400 mt-1 font-medium">
@@ -53,7 +53,7 @@ export default function EmployeeReportsHubPage() {
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="p-4 bg-white dark:bg-[#151C28] rounded-3xl border border-[#EAEAEA] dark:border-gray-800 shadow-sm flex flex-col sm:flex-row items-center gap-3">
+      <div className="p-4 bg-white dark:bg-[#151C28] rounded-3xl border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] flex flex-col sm:flex-row items-center gap-3">
         <div className="relative flex-1 w-full">
           <Search className="w-4 h-4 text-gray-400 absolute right-3.5 top-1/2 -translate-y-1/2" />
           <input
@@ -95,7 +95,7 @@ export default function EmployeeReportsHubPage() {
           {filteredEmployees.map((emp) => (
             <div
               key={emp.id}
-              className="p-5 bg-white dark:bg-[#151C28] rounded-3xl border border-gray-200 dark:border-gray-800 shadow-sm hover:border-primary/50 hover:shadow-md transition-all flex flex-col justify-between"
+              className="p-5 bg-white dark:bg-[#151C28] rounded-3xl border border-gray-200 dark:border-gray-800 shadow-[2.5px_2.5px_0_#202A5A] dark:shadow-[2.5px_2.5px_0_#59BBAF] hover:border-primary/50 transition-all flex flex-col justify-between"
             >
               <div className="flex items-start gap-3.5">
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-ecosystem-dark text-white flex items-center justify-center font-black text-lg shadow-sm shrink-0">
@@ -113,10 +113,10 @@ export default function EmployeeReportsHubPage() {
               </div>
 
               <div className="mt-5 pt-4 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
-                <span className="text-xs text-ink-normal/40 dark:text-gray-500">مشاهده آمار و کارنامه</span>
+                <span className="text-xs text-ink-normal/40 dark:text-gray-500 font-medium">مشاهده آمار و کارنامه</span>
                 <Link
                   href={`/reports/employee/${emp.id}`}
-                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-sec text-white text-xs font-bold hover:bg-sec/90 transition shadow-sm"
+                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-sec dark:bg-primary dark:text-[#121824] text-white text-xs font-black hover:bg-sec/90 dark:hover:bg-primary/90 transition shadow-sm"
                 >
                   <span>کارنامه جامع</span>
                   <ArrowLeft className="w-3.5 h-3.5" />

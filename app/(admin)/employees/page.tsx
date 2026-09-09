@@ -189,7 +189,7 @@ export default function EmployeesPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-sec dark:text-white">مدیریت کارکنان</h1>
+          <h1 className="text-xl sm:text-2xl font-black text-sec dark:text-white tracking-tight">مدیریت کارکنان</h1>
           <p className="text-xs text-ink-normal/60 dark:text-gray-400 mt-1">
             مشاهده، افزودن، صدور کد اتصال تلگرام و مدیریت دسترسی کارمندان
           </p>
@@ -213,7 +213,7 @@ export default function EmployeesPage() {
             placeholder="جستجوی نام کارمند..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-3 pr-10 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-xs focus:border-primary focus:outline-none bg-[#FAFAFA] dark:bg-[#1C2536] dark:text-white focus:bg-white dark:focus:bg-[#1C2536]"
+            className="w-full pl-3 pr-10 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-xs focus:border-primary focus:outline-none bg-[#FAFAFA] dark:bg-[#1C2536] text-ink-normal dark:text-white focus:bg-white dark:focus:bg-[#1C2536]"
           />
           <Search className="w-4 h-4 text-gray-400 absolute right-3.5 top-2.5" />
         </div>
@@ -223,7 +223,7 @@ export default function EmployeesPage() {
           <select
             value={selectedDept}
             onChange={(e) => setSelectedDept(e.target.value)}
-            className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-xs bg-[#FAFAFA] dark:bg-[#1C2536] dark:text-white focus:border-primary focus:outline-none font-bold text-sec"
+            className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-xs bg-[#FAFAFA] dark:bg-[#1C2536] dark:text-white focus:border-primary focus:outline-none font-bold text-sec dark:text-white"
           >
             <option value="all">همه دپارتمان‌ها</option>
             {DEPARTMENTS.map((d) => (
@@ -237,7 +237,7 @@ export default function EmployeesPage() {
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
-            className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-xs bg-[#FAFAFA] dark:bg-[#1C2536] dark:text-white focus:border-primary focus:outline-none font-bold text-sec"
+            className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-xs bg-[#FAFAFA] dark:bg-[#1C2536] dark:text-white focus:border-primary focus:outline-none font-bold text-sec dark:text-white"
           >
             <option value="all">همه وضعیت‌ها</option>
             <option value="true">فعال</option>
@@ -247,7 +247,7 @@ export default function EmployeesPage() {
       </div>
 
       {/* Employees Table */}
-      <div className="bg-white dark:bg-[#151C28] rounded-2xl border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] overflow-hidden">
+      <div className="bg-white dark:bg-[#151C28] rounded-2xl border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-right text-xs min-w-[650px]">
             <thead className="bg-[#F8F9FA] dark:bg-[#1C2536] border-b border-gray-200 dark:border-gray-800 text-ink-normal/70 dark:text-gray-300 font-bold">
