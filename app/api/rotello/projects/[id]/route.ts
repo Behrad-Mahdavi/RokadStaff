@@ -35,6 +35,11 @@ export async function GET(
       .limit(1);
 
     if (projResult.length === 0) {
+      const { getMockProjectBoard } = await import("@/lib/mockRotello");
+      const mockBoard = getMockProjectBoard(projectId);
+      if (mockBoard) {
+        return NextResponse.json(mockBoard);
+      }
       return NextResponse.json({ error: "پروژه یافت نشد." }, { status: 404 });
     }
 

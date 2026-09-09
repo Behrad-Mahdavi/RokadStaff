@@ -361,6 +361,7 @@ export function getMockProjectBoard(projectId: string) {
     userRole: "owner",
     isAdmin: true,
     columns: columnsWithTasks,
+    tasks: tasks,
     members: project.members || [],
     allEmployees: [
       { id: "emp-1", fullName: "علی رضایی", department: "پسرانه", position: "توسعه‌دهنده فرانت‌اند" },

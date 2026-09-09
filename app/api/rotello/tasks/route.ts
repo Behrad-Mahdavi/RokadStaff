@@ -64,10 +64,14 @@ export async function POST(req: NextRequest) {
         .limit(1);
 
       if (membership.length === 0) {
-        return NextResponse.json(
-          { error: "شما عضو این پروژه نیستید و دسترسی به ثبت تسک ندارید." },
-          { status: 403 }
-        );
+        const { getMockProjectBoard } = await import("@/lib/mockRotello");
+        const mockBoard = getMockProjectBoard(projectId);
+        if (!mockBoard) {
+          return NextResponse.json(
+            { error: "شما عضو این پروژه نیستید و دسترسی به ثبت تسک ندارید." },
+            { status: 403 }
+          );
+        }
       }
     }
 
@@ -82,12 +86,43 @@ export async function POST(req: NextRequest) {
         .limit(1);
 
       if (firstCol.length === 0) {
-        return NextResponse.json(
-          { error: "پروژه هنوز هیچ ستونی برای قرارگیری تسک ندارد." },
-          { status: 400 }
-        );
+        const { getMockColumns } = await import("@/lib/mockRotello");
+        const mockCols = getMockColumns(projectId);
+        if (mockCols && mockCols.length > 0) {
+          targetColumnId = mockCols[0].id;
+        } else {
+          return NextResponse.json(
+            { error: "پروژه هنوز هیچ ستونی برای قرارگیری تسک ندارد." },
+            { status: 400 }
+          );
+        }
+      } else {
+        targetColumnId = firstCol[0].id;
       }
-      targetColumnId = firstCol[0].id;
+    }
+
+    // Check if project exists in DB, if not use mock store directly
+    const projCheck = await db
+      .select({ id: projects.id })
+      .from(projects)
+      .where(eq(projects.id, projectId))
+      .limit(1);
+
+    if (projCheck.length === 0) {
+      const { createMockTask } = await import("@/lib/mockRotello");
+      const mockTask = createMockTask({
+        projectId,
+        columnId: targetColumnId,
+        title,
+        description,
+        deadline,
+        priority,
+        assigneeIds,
+      });
+      return NextResponse.json({
+        success: true,
+        task: mockTask,
+      });
     }
 
     // Check if target column is a Done column

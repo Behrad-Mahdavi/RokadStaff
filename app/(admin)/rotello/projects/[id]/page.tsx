@@ -36,10 +36,16 @@ export default function ProjectBoardPage() {
   // Active task for detail modal
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
 
-  // Quick Task Create in column
-  const [quickTaskColId, setQuickTaskColId] = useState<string | null>(null);
-  const [quickTaskTitle, setQuickTaskTitle] = useState("");
+  // Create Task Modal in Board
+  const [isCreateTaskModalOpen, setIsCreateTaskModalOpen] = useState(false);
+  const [newTaskTitle, setNewTaskTitle] = useState("");
+  const [newTaskColId, setNewTaskColId] = useState("");
+  const [newTaskDesc, setNewTaskDesc] = useState("");
+  const [newTaskPriority, setNewTaskPriority] = useState("normal");
+  const [newTaskDeadline, setNewTaskDeadline] = useState("");
+  const [newTaskAssignees, setNewTaskAssignees] = useState<string[]>([]);
   const [creatingTask, setCreatingTask] = useState(false);
+  const [createTaskError, setCreateTaskError] = useState("");
 
   // New Column Modal
   const [isNewColModalOpen, setIsNewColModalOpen] = useState(false);
@@ -89,29 +95,51 @@ export default function ProjectBoardPage() {
     }
   }, [projectId]);
 
-  // Handle Quick Task Submit
-  const handleQuickTaskSubmit = async (colId: string) => {
-    if (!quickTaskTitle.trim()) return;
+  // Handle Open & Submit Create Task Modal
+  const handleOpenCreateTaskModal = (colId?: string) => {
+    setNewTaskTitle("");
+    setNewTaskDesc("");
+    setNewTaskPriority("normal");
+    setNewTaskDeadline("");
+    setNewTaskAssignees([]);
+    setCreateTaskError("");
+    setNewTaskColId(colId || (columns.length > 0 ? columns[0].id : ""));
+    setIsCreateTaskModalOpen(true);
+  };
+
+  const handleCreateTaskSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newTaskTitle.trim()) {
+      setCreateTaskError("عنوان وظیفه الزامی است.");
+      return;
+    }
 
     setCreatingTask(true);
+    setCreateTaskError("");
     try {
       const res = await fetch("/api/rotello/tasks", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           projectId,
-          columnId: colId,
-          title: quickTaskTitle.trim(),
+          columnId: newTaskColId || (columns.length > 0 ? columns[0].id : undefined),
+          title: newTaskTitle.trim(),
+          description: newTaskDesc.trim() || null,
+          priority: newTaskPriority,
+          deadline: newTaskDeadline || null,
+          assigneeIds: newTaskAssignees,
         }),
       });
 
+      const data = await res.json();
       if (res.ok) {
-        setQuickTaskTitle("");
-        setQuickTaskColId(null);
+        setIsCreateTaskModalOpen(false);
         fetchBoard();
+      } else {
+        setCreateTaskError(data.error || "خطا در ایجاد وظیفه");
       }
     } catch (err) {
-      console.error(err);
+      setCreateTaskError("خطای شبکه یا ارتباط با سرور");
     } finally {
       setCreatingTask(false);
     }
@@ -292,6 +320,15 @@ export default function ProjectBoardPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
+          {/* Create Task Button */}
+          <button
+            onClick={() => handleOpenCreateTaskModal()}
+            className="rokad-btn-primary px-4 py-2 text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-[2px_2px_0_#202A5A] dark:shadow-[2px_2px_0_#59BBAF]"
+          >
+            <Plus className="w-4 h-4" />
+            <span>وظیفه جدید</span>
+          </button>
+
           {/* Members Avatars Button */}
           <button
             onClick={() => setIsMembersModalOpen(true)}
@@ -449,48 +486,15 @@ export default function ProjectBoardPage() {
                 })}
               </div>
 
-              {/* Quick Add Task in Column */}
-              <div className="pt-3 mt-2 border-t border-gray-200/60">
+              {/* Add Task in Column (Opens Popup Modal) */}
+              <div className="pt-3 mt-2 border-t border-gray-200/60 dark:border-gray-800">
                 {column.isDoneColumn && !boardData?.isAdmin ? (
                   <div className="py-2 text-center text-[11px] font-bold text-ink-normal/40 dark:text-gray-400 bg-gray-100/60 dark:bg-gray-800/40 rounded-xl">
                     تکمیل تسک تنها توسط مدیر مجاز است
                   </div>
-                ) : quickTaskColId === column.id ? (
-                  <div className="bg-white dark:bg-[#1C2536] p-3 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm space-y-2">
-                    <input
-                      type="text"
-                      autoFocus
-                      placeholder="عنوان تسک جدید..."
-                      value={quickTaskTitle}
-                      onChange={(e) => setQuickTaskTitle(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") handleQuickTaskSubmit(column.id);
-                        if (e.key === "Escape") setQuickTaskColId(null);
-                      }}
-                      className="w-full text-xs p-2.5 rounded-xl border border-primary/60 dark:border-primary/50 bg-white dark:bg-[#121824] text-slate-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-1 focus:ring-primary"
-                    />
-                    <div className="flex items-center justify-end gap-1.5">
-                      <button
-                        onClick={() => setQuickTaskColId(null)}
-                        className="px-2.5 py-1 text-xs text-gray-500 dark:text-gray-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                      >
-                        انصراف
-                      </button>
-                      <button
-                        onClick={() => handleQuickTaskSubmit(column.id)}
-                        disabled={creatingTask || !quickTaskTitle.trim()}
-                        className="rokad-btn-primary px-3 py-1 text-xs font-bold rounded-lg disabled:opacity-50"
-                      >
-                        افزودن
-                      </button>
-                    </div>
-                  </div>
                 ) : (
                   <button
-                    onClick={() => {
-                      setQuickTaskColId(column.id);
-                      setQuickTaskTitle("");
-                    }}
+                    onClick={() => handleOpenCreateTaskModal(column.id)}
                     className="w-full py-2 px-3 rounded-xl hover:bg-white dark:hover:bg-[#1C2536] text-xs font-bold text-ink-normal/70 dark:text-gray-300 hover:text-sec dark:hover:text-white flex items-center justify-center gap-1.5 transition-colors border border-transparent hover:border-gray-200 dark:hover:border-gray-700"
                   >
                     <Plus className="w-3.5 h-3.5" />
@@ -502,6 +506,157 @@ export default function ProjectBoardPage() {
           );
         })}
       </div>
+
+      {/* Modal: Create New Task in Board */}
+      <Modal
+        isOpen={isCreateTaskModalOpen}
+        onClose={() => setIsCreateTaskModalOpen(false)}
+        title={`ایجاد وظیفه جدید: ${project?.name || ""}`}
+        maxWidth="md"
+      >
+        <form onSubmit={handleCreateTaskSubmit} className="space-y-4">
+          {createTaskError && (
+            <div className="p-3 bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 text-xs font-bold rounded-xl border border-red-200 dark:border-red-800/50 flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{createTaskError}</span>
+            </div>
+          )}
+
+          <div>
+            <label className="block text-xs font-black text-slate-700 dark:text-gray-200 mb-1.5">
+              عنوان وظیفه <span className="text-rose-500">*</span>
+            </label>
+            <input
+              type="text"
+              autoFocus
+              value={newTaskTitle}
+              onChange={(e) => setNewTaskTitle(e.target.value)}
+              placeholder="مثال: طراحی پروتوتایپ صفحه نخست..."
+              className="w-full text-xs font-bold p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#121824] text-slate-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-gray-200 mb-1.5">
+                ستون قرارگیری
+              </label>
+              <select
+                value={newTaskColId}
+                onChange={(e) => setNewTaskColId(e.target.value)}
+                className="w-full text-xs font-bold p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#121824] text-slate-900 dark:text-white focus:border-primary focus:outline-none"
+              >
+                {columns.map((col: any) => (
+                  <option key={col.id} value={col.id} className="bg-white dark:bg-[#121824] text-slate-900 dark:text-white">
+                    {col.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-gray-200 mb-1.5">
+                سطح اولویت
+              </label>
+              <select
+                value={newTaskPriority}
+                onChange={(e) => setNewTaskPriority(e.target.value)}
+                className="w-full text-xs font-bold p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#121824] text-slate-900 dark:text-white focus:border-primary focus:outline-none"
+              >
+                <option value="normal" className="bg-white dark:bg-[#121824] text-slate-900 dark:text-white">عادی (Normal)</option>
+                <option value="important" className="bg-white dark:bg-[#121824] text-slate-900 dark:text-white">مهم (Important)</option>
+                <option value="urgent" className="bg-white dark:bg-[#121824] text-slate-900 dark:text-white">فوری (Urgent)</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-slate-700 dark:text-gray-200 mb-1.5">
+              مهلت انجام (ددلاین)
+            </label>
+            <input
+              type="date"
+              value={newTaskDeadline}
+              onChange={(e) => setNewTaskDeadline(e.target.value)}
+              className="w-full text-xs font-bold p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#121824] text-slate-900 dark:text-white focus:border-primary focus:outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-slate-700 dark:text-gray-200 mb-1.5">
+              توضیحات و شرح کار
+            </label>
+            <textarea
+              value={newTaskDesc}
+              onChange={(e) => setNewTaskDesc(e.target.value)}
+              rows={3}
+              placeholder="شرح اهداف، جزئیات و نیازمندی‌های این وظیفه..."
+              className="w-full text-xs font-medium p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#121824] text-slate-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-primary focus:outline-none resize-none leading-relaxed"
+            />
+          </div>
+
+          {/* Assignees selection */}
+          {members.length > 0 && (
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-gray-200 mb-1.5">
+                تخصیص به همکاران پروژه:
+              </label>
+              <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto p-2 bg-gray-50 dark:bg-[#121824] rounded-xl border border-gray-200 dark:border-gray-700">
+                {members.map((m: any) => {
+                  const isSelected = newTaskAssignees.includes(m.employeeId);
+                  return (
+                    <button
+                      key={m.employeeId}
+                      type="button"
+                      onClick={() => {
+                        setNewTaskAssignees((prev) =>
+                          prev.includes(m.employeeId)
+                            ? prev.filter((id) => id !== m.employeeId)
+                            : [...prev, m.employeeId]
+                        );
+                      }}
+                      className={`text-xs font-bold px-3 py-1.5 rounded-xl border transition-all flex items-center gap-1.5 ${
+                        isSelected
+                          ? "bg-primary text-white border-primary shadow-sm"
+                          : "bg-white dark:bg-[#192131] text-slate-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-primary/50"
+                      }`}
+                    >
+                      <div className="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center text-[10px]">
+                        {m.fullName ? m.fullName.slice(0, 1) : "?"}
+                      </div>
+                      <span>{m.fullName}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          <div className="flex items-center justify-end gap-2 pt-2 border-t border-gray-100 dark:border-gray-800">
+            <button
+              type="button"
+              onClick={() => setIsCreateTaskModalOpen(false)}
+              className="px-4 py-2 text-xs font-bold text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors"
+            >
+              انصراف
+            </button>
+            <button
+              type="submit"
+              disabled={creatingTask || !newTaskTitle.trim()}
+              className="rokad-btn-primary px-5 py-2.5 text-xs font-black rounded-xl disabled:opacity-50 flex items-center gap-1.5 shadow-[2px_2px_0_#202A5A] dark:shadow-[2px_2px_0_#59BBAF]"
+            >
+              {creatingTask ? (
+                <span>در حال ثبت...</span>
+              ) : (
+                <>
+                  <Plus className="w-4 h-4" />
+                  <span>ثبت وظیفه جدید</span>
+                </>
+              )}
+            </button>
+          </div>
+        </form>
+      </Modal>
 
       {/* Task Details Modal */}
       <TaskModal
