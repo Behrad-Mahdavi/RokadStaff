@@ -333,11 +333,11 @@ body {
     max-width: 100% !important;
   }
 
-  /* Executive Table Styling */
+  /* Executive Table Styling - Clean & Modern */
   .executive-table {
     width: 100% !important;
     border-collapse: collapse !important;
-    font-size: 8.5pt !important;
+    font-size: 9pt !important;
     page-break-inside: auto !important;
   }
 
@@ -347,11 +347,12 @@ body {
   }
 
   .executive-table th {
-    background-color: #1E293B !important;
-    color: #FFFFFF !important;
+    background-color: #F1F5F9 !important;
+    color: #1E293B !important;
     font-weight: 800 !important;
-    border: 1px solid #334155 !important;
-    padding: 7px 9px !important;
+    border: 1px solid #E2E8F0 !important;
+    border-bottom: 2px solid #CBD5E1 !important;
+    padding: 8px 10px !important;
     text-align: right !important;
   }
 
@@ -360,10 +361,11 @@ body {
   }
 
   .executive-table td {
-    border: 1px solid #CBD5E1 !important;
-    padding: 6px 9px !important;
+    border: 1px solid #E2E8F0 !important;
+    padding: 7px 10px !important;
     color: #1E293B !important;
     background-color: #FFFFFF;
+    vertical-align: middle;
   }
 
   .executive-table tr:nth-child(even) td {
@@ -374,9 +376,9 @@ body {
   .print-badge {
     display: inline-block !important;
     padding: 2px 8px !important;
-    border-radius: 9999px !important;
-    font-weight: 800 !important;
-    font-size: 7.5pt !important;
+    border-radius: 6px !important;
+    font-weight: 700 !important;
+    font-size: 8pt !important;
     border: 1px solid currentColor !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;

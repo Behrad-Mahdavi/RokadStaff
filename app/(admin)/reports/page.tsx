@@ -498,138 +498,100 @@ function ReportsContent() {
       </div>
 
       {/* ------------------------------------------------------------- */}
-      {/* 2. STATE-OF-THE-ART EXECUTIVE DAILY MANAGEMENT REPORT (PRINT ONLY) */}
+      {/* 2. SIMPLE, CLEAN & USEFUL DAILY MANAGEMENT REPORT (PRINT ONLY) */}
       {/* ------------------------------------------------------------- */}
-      <div className="print-only font-vazirmatn text-slate-900 space-y-5" dir="rtl">
-        {/* Double-border Official Letterhead */}
-        <div className="border-b-[3px] border-slate-900 pb-3">
-          <div className="flex items-start justify-between">
-            {/* Logo & Org Title */}
-            <div className="flex items-center gap-3.5">
-              <div className="w-14 h-14 rounded-2xl border-2 border-slate-900 flex items-center justify-center p-1 bg-white shrink-0">
-                <img src="/icon.png" alt="Logo" className="w-full h-full object-contain" />
-              </div>
-              <div>
-                <div className="text-[11px] font-bold text-slate-600 tracking-wider">بنام خدا</div>
-                <h1 className="text-lg font-black text-slate-950 mt-0.5">استودیو خلاق روتلو • مدیریت عوامل سازمانی</h1>
-                <p className="text-xs text-slate-700 font-bold mt-0.5">صورتجلسه و گزارش رسمی عملکرد روزانه پرسنل</p>
-              </div>
+      <div className="print-only text-slate-900 space-y-4" dir="rtl">
+        {/* Clean Modern Header */}
+        <div className="border-b border-slate-200 pb-3.5 mb-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-xl border border-slate-200 flex items-center justify-center p-1 bg-white shrink-0">
+              <img src="/icon.png" alt="Logo" className="w-full h-full object-contain" />
             </div>
-
-            {/* Official Metadata Document Stamp */}
-            <div className="border border-slate-300 bg-slate-50/80 rounded-xl p-2.5 text-[10.5px] space-y-1 min-w-[210px]">
-              <div className="flex justify-between">
-                <span className="font-bold text-slate-600">شماره ثبت سند:</span>
-                <span className="font-bold text-slate-900">ROT-RPT-{toPersianDigits(selectedDate.replace(/-/g, "").slice(2))}-{toPersianDigits(reports.length)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-bold text-slate-600">تاریخ گزارش:</span>
-                <span className="font-bold text-slate-900">{formatToJalali(selectedDate, { showMonthName: true, includeDayName: true })}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-bold text-slate-600">زمان صدور:</span>
-                <span className="font-bold text-slate-800">{formatToJalali(new Date())}</span>
-              </div>
-              <div className="flex justify-between pt-1 border-t border-slate-200">
-                <span className="font-bold text-slate-600">طبقه‌بندی:</span>
-                <span className="font-black text-amber-800 bg-amber-100/80 px-1.5 py-0.2 rounded text-[9.5px]">سازمانی / محرمانه</span>
+            <div>
+              <h1 className="text-base font-black text-slate-950 leading-tight">
+                استودیو روتلو • گزارش عملکرد روزانه همکاران
+              </h1>
+              <div className="text-[11px] text-slate-500 font-medium mt-0.5">
+                دپارتمان: {selectedDept === "all" ? "تمامی دپارتمان‌ها" : selectedDept}
               </div>
             </div>
           </div>
-          {/* Teal Accent Line */}
-          <div className="h-1 bg-gradient-to-l from-teal-600 via-slate-800 to-teal-700 rounded-full mt-3" />
+
+          <div className="text-left text-xs space-y-0.5">
+            <div className="font-bold text-slate-900">
+              تاریخ گزارش: {formatToJalali(selectedDate, { showMonthName: true, includeDayName: true })}
+            </div>
+            <div className="text-[10.5px] text-slate-500 font-medium">
+              زمان صدور: {formatToJalali(new Date())}
+            </div>
+          </div>
         </div>
 
-        {/* Executive KPI Metric Tiles */}
-        <div className="avoid-break">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-xs font-black text-slate-900 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-teal-600" />
-              <span>۱. خلاصه شاخص‌های عملکرد روزانه (Daily KPIs Dashboard)</span>
-            </h2>
-            <span className="text-[10px] text-slate-500 font-medium">پایش لحظه‌ای بر اساس داده‌های ثبت‌شده</span>
+        {/* Minimal KPI Metric Tiles */}
+        <div className="grid grid-cols-4 gap-3 mb-4 avoid-break">
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
+            <div className="text-[11px] font-bold text-slate-600 mb-1">کل عوامل فعال</div>
+            <div className="text-lg font-black text-slate-900">
+              {toPersianDigits(reports.length + missingList.length)} <span className="text-xs font-normal text-slate-500">نفر</span>
+            </div>
           </div>
 
-          <div className="grid grid-cols-4 gap-2.5">
-            {/* Tile 1: Total Personnel */}
-            <div className="border border-slate-300 rounded-xl p-3 bg-slate-50 border-t-4 border-t-slate-700 text-center">
-              <div className="text-[11px] font-bold text-slate-600">کل عوامل فعال</div>
-              <div className="text-xl font-black text-slate-900 my-1">
-                {toPersianDigits(reports.length + missingList.length)} <span className="text-xs font-normal">نفر</span>
-              </div>
-              <div className="text-[10px] text-slate-500">مجموع ثبت‌شده و بدون ثبت</div>
-            </div>
-
-            {/* Tile 2: Submitted */}
-            <div className="border border-emerald-300 rounded-xl p-3 bg-emerald-50/50 border-t-4 border-t-emerald-600 text-center">
-              <div className="text-[11px] font-bold text-emerald-800">گزارش‌های ثبت‌شده</div>
-              <div className="text-xl font-black text-emerald-700 my-1">
-                {toPersianDigits(reports.length)} <span className="text-xs font-normal">نفر</span>
-              </div>
-              <div className="text-[10px] text-emerald-600 font-bold">
-                ٪{toPersianDigits(
+          <div className="bg-emerald-50/50 border border-emerald-200 rounded-xl p-3 text-center">
+            <div className="text-[11px] font-bold text-emerald-800 mb-1">گزارش‌های ثبت‌شده</div>
+            <div className="text-lg font-black text-emerald-700">
+              {toPersianDigits(reports.length)} <span className="text-xs font-normal text-slate-500">نفر</span>
+              <span className="text-[10.5px] font-bold text-emerald-600 mr-1.5">
+                (٪{toPersianDigits(
                   reports.length + missingList.length > 0
                     ? Math.round((reports.length / (reports.length + missingList.length)) * 100)
                     : 0
-                )} مشارکت کل
-              </div>
+                )})
+              </span>
             </div>
+          </div>
 
-            {/* Tile 3: Missing */}
-            <div className="border border-rose-300 rounded-xl p-3 bg-rose-50/50 border-t-4 border-t-rose-600 text-center">
-              <div className="text-[11px] font-bold text-rose-800">موارد عدم ثبت (غیبت)</div>
-              <div className="text-xl font-black text-rose-700 my-1">
-                {toPersianDigits(missingList.length)} <span className="text-xs font-normal">نفر</span>
-              </div>
-              <div className="text-[10px] text-rose-600 font-bold">
-                {missingList.length === 0 ? "بدون مورد عدم ثبت" : "نیازمند پیگیری انضباطی"}
-              </div>
+          <div className="bg-rose-50/50 border border-rose-200 rounded-xl p-3 text-center">
+            <div className="text-[11px] font-bold text-rose-800 mb-1">عدم ثبت گزارش</div>
+            <div className="text-lg font-black text-rose-700">
+              {toPersianDigits(missingList.length)} <span className="text-xs font-normal text-slate-500">نفر</span>
             </div>
+          </div>
 
-            {/* Tile 4: On-time rate */}
-            <div className="border border-blue-300 rounded-xl p-3 bg-blue-50/50 border-t-4 border-t-blue-600 text-center">
-              <div className="text-[11px] font-bold text-blue-800">نرخ ثبت به‌موقع</div>
-              <div className="text-xl font-black text-blue-700 my-1">
-                ٪{toPersianDigits(
-                  reports.length > 0
-                    ? Math.round((reports.filter((r) => r.status === "on_time").length / reports.length) * 100)
-                    : 100
-                )}
-              </div>
-              <div className="text-[10px] text-blue-600">
-                {toPersianDigits(reports.filter((r) => r.status === "on_time").length)} گزارش بدون تأخیر
-              </div>
+          <div className="bg-blue-50/50 border border-blue-200 rounded-xl p-3 text-center">
+            <div className="text-[11px] font-bold text-blue-800 mb-1">نرخ ثبت به‌موقع</div>
+            <div className="text-lg font-black text-blue-700">
+              ٪{toPersianDigits(
+                reports.length > 0
+                  ? Math.round((reports.filter((r) => r.status === "on_time").length / reports.length) * 100)
+                  : 100
+              )}
             </div>
           </div>
         </div>
 
-        {/* Section 2: Submitted Reports Table */}
-        <div className="avoid-break">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-xs font-black text-slate-900 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-teal-600" />
-              <span>۲. فهرست تفصیلی فعالیت‌ها و گزارش‌های ثبت‌شده</span>
+        {/* Section 1: Submitted Reports Table */}
+        <div className="avoid-break space-y-2">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xs font-black text-slate-900">
+              فهرست گزارش‌های کاری ثبت‌شده ({toPersianDigits(reports.length)} مورد)
             </h2>
-            <span className="text-[10.5px] text-slate-500 font-bold">
-              تعداد: {toPersianDigits(reports.length)} فقره گزارش
-            </span>
           </div>
 
           {reports.length === 0 ? (
-            <div className="p-4 border-2 border-dashed border-slate-300 text-xs text-slate-500 text-center rounded-xl bg-slate-50">
+            <div className="p-4 border border-dashed border-slate-200 text-xs text-slate-500 text-center rounded-xl bg-slate-50">
               هیچ گزارش کاری برای این تاریخ ثبت نشده است.
             </div>
           ) : (
-            <div className="overflow-hidden rounded-xl border border-slate-300">
+            <div className="overflow-hidden rounded-xl border border-slate-200">
               <table className="executive-table">
                 <thead>
                   <tr>
-                    <th className="w-9 text-center">ردیف</th>
+                    <th className="w-8 text-center">ردیف</th>
                     <th className="w-32">نام همکار</th>
                     <th className="w-24 text-center">دپارتمان</th>
                     <th className="w-20 text-center">زمان ثبت</th>
-                    <th className="w-24 text-center">وضعیت تحویل</th>
-                    <th>شرح فعالیت‌ها، دستاوردها و اقلام تحویلی</th>
+                    <th className="w-20 text-center">وضعیت</th>
+                    <th>شرح فعالیت‌ها و اقلام تحویلی</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -637,22 +599,22 @@ function ReportsContent() {
                     const isOnTime = rep.status === "on_time";
                     return (
                       <tr key={rep.id}>
-                        <td className="text-center font-bold text-slate-600">{toPersianDigits(idx + 1)}</td>
+                        <td className="text-center font-bold text-slate-500">{toPersianDigits(idx + 1)}</td>
                         <td className="font-bold text-slate-900">{rep.employeeFullName || rep.employeeName}</td>
-                        <td className="text-center text-slate-700 font-medium">{rep.employeeDepartment || rep.department || "پسرانه"}</td>
-                        <td className="text-center font-bold text-slate-700 text-[11px]">{formatTehranTime(rep.submittedAt)}</td>
+                        <td className="text-center text-slate-600">{rep.employeeDepartment || rep.department || "پسرانه"}</td>
+                        <td className="text-center font-bold text-slate-700 text-xs">{formatTehranTime(rep.submittedAt)}</td>
                         <td className="text-center">
                           <span
                             className={`print-badge ${
                               isOnTime
-                                ? "bg-emerald-50 text-emerald-800 border-emerald-300"
-                                : "bg-amber-50 text-amber-800 border-amber-300"
+                                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                : "bg-amber-50 text-amber-700 border-amber-200"
                             }`}
                           >
                             {isOnTime ? "به‌موقع" : "با تأخیر"}
                           </span>
                         </td>
-                        <td className="leading-relaxed text-[10px] text-slate-800">
+                        <td className="leading-relaxed text-[10.5px] text-slate-800">
                           {(rep.rawText || "").replace(/^\/report\s*/i, "").trim()}
                         </td>
                       </tr>
@@ -664,51 +626,43 @@ function ReportsContent() {
           )}
         </div>
 
-        {/* Section 3: Missing Employees Table (If any) */}
+        {/* Section 2: Missing Employees Table (If any) */}
         {missingList.length > 0 && (
-          <div className="avoid-break">
-            <div className="flex items-center justify-between mb-2">
-              <h2 className="text-xs font-black text-rose-900 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-rose-600" />
-                <span>۳. فهرست همکاران بدون گزارش کار (غایبان سامانه در این روز)</span>
+          <div className="avoid-break space-y-2 pt-2">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xs font-black text-rose-800">
+                همکاران بدون ثبت گزارش ({toPersianDigits(missingList.length)} نفر)
               </h2>
-              <span className="text-[10.5px] text-rose-700 font-bold">
-                تعداد: {toPersianDigits(missingList.length)} نفر
-              </span>
             </div>
 
             <div className="overflow-hidden rounded-xl border border-rose-200">
               <table className="executive-table">
                 <thead>
-                  <tr className="bg-rose-900">
-                    <th className="w-9 text-center bg-rose-900 text-white">ردیف</th>
-                    <th className="bg-rose-900 text-white">نام و نام خانوادگی</th>
-                    <th className="w-28 text-center bg-rose-900 text-white">دپارتمان</th>
-                    <th className="w-32 bg-rose-900 text-white">سمت سازمانی</th>
-                    <th className="w-24 text-center bg-rose-900 text-white">اتصال به تلگرام</th>
-                    <th className="bg-rose-900 text-white">علت و ملاحظات سرپرست</th>
+                  <tr className="bg-rose-50/80">
+                    <th className="w-8 text-center bg-rose-50 text-rose-900 border-rose-200">ردیف</th>
+                    <th className="bg-rose-50 text-rose-900 border-rose-200">نام و نام خانوادگی</th>
+                    <th className="w-28 text-center bg-rose-50 text-rose-900 border-rose-200">دپارتمان</th>
+                    <th className="w-32 bg-rose-50 text-rose-900 border-rose-200">سمت</th>
+                    <th className="w-24 text-center bg-rose-50 text-rose-900 border-rose-200">وضعیت اتصال</th>
                   </tr>
                 </thead>
                 <tbody>
                   {missingList.map((emp: any, idx: number) => (
                     <tr key={emp.id}>
-                      <td className="text-center font-bold text-slate-600">{toPersianDigits(idx + 1)}</td>
+                      <td className="text-center font-bold text-slate-500">{toPersianDigits(idx + 1)}</td>
                       <td className="font-bold text-slate-900">{emp.fullName}</td>
-                      <td className="text-center text-slate-700">{emp.department || "پسرانه"}</td>
-                      <td className="text-slate-700">{emp.position || "عضو تیم"}</td>
+                      <td className="text-center text-slate-600">{emp.department || "پسرانه"}</td>
+                      <td className="text-slate-700">{emp.position || "همکار استودیو"}</td>
                       <td className="text-center">
                         <span
                           className={`print-badge ${
                             emp.isLinked
-                              ? "bg-slate-100 text-slate-700 border-slate-300"
+                              ? "bg-slate-100 text-slate-700 border-slate-200"
                               : "bg-rose-50 text-rose-700 border-rose-200"
                           }`}
                         >
                           {emp.isLinked ? "متصل" : "عدم اتصال"}
                         </span>
-                      </td>
-                      <td className="text-[10px] text-slate-400">
-                        محل ثبت مرخصی / مأموریت / یادداشت پیگیری
                       </td>
                     </tr>
                   ))}
@@ -718,43 +672,10 @@ function ReportsContent() {
           </div>
         )}
 
-        {/* Section 4: Management Directives / Observations */}
-        <div className="avoid-break border border-slate-300 bg-slate-50/60 rounded-xl p-3">
-          <div className="text-[11px] font-black text-slate-900 mb-2">۴. توضیحات، ارزیابی کیفی و مصوبات مدیر دپارتمان / معاونت اجرایی:</div>
-          <div className="space-y-2 text-[10px] text-slate-400">
-            <div className="border-b border-dashed border-slate-300 pb-1.5 h-4" />
-            <div className="border-b border-dashed border-slate-300 pb-1.5 h-4" />
-          </div>
-        </div>
-
-        {/* Section 5: Official Signatures & Seal Frame */}
-        <div className="avoid-break pt-4 border-t-2 border-slate-300">
-          <div className="grid grid-cols-3 gap-4 text-center text-xs">
-            <div className="border border-slate-300 bg-white p-3 rounded-xl space-y-6">
-              <div className="font-black text-slate-800 text-[11px]">۱. تنظیم و بررسی اولیه</div>
-              <div className="text-[10px] text-slate-500">مسئول هماهنگی / سرپرست دپارتمان</div>
-              <div className="text-[9.5px] text-slate-400 pt-3 border-t border-slate-100">امضا و تاریخ</div>
-            </div>
-
-            <div className="border border-slate-300 bg-white p-3 rounded-xl space-y-6">
-              <div className="font-black text-slate-800 text-[11px]">۲. تأیید امور اداری و انضباطی</div>
-              <div className="text-[10px] text-slate-500">مدیریت منابع انسانی و عوامل</div>
-              <div className="text-[9.5px] text-slate-400 pt-3 border-t border-slate-100">امضا و تاریخ</div>
-            </div>
-
-            <div className="border border-slate-300 bg-white p-3 rounded-xl space-y-6">
-              <div className="font-black text-slate-800 text-[11px]">۳. تصویب نهایی مدیریت ارشد</div>
-              <div className="text-[10px] text-slate-500">معاونت اجرایی / مدیرعامل استودیو</div>
-              <div className="text-[9.5px] text-slate-400 pt-3 border-t border-slate-100">محل مهر رسمی و امضا</div>
-            </div>
-          </div>
-
-          {/* Official Security Footer */}
-          <div className="mt-4 pt-2 border-t border-slate-200 flex items-center justify-between text-[9px] text-slate-500">
-            <span>استودیو خلاق روتلو • سامانه اختصاصی مدیریت پروژه‌ها و عوامل</span>
-            <span className="font-bold">ROT-SYS-SECURED • صفحه ۱ از ۱</span>
-            <span>تولید شده توسط سامانه هوشمند روتلو</span>
-          </div>
+        {/* Clean Minimal Footer */}
+        <div className="pt-3 border-t border-slate-200 flex items-center justify-between text-[10px] text-slate-500 avoid-break">
+          <span>استودیو خلاق روتلو • سامانه مدیریت پروژه‌ها و عوامل</span>
+          <span>صفحه رسمی عملکرد روزانه پرسنل</span>
         </div>
       </div>
     </div>

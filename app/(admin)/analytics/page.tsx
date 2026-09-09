@@ -398,116 +398,80 @@ export default function AnalyticsPage() {
       </div>
 
       {/* ------------------------------------------------------------- */}
-      {/* 2. STATE-OF-THE-ART EXECUTIVE MANAGEMENT REPORT (PRINT ONLY) */}
+      {/* 2. SIMPLE, CLEAN & USEFUL ANALYTICS REPORT (PRINT ONLY) */}
       {/* ------------------------------------------------------------- */}
-      <div className="print-only font-vazirmatn text-slate-900 space-y-5" dir="rtl">
-        {/* Official Header */}
-        <div className="border-b-[3px] border-slate-900 pb-3">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-3.5">
-              <div className="w-14 h-14 rounded-2xl border-2 border-slate-900 flex items-center justify-center p-1 bg-white shrink-0">
-                <img src="/icon.png" alt="Logo" className="w-full h-full object-contain" />
-              </div>
-              <div>
-                <div className="text-[11px] font-bold text-slate-600 tracking-wider">بنام خدا</div>
-                <h1 className="text-lg font-black text-slate-950 mt-0.5">استودیو خلاق روتلو • گزارش جامع تحلیلی سازمان</h1>
-                <p className="text-xs text-slate-700 font-bold mt-0.5">پایش کلان شاخص‌های انضباط، مشارکت پرسنل و بهره‌وری سازمانی</p>
-              </div>
+      <div className="print-only text-slate-900 space-y-4" dir="rtl">
+        {/* Clean Modern Header */}
+        <div className="border-b border-slate-200 pb-3.5 mb-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-xl border border-slate-200 flex items-center justify-center p-1 bg-white shrink-0">
+              <img src="/icon.png" alt="Logo" className="w-full h-full object-contain" />
             </div>
-
-            {/* Document Metadata Stamp */}
-            <div className="border border-slate-300 bg-slate-50/80 rounded-xl p-2.5 text-[10.5px] space-y-1 min-w-[220px]">
-              <div className="flex justify-between">
-                <span className="font-bold text-slate-600">شماره ثبت سند:</span>
-                <span className="font-bold text-slate-900">ROT-ANL-{toPersianDigits(Date.now().toString().slice(-6))}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-bold text-slate-600">بازه ارزیابی:</span>
-                <span className="font-bold text-slate-900">{from} الی {to}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-bold text-slate-600">دپارتمان تحت بررسی:</span>
-                <span className="font-bold text-slate-900">{selectedDept === "all" ? "کل سازمان" : `دپارتمان ${selectedDept}`}</span>
-              </div>
-              <div className="flex justify-between pt-1 border-t border-slate-200">
-                <span className="font-bold text-slate-600">طبقه‌بندی:</span>
-                <span className="font-black text-amber-900 bg-amber-100/80 px-1.5 py-0.2 rounded text-[9.5px]">محرمانه سازمانی</span>
+            <div>
+              <h1 className="text-base font-black text-slate-950 leading-tight">
+                استودیو روتلو • گزارش جامع تحلیلی سازمان
+              </h1>
+              <div className="text-[11px] text-slate-500 font-medium mt-0.5">
+                دپارتمان: {selectedDept === "all" ? "تمامی دپارتمان‌ها" : selectedDept}
               </div>
             </div>
           </div>
-          {/* Teal Accent Line */}
-          <div className="h-1 bg-gradient-to-l from-teal-600 via-slate-800 to-teal-700 rounded-full mt-3" />
-        </div>
 
-        {/* 1. Executive KPI Summary Tiles */}
-        <div className="avoid-break">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-xs font-black text-slate-900 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-teal-600" />
-              <span>۱. خلاصه شاخص‌های کلان عملکرد و انضباط سازمانی (Executive KPIs)</span>
-            </h2>
-            <span className="text-[10px] text-slate-500 font-medium">مبتنی بر عملکرد کل واحدهای فعال</span>
-          </div>
-
-          <div className="grid grid-cols-4 gap-2.5">
-            {/* Tile 1 */}
-            <div className="border border-emerald-300 rounded-xl p-3 bg-emerald-50/50 border-t-4 border-t-emerald-600 text-center">
-              <div className="text-[11px] font-bold text-emerald-800">نرخ مشارکت گزارش‌ها</div>
-              <div className="text-xl font-black text-emerald-700 my-1">
-                ٪{toPersianDigits(kpis.completionRate)}
-              </div>
-              <div className="text-[10px] text-emerald-600 font-bold">میانگین کل دوره</div>
+          <div className="text-left text-xs space-y-0.5">
+            <div className="font-bold text-slate-900">
+              بازه ارزیابی: {from} الی {to}
             </div>
-
-            {/* Tile 2 */}
-            <div className="border border-blue-300 rounded-xl p-3 bg-blue-50/50 border-t-4 border-t-blue-600 text-center">
-              <div className="text-[11px] font-bold text-blue-800">شاخص تحویل به‌موقع</div>
-              <div className="text-xl font-black text-blue-700 my-1">
-                ٪{toPersianDigits(kpis.onTimeRate)}
-              </div>
-              <div className="text-[10px] text-blue-600">نرخ انضباط سازمانی</div>
-            </div>
-
-            {/* Tile 3 */}
-            <div className="border border-slate-300 rounded-xl p-3 bg-slate-50 border-t-4 border-t-slate-700 text-center">
-              <div className="text-[11px] font-bold text-slate-700">کل گزارش‌های دریافتی</div>
-              <div className="text-xl font-black text-slate-900 my-1">
-                {toPersianDigits(kpis.totalSubmitted)} <span className="text-xs font-normal">فقره</span>
-              </div>
-              <div className="text-[10px] text-slate-500">در بازه ارزیابی</div>
-            </div>
-
-            {/* Tile 4 */}
-            <div className="border border-rose-300 rounded-xl p-3 bg-rose-50/50 border-t-4 border-t-rose-600 text-center">
-              <div className="text-[11px] font-bold text-rose-800">موارد عدم ثبت (غیبت)</div>
-              <div className="text-xl font-black text-rose-700 my-1">
-                {toPersianDigits(kpis.totalMissing)} <span className="text-xs font-normal">مورد</span>
-              </div>
-              <div className="text-[10px] text-rose-600 font-bold">
-                {kpis.totalMissing > 0 ? "نیازمند ممیزی اداری" : "بدون ثبت غیبت"}
-              </div>
+            <div className="text-[10.5px] text-slate-500 font-medium">
+              زمان صدور: {formatToJalali(new Date())}
             </div>
           </div>
         </div>
 
-        {/* 2. Trend Summary Table */}
-        <div className="avoid-break">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-xs font-black text-slate-900 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-teal-600" />
-              <span>۲. پایش روزانه نوسانات مشارکت و انضباط سازمانی</span>
+        {/* Minimal KPI Metric Tiles */}
+        <div className="grid grid-cols-4 gap-3 mb-4 avoid-break">
+          <div className="bg-emerald-50/50 border border-emerald-200 rounded-xl p-3 text-center">
+            <div className="text-[11px] font-bold text-emerald-800 mb-1">نرخ مشارکت کل</div>
+            <div className="text-lg font-black text-emerald-700">
+              ٪{toPersianDigits(kpis.completionRate)}
+            </div>
+          </div>
+
+          <div className="bg-blue-50/50 border border-blue-200 rounded-xl p-3 text-center">
+            <div className="text-[11px] font-bold text-blue-800 mb-1">شاخص تحویل به‌موقع</div>
+            <div className="text-lg font-black text-blue-700">
+              ٪{toPersianDigits(kpis.onTimeRate)}
+            </div>
+          </div>
+
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
+            <div className="text-[11px] font-bold text-slate-700 mb-1">کل گزارش‌های دریافتی</div>
+            <div className="text-lg font-black text-slate-900">
+              {toPersianDigits(kpis.totalSubmitted)} <span className="text-xs font-normal text-slate-500">فقره</span>
+            </div>
+          </div>
+
+          <div className="bg-rose-50/50 border border-rose-200 rounded-xl p-3 text-center">
+            <div className="text-[11px] font-bold text-rose-800 mb-1">موارد عدم ثبت (غیبت)</div>
+            <div className="text-lg font-black text-rose-700">
+              {toPersianDigits(kpis.totalMissing)} <span className="text-xs font-normal text-slate-500">مورد</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Section 1: Trend Summary Table */}
+        <div className="avoid-break space-y-2">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xs font-black text-slate-900">
+              پایش روزانه نوسانات مشارکت و انضباط سازمانی ({toPersianDigits(trendData.length)} روز)
             </h2>
-            <span className="text-[10px] text-slate-500 font-bold">
-              تعداد روزهای پایش‌شده: {toPersianDigits(trendData.length)} روز
-            </span>
           </div>
 
           {trendData.length === 0 ? (
-            <div className="p-4 border-2 border-dashed border-slate-200 text-xs text-slate-500 text-center rounded-xl bg-slate-50">
+            <div className="p-4 border border-dashed border-slate-200 text-xs text-slate-500 text-center rounded-xl bg-slate-50">
               داده‌ای برای پایش در این بازه زمانی یافت نشد.
             </div>
           ) : (
-            <div className="overflow-hidden rounded-xl border border-slate-300">
+            <div className="overflow-hidden rounded-xl border border-slate-200">
               <table className="executive-table text-center">
                 <thead>
                   <tr>
@@ -518,22 +482,22 @@ export default function AnalyticsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {trendData.slice(0, 15).map((pt: any, idx: number) => {
+                  {trendData.slice(0, 20).map((pt: any, idx: number) => {
                     const isHigh = pt.value >= 80;
                     const isMed = pt.value >= 50 && pt.value < 80;
                     return (
                       <tr key={idx}>
                         <td className="font-bold text-slate-600">{toPersianDigits(idx + 1)}</td>
-                        <td className="font-bold text-slate-800 text-[10px]">{pt.dateJalali}</td>
+                        <td className="font-bold text-slate-800 text-[10.5px]">{pt.dateJalali}</td>
                         <td className="font-black text-slate-900">٪{toPersianDigits(pt.value)}</td>
                         <td>
                           <span
                             className={`print-badge ${
                               isHigh
-                                ? "bg-emerald-50 text-emerald-800 border-emerald-300"
+                                ? "bg-emerald-50 text-emerald-800 border-emerald-200"
                                 : isMed
-                                ? "bg-amber-50 text-amber-800 border-amber-300"
-                                : "bg-rose-50 text-rose-800 border-rose-300"
+                                ? "bg-amber-50 text-amber-800 border-amber-200"
+                                : "bg-rose-50 text-rose-800 border-rose-200"
                             }`}
                           >
                             {isHigh ? "عالی و منظم" : isMed ? "متوسط" : "نیازمند پیگیری"}
@@ -548,34 +512,10 @@ export default function AnalyticsPage() {
           )}
         </div>
 
-        {/* 3. Executive Analysis Notes */}
-        <div className="avoid-break border border-slate-300 bg-slate-50/60 rounded-xl p-3">
-          <div className="text-[11px] font-black text-slate-900 mb-2">۳. ارزیابی کیفی، راهکارها و دستورات مدیریت ارشد:</div>
-          <div className="space-y-2 text-[10px] text-slate-400">
-            <div className="border-b border-dashed border-slate-300 pb-1.5 h-4" />
-            <div className="border-b border-dashed border-slate-300 pb-1.5 h-4" />
-          </div>
-        </div>
-
-        {/* 4. Signatures and Sign-off */}
-        <div className="avoid-break pt-4 border-t-2 border-slate-300">
-          <div className="grid grid-cols-2 gap-6 text-center text-xs">
-            <div className="border border-slate-300 bg-white p-3.5 rounded-xl space-y-7">
-              <div className="font-black text-slate-800 text-[11px]">تأیید سرپرست پایش و کنترل پروژه</div>
-              <div className="text-[10px] text-slate-400">محل امضا و تاریخ</div>
-            </div>
-            <div className="border border-slate-300 bg-white p-3.5 rounded-xl space-y-7">
-              <div className="font-black text-slate-800 text-[11px]">تأیید نهایی مدیریت ارشد استودیو روتلو</div>
-              <div className="text-[10px] text-slate-400">محل مهر رسمی و امضا</div>
-            </div>
-          </div>
-
-          {/* Official Security Footer */}
-          <div className="mt-4 pt-2 border-t border-slate-200 flex items-center justify-between text-[9px] text-slate-500">
-            <span>استودیو خلاق روتلو • سامانه هوشمند پایش عملکرد و تحلیل داده‌ها</span>
-            <span className="font-bold">ROT-ANL-REPORT • محرمانه سازمانی</span>
-            <span>صفحه ۱ از ۱</span>
-          </div>
+        {/* Clean Minimal Footer */}
+        <div className="avoid-break pt-3 mt-4 border-t border-slate-200 flex items-center justify-between text-[10px] text-slate-500">
+          <span>استودیو روتلو • سامانه هوشمند پایش عملکرد و تحلیل داده‌ها</span>
+          <span>زمان استخراج: {formatToJalali(new Date())}</span>
         </div>
       </div>
     </div>

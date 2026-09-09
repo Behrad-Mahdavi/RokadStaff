@@ -408,157 +408,94 @@ export default function UnifiedEmployeeReportPage() {
       </div>
 
       {/* ------------------------------------------------------------- */}
-      {/* 2. DEDICATED OFFICIAL EXECUTIVE MANAGEMENT REPORT (PRINT ONLY) */}
+      {/* 2. SIMPLE, CLEAN & USEFUL EMPLOYEE PERFORMANCE REPORT (PRINT ONLY) */}
       {/* ------------------------------------------------------------- */}
       {data && (
-        <div className="print-only font-vazirmatn text-black space-y-5" dir="rtl">
-          {/* Official Letterhead */}
-          <div className="border-b-[3px] border-slate-900 pb-3">
-            <div className="flex items-start justify-between">
-              <div className="flex items-center gap-3.5">
-                <div className="w-14 h-14 rounded-2xl border-2 border-slate-900 flex items-center justify-center p-1 bg-white shrink-0">
-                  <img src="/icon.png" alt="Logo" className="w-full h-full object-contain" />
-                </div>
-                <div>
-                  <div className="text-[11px] font-bold text-slate-600 tracking-wider">بنام خدا</div>
-                  <h1 className="text-lg font-black text-slate-950 mt-0.5">استودیو خلاق روتلو • کارنامه رسمی عملکرد فردی</h1>
-                  <p className="text-xs text-slate-700 font-bold mt-0.5">ارزیابی تخصصی فعالیت‌ها، وظایف و گزارش‌های روزانه همکار</p>
-                </div>
+        <div className="print-only text-slate-900 space-y-4" dir="rtl">
+          {/* Clean Modern Header */}
+          <div className="border-b border-slate-200 pb-3.5 mb-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-xl border border-slate-200 flex items-center justify-center p-1 bg-white shrink-0">
+                <img src="/icon.png" alt="Logo" className="w-full h-full object-contain" />
               </div>
-
-              {/* Document Metadata Stamp */}
-              <div className="border border-slate-300 bg-slate-50/80 rounded-xl p-2.5 text-[10.5px] space-y-1 min-w-[220px]">
-                <div className="flex justify-between">
-                  <span className="font-bold text-slate-600">شماره پرونده:</span>
-                  <span className="font-bold text-slate-900">ROT-EMP-{toPersianDigits(data?.employee?.id?.replace(/\D/g, "") || "101")}-{toPersianDigits(new Date().getFullYear())}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="font-bold text-slate-600">بازه زمانی ارزیابی:</span>
-                  <span className="font-bold text-slate-900">{fromDate} الی {toDate}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="font-bold text-slate-600">زمان صدور کارنامه:</span>
-                  <span className="font-bold text-slate-800">{formatToJalali(new Date())}</span>
-                </div>
-                <div className="flex justify-between pt-1 border-t border-slate-200">
-                  <span className="font-bold text-slate-600">طبقه‌بندی:</span>
-                  <span className="font-black text-blue-900 bg-blue-100/80 px-1.5 py-0.2 rounded text-[9.5px]">پرونده پرسنلی / محرمانه</span>
+              <div>
+                <h1 className="text-base font-black text-slate-950 leading-tight">
+                  استودیو روتلو • کارنامه عملکرد همکار
+                </h1>
+                <div className="text-[11px] text-slate-500 font-medium mt-0.5">
+                  {data?.employee?.fullName} • {data?.employee?.position || "همکار استودیو"} ({data?.employee?.department || "عمومی"})
                 </div>
               </div>
             </div>
-            {/* Teal Accent Line */}
-            <div className="h-1 bg-gradient-to-l from-teal-600 via-slate-800 to-teal-700 rounded-full mt-3" />
-          </div>
 
-          {/* 1. Personnel Profile Grid */}
-          <div className="avoid-break border border-slate-300 rounded-xl p-3.5 bg-slate-50/60">
-            <h2 className="text-xs font-black text-slate-900 mb-2.5 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-teal-600" />
-              <span>۱. مشخصات هویتی و سازمانی همکار</span>
-            </h2>
-            <div className="grid grid-cols-4 gap-3 text-xs">
-              <div className="p-2 bg-white rounded-lg border border-slate-200">
-                <span className="text-[10.5px] text-slate-500 font-bold block mb-0.5">نام و نام خانوادگی:</span>
-                <span className="font-black text-slate-950 text-sm">{data?.employee?.fullName}</span>
+            <div className="text-left text-xs space-y-0.5">
+              <div className="font-bold text-slate-900">
+                بازه ارزیابی: {fromDate} الی {toDate}
               </div>
-              <div className="p-2 bg-white rounded-lg border border-slate-200">
-                <span className="text-[10.5px] text-slate-500 font-bold block mb-0.5">دپارتمان سازمانی:</span>
-                <span className="font-bold text-slate-900">{data?.employee?.department || "عمومی"}</span>
-              </div>
-              <div className="p-2 bg-white rounded-lg border border-slate-200">
-                <span className="text-[10.5px] text-slate-500 font-bold block mb-0.5">سمت و جایگاه شغلی:</span>
-                <span className="font-bold text-slate-900">{data?.employee?.position || "همکار استودیو"}</span>
-              </div>
-              <div className="p-2 bg-white rounded-lg border border-slate-200">
-                <span className="text-[10.5px] text-slate-500 font-bold block mb-0.5">نقش در سامانه:</span>
-                <span className="font-bold text-slate-900">
-                  {data?.employee?.role === "admin" ? "مدیریت ارشد" : data?.employee?.role === "supervisor" ? "سرپرست واحد" : "کارشناس همکار"}
-                </span>
+              <div className="text-[10.5px] text-slate-500 font-medium">
+                زمان صدور: {formatToJalali(new Date())}
               </div>
             </div>
           </div>
 
-          {/* 2. Executive KPI Summary Tiles */}
-          <div className="avoid-break">
-            <h2 className="text-xs font-black text-slate-900 mb-2 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-teal-600" />
-              <span>۲. خلاصه شاخص‌های کلیدی عملکرد در بازه ارزیابی (Executive KPIs)</span>
-            </h2>
-
-            <div className="grid grid-cols-5 gap-2.5">
-              {/* Tile 1 */}
-              <div className="border border-slate-300 rounded-xl p-2.5 bg-slate-50 border-t-4 border-t-slate-700 text-center">
-                <div className="text-[10.5px] font-bold text-slate-600">وظایف باز جاری</div>
-                <div className="text-lg font-black text-slate-900 my-0.5">
-                  {toPersianDigits(data?.currentTasksSnapshot?.totalOpen || 0)} <span className="text-[10px] font-normal">مورد</span>
-                </div>
-                <div className="text-[9.5px] text-slate-500">در تابلوهای پروژه‌ها</div>
+          {/* Minimal KPI Metric Tiles */}
+          <div className="grid grid-cols-5 gap-2.5 mb-4 avoid-break">
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
+              <div className="text-[11px] font-bold text-slate-600 mb-1">وظایف باز جاری</div>
+              <div className="text-lg font-black text-slate-900">
+                {toPersianDigits(data?.currentTasksSnapshot?.totalOpen || 0)} <span className="text-xs font-normal text-slate-500">مورد</span>
               </div>
+            </div>
 
-              {/* Tile 2 */}
-              <div className="border border-emerald-300 rounded-xl p-2.5 bg-emerald-50/50 border-t-4 border-t-emerald-600 text-center">
-                <div className="text-[10.5px] font-bold text-emerald-800">وظایف تکمیل‌شده</div>
-                <div className="text-lg font-black text-emerald-700 my-0.5">
-                  {toPersianDigits(data?.rotelloTasksPerformance?.completedTasks?.length || 0)} <span className="text-[10px] font-normal">مورد</span>
-                </div>
-                <div className="text-[9.5px] text-emerald-600 font-bold">بسته شده در این دوره</div>
+            <div className="bg-emerald-50/50 border border-emerald-200 rounded-xl p-3 text-center">
+              <div className="text-[11px] font-bold text-emerald-800 mb-1">وظایف تکمیل‌شده</div>
+              <div className="text-lg font-black text-emerald-700">
+                {toPersianDigits(data?.rotelloTasksPerformance?.completedTasks?.length || 0)} <span className="text-xs font-normal text-slate-500">مورد</span>
               </div>
+            </div>
 
-              {/* Tile 3 */}
-              <div className="border border-blue-300 rounded-xl p-2.5 bg-blue-50/50 border-t-4 border-t-blue-600 text-center">
-                <div className="text-[10.5px] font-bold text-blue-800">تعداد گزارش روزانه</div>
-                <div className="text-lg font-black text-blue-700 my-0.5">
-                  {toPersianDigits(data?.dailyReportsSummary?.totalSubmitted || 0)} <span className="text-[10px] font-normal">روز</span>
-                </div>
-                <div className="text-[9.5px] text-blue-600 font-bold">ثبت شده در سامانه</div>
+            <div className="bg-blue-50/50 border border-blue-200 rounded-xl p-3 text-center">
+              <div className="text-[11px] font-bold text-blue-800 mb-1">تعداد گزارش‌های ثبت‌شده</div>
+              <div className="text-lg font-black text-blue-700">
+                {toPersianDigits(data?.dailyReportsSummary?.totalSubmitted || 0)} <span className="text-xs font-normal text-slate-500">روز</span>
               </div>
+            </div>
 
-              {/* Tile 4 */}
-              <div className="border border-teal-300 rounded-xl p-2.5 bg-teal-50/50 border-t-4 border-t-teal-600 text-center">
-                <div className="text-[10.5px] font-bold text-teal-800">نرخ ثبت به‌موقع</div>
-                <div className="text-lg font-black text-teal-700 my-0.5">
-                  ٪{toPersianDigits(data?.dailyReportsSummary?.onTimeRate || 0)}
-                </div>
-                <div className="text-[9.5px] text-teal-600 font-bold">شاخص انضباط</div>
+            <div className="bg-teal-50/50 border border-teal-200 rounded-xl p-3 text-center">
+              <div className="text-[11px] font-bold text-teal-800 mb-1">انضباط ثبت روزانه</div>
+              <div className="text-lg font-black text-teal-700">
+                ٪{toPersianDigits(data?.dailyReportsSummary?.onTimeRate || 0)}
               </div>
+            </div>
 
-              {/* Tile 5 */}
-              <div className="border border-rose-300 rounded-xl p-2.5 bg-rose-50/50 border-t-4 border-t-rose-600 text-center">
-                <div className="text-[10.5px] font-bold text-rose-800">وظایف با تأخیر</div>
-                <div className="text-lg font-black text-rose-700 my-0.5">
-                  {toPersianDigits(data?.currentTasksSnapshot?.overdueCount || 0)} <span className="text-[10px] font-normal">مورد</span>
-                </div>
-                <div className="text-[9.5px] text-rose-600 font-bold">
-                  {data?.currentTasksSnapshot?.overdueCount > 0 ? "گذشته از ددلاین" : "بدون تأخیر"}
-                </div>
+            <div className="bg-rose-50/50 border border-rose-200 rounded-xl p-3 text-center">
+              <div className="text-[11px] font-bold text-rose-800 mb-1">وظایف با تأخیر</div>
+              <div className="text-lg font-black text-rose-700">
+                {toPersianDigits(data?.currentTasksSnapshot?.overdueCount || 0)} <span className="text-xs font-normal text-slate-500">مورد</span>
               </div>
             </div>
           </div>
 
-          {/* 3. Active Tasks Table */}
-          <div className="avoid-break">
-            <div className="flex items-center justify-between mb-2">
-              <h2 className="text-xs font-black text-slate-900 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-teal-600" />
-                <span>۳. وضعیت وظایف جاری در تابلوهای پروژه‌ها</span>
+          {/* Section 1: Active Tasks Table */}
+          <div className="avoid-break space-y-2">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xs font-black text-slate-900">
+                وضعیت وظایف جاری در تابلوهای پروژه‌ها ({toPersianDigits(data?.currentTasksSnapshot?.openTasks?.length || 0)} مورد)
               </h2>
-              <span className="text-[10px] text-slate-500 font-bold">
-                تعداد: {toPersianDigits(data?.currentTasksSnapshot?.openTasks?.length || 0)} وظیفه
-              </span>
             </div>
 
             {data?.currentTasksSnapshot?.openTasks?.length === 0 ? (
-              <div className="p-3 border-2 border-dashed border-slate-200 text-xs text-slate-500 text-center rounded-xl bg-slate-50">
+              <div className="p-3 border border-dashed border-slate-200 text-xs text-slate-500 text-center rounded-xl bg-slate-50">
                 در حال حاضر وظیفه جاری برای این همکار ثبت نشده است.
               </div>
             ) : (
-              <div className="overflow-hidden rounded-xl border border-slate-300">
+              <div className="overflow-hidden rounded-xl border border-slate-200">
                 <table className="executive-table">
                   <thead>
                     <tr>
-                      <th className="w-9 text-center">ردیف</th>
+                      <th className="w-8 text-center">ردیف</th>
                       <th>عنوان وظیفه</th>
-                      <th className="w-40">نام پروژه</th>
+                      <th className="w-36">نام پروژه</th>
                       <th className="w-28 text-center">ستون فعلی</th>
                       <th className="w-20 text-center">اولویت</th>
                       <th className="w-24 text-center">مهلت انجام</th>
@@ -575,10 +512,10 @@ export default function UnifiedEmployeeReportPage() {
                           <span
                             className={`print-badge ${
                               t.priority === "urgent"
-                                ? "bg-rose-50 text-rose-800 border-rose-300"
+                                ? "bg-rose-50 text-rose-800 border-rose-200"
                                 : t.priority === "important"
-                                ? "bg-amber-50 text-amber-800 border-amber-300"
-                                : "bg-slate-100 text-slate-700 border-slate-300"
+                                ? "bg-amber-50 text-amber-800 border-amber-200"
+                                : "bg-slate-100 text-slate-700 border-slate-200"
                             }`}
                           >
                             {t.priority === "urgent" ? "فوری" : t.priority === "important" ? "مهم" : "عادی"}
@@ -595,28 +532,24 @@ export default function UnifiedEmployeeReportPage() {
             )}
           </div>
 
-          {/* 4. Daily Reports Summary Table */}
-          <div className="avoid-break">
-            <div className="flex items-center justify-between mb-2">
-              <h2 className="text-xs font-black text-slate-900 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-teal-600" />
-                <span>۴. گزیده گزارش‌های روزانه ثبت‌شده در بازه ارزیابی</span>
+          {/* Section 2: Daily Reports Summary Table */}
+          <div className="avoid-break space-y-2">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xs font-black text-slate-900">
+                گزیده گزارش‌های روزانه ثبت‌شده در بازه ارزیابی ({toPersianDigits(data?.dailyReportsSummary?.reports?.length || 0)} مورد)
               </h2>
-              <span className="text-[10px] text-slate-500 font-bold">
-                تعداد ثبت‌شده: {toPersianDigits(data?.dailyReportsSummary?.totalSubmitted || 0)} روز
-              </span>
             </div>
 
             {data?.dailyReportsSummary?.reports?.length === 0 ? (
-              <div className="p-3 border-2 border-dashed border-slate-200 text-xs text-slate-500 text-center rounded-xl bg-slate-50">
+              <div className="p-3 border border-dashed border-slate-200 text-xs text-slate-500 text-center rounded-xl bg-slate-50">
                 هیچ گزارش کاری در این بازه زمانی به ثبت نرسیده است.
               </div>
             ) : (
-              <div className="overflow-hidden rounded-xl border border-slate-300">
+              <div className="overflow-hidden rounded-xl border border-slate-200">
                 <table className="executive-table">
                   <thead>
                     <tr>
-                      <th className="w-9 text-center">ردیف</th>
+                      <th className="w-8 text-center">ردیف</th>
                       <th className="w-24 text-center">تاریخ ثبت</th>
                       <th>شرح کامل فعالیت‌ها و دستاوردها</th>
                       <th className="w-20 text-center">وضعیت</th>
@@ -626,18 +559,18 @@ export default function UnifiedEmployeeReportPage() {
                     {data?.dailyReportsSummary?.reports?.slice(0, 15).map((rep: any, idx: number) => (
                       <tr key={rep.id}>
                         <td className="text-center font-bold text-slate-600">{toPersianDigits(idx + 1)}</td>
-                        <td className="text-center font-bold text-[10px] text-slate-800">
+                        <td className="text-center font-bold text-[10.5px] text-slate-800">
                           {formatToJalali(rep.reportDate)}
                         </td>
-                        <td className="leading-relaxed text-[10px] text-slate-800">
+                        <td className="leading-relaxed text-[10.5px] text-slate-800">
                           {(rep.rawText || "").replace(/^\/report\s*/i, "").trim()}
                         </td>
                         <td className="text-center">
                           <span
                             className={`print-badge ${
                               rep.isOnTime
-                                ? "bg-emerald-50 text-emerald-800 border-emerald-300"
-                                : "bg-amber-50 text-amber-800 border-amber-300"
+                                ? "bg-emerald-50 text-emerald-800 border-emerald-200"
+                                : "bg-amber-50 text-amber-800 border-amber-200"
                             }`}
                           >
                             {rep.isOnTime ? "به‌موقع" : "با تأخیر"}
@@ -651,25 +584,10 @@ export default function UnifiedEmployeeReportPage() {
             )}
           </div>
 
-          {/* 5. Signatures and Official Seals */}
-          <div className="avoid-break pt-4 border-t-2 border-slate-300">
-            <div className="grid grid-cols-2 gap-6 text-center text-xs">
-              <div className="border border-slate-300 bg-white p-3.5 rounded-xl space-y-7">
-                <div className="font-black text-slate-800 text-[11px]">تأیید و ارزیابی کیفی سرپرست مستقیم</div>
-                <div className="text-[10px] text-slate-400">محل درج نمره، امضا و تاریخ</div>
-              </div>
-              <div className="border border-slate-300 bg-white p-3.5 rounded-xl space-y-7">
-                <div className="font-black text-slate-800 text-[11px]">تأیید مدیریت منابع انسانی و امور اداری</div>
-                <div className="text-[10px] text-slate-400">محل مهر رسمی استودیو و امضا</div>
-              </div>
-            </div>
-
-            {/* Official Security Footer */}
-            <div className="mt-4 pt-2 border-t border-slate-200 flex items-center justify-between text-[9px] text-slate-500">
-              <span>استودیو خلاق روتلو • پرونده الکترونیک و کارنامه عوامل</span>
-              <span className="font-bold">ROT-EMP-RECORD • محرمانه و غیرقابل انتقال</span>
-              <span>صفحه ۱ از ۱</span>
-            </div>
+          {/* Clean Minimal Footer */}
+          <div className="avoid-break pt-3 mt-4 border-t border-slate-200 flex items-center justify-between text-[10px] text-slate-500">
+            <span>استودیو روتلو • سامانه مدیریت یکپارچه عملکرد همکاران</span>
+            <span>زمان استخراج: {formatToJalali(new Date())}</span>
           </div>
         </div>
       )}
