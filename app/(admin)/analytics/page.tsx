@@ -409,7 +409,7 @@ export default function AnalyticsPage() {
             </div>
             <div>
               <h1 className="text-base font-black text-slate-950 leading-tight">
-                استودیو روتلو • گزارش جامع تحلیلی سازمان
+                روتلو • گزارش جامع تحلیلی سازمان
               </h1>
               <div className="text-[11px] text-slate-500 font-medium mt-0.5">
                 دپارتمان: {selectedDept === "all" ? "تمامی دپارتمان‌ها" : selectedDept}
@@ -514,7 +514,7 @@ export default function AnalyticsPage() {
 
         {/* Clean Minimal Footer */}
         <div className="avoid-break pt-3 mt-4 border-t border-slate-200 flex items-center justify-between text-[10px] text-slate-500">
-          <span>استودیو روتلو • سامانه هوشمند پایش عملکرد و تحلیل داده‌ها</span>
+          <span>روتلو • سامانه هوشمند پایش عملکرد و تحلیل داده‌ها</span>
           <span>زمان استخراج: {formatToJalali(new Date())}</span>
         </div>
       </div>

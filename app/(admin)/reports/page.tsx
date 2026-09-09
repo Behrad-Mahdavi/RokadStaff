@@ -509,7 +509,7 @@ function ReportsContent() {
             </div>
             <div>
               <h1 className="text-base font-black text-slate-950 leading-tight">
-                استودیو روتلو • گزارش عملکرد روزانه همکاران
+                روتلو • گزارش عملکرد روزانه همکاران
               </h1>
               <div className="text-[11px] text-slate-500 font-medium mt-0.5">
                 دپارتمان: {selectedDept === "all" ? "تمامی دپارتمان‌ها" : selectedDept}
@@ -674,7 +674,7 @@ function ReportsContent() {
 
         {/* Clean Minimal Footer */}
         <div className="pt-3 border-t border-slate-200 flex items-center justify-between text-[10px] text-slate-500 avoid-break">
-          <span>استودیو خلاق روتلو • سامانه مدیریت پروژه‌ها و عوامل</span>
+          <span>روتلو • سامانه مدیریت پروژه‌ها و عوامل</span>
           <span>صفحه رسمی عملکرد روزانه پرسنل</span>
         </div>
       </div>

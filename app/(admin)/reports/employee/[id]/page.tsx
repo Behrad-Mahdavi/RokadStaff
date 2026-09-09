@@ -420,7 +420,7 @@ export default function UnifiedEmployeeReportPage() {
               </div>
               <div>
                 <h1 className="text-base font-black text-slate-950 leading-tight">
-                  استودیو روتلو • کارنامه عملکرد همکار
+                  روتلو • کارنامه عملکرد همکار
                 </h1>
                 <div className="text-[11px] text-slate-500 font-medium mt-0.5">
                   {data?.employee?.fullName} • {data?.employee?.position || "همکار استودیو"} ({data?.employee?.department || "عمومی"})
@@ -586,7 +586,7 @@ export default function UnifiedEmployeeReportPage() {
 
           {/* Clean Minimal Footer */}
           <div className="avoid-break pt-3 mt-4 border-t border-slate-200 flex items-center justify-between text-[10px] text-slate-500">
-            <span>استودیو روتلو • سامانه مدیریت یکپارچه عملکرد همکاران</span>
+            <span>روتلو • سامانه مدیریت یکپارچه عملکرد همکاران</span>
             <span>زمان استخراج: {formatToJalali(new Date())}</span>
           </div>
         </div>
