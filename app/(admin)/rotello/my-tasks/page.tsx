@@ -54,7 +54,7 @@ export default function PersonalWorkspacePage() {
   return (
     <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-300">
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 bg-gradient-to-r from-ecosystem-light via-white to-male-light/40 dark:from-[#151C28] dark:via-[#161E2C] dark:to-[#151C28] p-6 sm:p-7 rounded-3xl border-2 border-primary/20 dark:border-gray-800 shadow-[3px_3px_0_#59BBAF]">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 bg-gradient-to-r from-ecosystem-light via-white to-male-light/40 dark:from-[#151C28] dark:via-[#161E2C] dark:to-[#151C28] p-6 sm:p-7 rounded-2xl border-2 border-primary/20 dark:border-gray-800 shadow-[3px_3px_0_#59BBAF]">
         <div>
           <div className="flex items-center gap-2 text-sm font-black text-primary mb-1.5">
             <Briefcase className="w-4 h-4" />
@@ -118,11 +118,11 @@ export default function PersonalWorkspacePage() {
       {loading ? (
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-40 bg-white rounded-3xl border animate-pulse p-6" />
+            <div key={i} className="h-40 bg-white rounded-2xl border animate-pulse p-6" />
           ))}
         </div>
       ) : summary.total === 0 ? (
-        <div className="text-center py-16 bg-white dark:bg-[#151C28] rounded-3xl border border-dashed border-gray-300 dark:border-gray-700 p-8">
+        <div className="text-center py-16 bg-white dark:bg-[#151C28] rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-8">
           <Briefcase className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
           <h3 className="text-base font-black text-sec dark:text-white">هیچ وظیفه‌ای به شما واگذار نشده است</h3>
           <p className="text-xs sm:text-sm text-ink-normal/60 dark:text-gray-400 mt-1">
@@ -133,7 +133,7 @@ export default function PersonalWorkspacePage() {
         <div className="space-y-6">
           {/* 1. Overdue Bucket */}
           {tasks.overdue.length > 0 && (
-            <div className="bg-white dark:bg-[#151C28] rounded-3xl p-6 sm:p-7 border-2 border-red-200 dark:border-red-900/60 shadow-[3px_3px_0_#DF5C5C] space-y-4">
+            <div className="bg-white dark:bg-[#151C28] rounded-2xl p-6 sm:p-7 border-2 border-red-200 dark:border-red-900/60 shadow-[3px_3px_0_#DF5C5C] space-y-4">
               <div className="flex items-center gap-2 text-red-600 dark:text-red-400 font-black text-base">
                 <AlertCircle className="w-5 h-5" />
                 <span>عقب‌افتاده و نیازمند اقدام فوری ({toPersianDigits(tasks.overdue.length)})</span>
@@ -148,7 +148,7 @@ export default function PersonalWorkspacePage() {
 
           {/* 2. Today & This Week Bucket */}
           {tasks.todayOrThisWeek.length > 0 && (
-            <div className="bg-white dark:bg-[#151C28] rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] space-y-4">
+            <div className="bg-white dark:bg-[#151C28] rounded-2xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] space-y-4">
               <div className="flex items-center gap-2 text-college-darker dark:text-college-light font-black text-base">
                 <Calendar className="w-5 h-5 text-college-normal" />
                 <span>موعد امروز و این هفته ({toPersianDigits(tasks.todayOrThisWeek.length)})</span>
@@ -163,7 +163,7 @@ export default function PersonalWorkspacePage() {
 
           {/* 3. No Deadline or Later */}
           {tasks.noDeadlineOrLater.length > 0 && (
-            <div className="bg-white dark:bg-[#151C28] rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] space-y-4">
+            <div className="bg-white dark:bg-[#151C28] rounded-2xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] space-y-4">
               <div className="flex items-center gap-2 text-sec dark:text-white font-black text-base">
                 <Layers className="w-5 h-5 text-primary" />
                 <span>سایر وظایف در دست اقدام ({toPersianDigits(tasks.noDeadlineOrLater.length)})</span>
@@ -178,7 +178,7 @@ export default function PersonalWorkspacePage() {
 
           {/* 4. Completed Recently */}
           {tasks.completedRecently.length > 0 && (
-            <div className="bg-white dark:bg-[#151C28] rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] space-y-4">
+            <div className="bg-white dark:bg-[#151C28] rounded-2xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] space-y-4">
               <div className="flex items-center gap-2 text-ecosystem-darker dark:text-ecosystem-light font-black text-base">
                 <CheckCircle2 className="w-5 h-5 text-primary" />
                 <span>تکمیل‌شده‌های اخیر ({toPersianDigits(tasks.completedRecently.length)})</span>
@@ -218,7 +218,7 @@ function TaskCard({
   return (
     <div
       onClick={onSelect}
-      className={`p-5 rounded-2xl border transition-all cursor-pointer space-y-3 bg-[#FCFDFD] dark:bg-[#1C2536] hover:bg-white dark:hover:bg-[#202B3E] hover:shadow-md ${
+      className={`p-5 rounded-xl border transition-all cursor-pointer space-y-3 bg-[#FCFDFD] dark:bg-[#1C2536] hover:bg-white dark:hover:bg-[#202B3E] hover:shadow-md ${
         isOverdue
           ? "border-red-300 dark:border-red-900/80 hover:border-red-500"
           : isDone

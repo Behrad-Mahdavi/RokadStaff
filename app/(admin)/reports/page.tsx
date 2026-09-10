@@ -229,7 +229,7 @@ function ReportsContent() {
       </div>
 
       {/* Shared Filter Bar */}
-      <div className="bg-white dark:bg-[#151C28] p-4 sm:p-5 rounded-3xl border border-[#EAEAEA] dark:border-gray-800 shadow-sm flex flex-col md:flex-row items-center gap-3">
+      <div className="bg-white dark:bg-[#151C28] p-4 sm:p-5 rounded-2xl border border-[#EAEAEA] dark:border-gray-800 shadow-sm flex flex-col md:flex-row items-center gap-3">
         {/* Search Input */}
         <div className="relative flex-1 w-full">
           <input
@@ -301,7 +301,7 @@ function ReportsContent() {
 
       {/* TAB 1: Submitted Reports Table */}
       {activeTab === "submitted" && (
-        <div className="bg-white dark:bg-[#151C28] rounded-3xl border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] overflow-hidden">
+        <div className="bg-white dark:bg-[#151C28] rounded-2xl border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-right text-xs sm:text-sm min-w-[650px]">
               <thead className="bg-[#F8F9FA] dark:bg-[#1C2536] border-b border-gray-200 dark:border-gray-800 text-ink-normal/70 dark:text-gray-300 font-bold">
@@ -381,7 +381,7 @@ function ReportsContent() {
 
       {/* TAB 2: Missing Employees Table */}
       {activeTab === "missing" && (
-        <div className="bg-white dark:bg-[#151C28] rounded-3xl border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] overflow-hidden">
+        <div className="bg-white dark:bg-[#151C28] rounded-2xl border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-right text-xs sm:text-sm">
               <thead className="bg-[#F8F9FA] dark:bg-[#1C2536] border-b border-gray-200 dark:border-gray-800 text-ink-normal/70 dark:text-gray-300 font-bold">

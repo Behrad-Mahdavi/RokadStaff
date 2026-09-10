@@ -116,3 +116,23 @@ export function getTehranDateString(date: Date = new Date()): string {
 export function generateLinkCode(): string {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
+
+// Determine if submission is after workplace cutoff hour
+export function isSubmissionLate(now: Date = new Date()): boolean {
+  const endHourConfig = process.env.WORK_END_HOUR || "18:00";
+  const [targetH, targetM] = endHourConfig.split(":").map((v) => parseInt(v, 10));
+
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    timeZone: process.env.APP_TIMEZONE || "Asia/Tehran",
+    hour: "numeric",
+    minute: "numeric",
+    hour12: false,
+  });
+  const parts = formatter.formatToParts(now);
+  const hour = parseInt(parts.find((p) => p.type === "hour")?.value || "0", 10);
+  const minute = parseInt(parts.find((p) => p.type === "minute")?.value || "0", 10);
+
+  if (hour > targetH) return true;
+  if (hour === targetH && minute > targetM) return true;
+  return false;
+}

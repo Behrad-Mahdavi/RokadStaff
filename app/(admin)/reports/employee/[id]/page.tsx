@@ -110,9 +110,9 @@ export default function UnifiedEmployeeReportPage() {
         </div>
 
         {/* Employee Profile Header & Date Range */}
-        <div className="p-5 sm:p-6 bg-white dark:bg-[#151C28] rounded-3xl border border-gray-200 dark:border-gray-800 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-5 sm:gap-6">
+        <div className="p-5 sm:p-6 bg-white dark:bg-[#151C28] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-5 sm:gap-6">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-primary to-ecosystem-dark text-white flex items-center justify-center font-black text-lg sm:text-xl shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] shrink-0">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-primary to-ecosystem-dark text-white flex items-center justify-center font-black text-lg sm:text-xl shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] shrink-0">
               {data?.employee?.fullName ? data.employee.fullName.slice(0, 1) : "ک"}
             </div>
             <div>
@@ -213,28 +213,28 @@ export default function UnifiedEmployeeReportPage() {
               <div className="space-y-6">
                 {/* KPI Cards */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                  <div className="p-5 bg-white dark:bg-[#151C28] rounded-3xl border border-gray-200 dark:border-gray-800 shadow-sm">
+                  <div className="p-5 bg-white dark:bg-[#151C28] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm">
                     <div className="text-xs text-ink-normal/60 dark:text-gray-400 font-bold mb-1">کل وظایف باز</div>
                     <div className="text-2xl font-black text-sec dark:text-white">
                       {toPersianDigits(data.currentTasksSnapshot.totalOpen)}
                     </div>
                   </div>
 
-                  <div className="p-5 bg-white dark:bg-[#151C28] rounded-3xl border border-college-normal/30 bg-college-light/30 dark:bg-college-darker/20 shadow-sm">
+                  <div className="p-5 bg-white dark:bg-[#151C28] rounded-2xl border border-college-normal/30 bg-college-light/30 dark:bg-college-darker/20 shadow-sm">
                     <div className="text-xs text-college-darker dark:text-college-light font-bold mb-1">وظایف فوری</div>
                     <div className="text-2xl font-black text-college-normal">
                       {toPersianDigits(data.currentTasksSnapshot.priorityBreakdown.urgent)}
                     </div>
                   </div>
 
-                  <div className="p-5 bg-white dark:bg-[#151C28] rounded-3xl border border-female-normal/30 bg-female-light/30 dark:bg-female-darker/20 shadow-sm">
+                  <div className="p-5 bg-white dark:bg-[#151C28] rounded-2xl border border-female-normal/30 bg-female-light/30 dark:bg-female-darker/20 shadow-sm">
                     <div className="text-xs text-female-darker dark:text-female-light font-bold mb-1">وظایف مهم</div>
                     <div className="text-2xl font-black text-female-normal">
                       {toPersianDigits(data.currentTasksSnapshot.priorityBreakdown.important)}
                     </div>
                   </div>
 
-                  <div className="p-5 bg-white dark:bg-[#151C28] rounded-3xl border border-red-200 dark:border-red-900/60 bg-red-50/40 dark:bg-red-950/20 shadow-sm">
+                  <div className="p-5 bg-white dark:bg-[#151C28] rounded-2xl border border-red-200 dark:border-red-900/60 bg-red-50/40 dark:bg-red-950/20 shadow-sm">
                     <div className="text-xs text-red-600 dark:text-red-400 font-bold mb-1">گذشته از مهلت مقرر</div>
                     <div className="text-2xl font-black text-red-600 dark:text-red-400">
                       {toPersianDigits(data.currentTasksSnapshot.overdueCount)}
@@ -243,7 +243,7 @@ export default function UnifiedEmployeeReportPage() {
                 </div>
 
                 {/* Open Tasks List */}
-                <div className="bg-white dark:bg-[#151C28] rounded-3xl border border-gray-200 dark:border-gray-800 p-6 shadow-sm space-y-4">
+                <div className="bg-white dark:bg-[#151C28] rounded-2xl border border-gray-200 dark:border-gray-800 p-6 shadow-sm space-y-4">
                   <h3 className="text-base font-black text-sec dark:text-white flex items-center gap-2">
                     <Layers className="w-5 h-5 text-primary" />
                     <span>لیست تسک‌های در دست اقدام این همکار ({toPersianDigits(data.currentTasksSnapshot.openTasks.length)})</span>
@@ -303,7 +303,7 @@ export default function UnifiedEmployeeReportPage() {
             {/* TAB 2: Rotello Tasks Range Performance */}
             {activeTab === "rotello" && (
               <div className="space-y-6">
-                <div className="p-6 bg-white dark:bg-[#151C28] rounded-3xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4">
+                <div className="p-6 bg-white dark:bg-[#151C28] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4">
                   <h3 className="text-base font-black text-sec dark:text-white flex items-center justify-between">
                     <span className="flex items-center gap-2">
                       <CheckCircle2 className="w-5 h-5 text-primary" />
@@ -336,21 +336,21 @@ export default function UnifiedEmployeeReportPage() {
             {activeTab === "daily" && (
               <div className="space-y-6">
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                  <div className="p-5 bg-white dark:bg-[#151C28] rounded-3xl border border-gray-200 dark:border-gray-800 shadow-sm">
+                  <div className="p-5 bg-white dark:bg-[#151C28] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm">
                     <div className="text-xs text-ink-normal/60 dark:text-gray-400 font-bold mb-1">کل گزارش‌های ارسالی</div>
                     <div className="text-2xl font-black text-sec dark:text-white">
                       {toPersianDigits(data.dailyReportsSummary?.totalSubmitted || 0)}
                     </div>
                   </div>
 
-                  <div className="p-5 bg-white dark:bg-[#151C28] rounded-3xl border border-primary/30 bg-ecosystem-light/30 dark:bg-ecosystem-darker/20 shadow-sm">
+                  <div className="p-5 bg-white dark:bg-[#151C28] rounded-2xl border border-primary/30 bg-ecosystem-light/30 dark:bg-ecosystem-darker/20 shadow-sm">
                     <div className="text-xs text-ecosystem-darker dark:text-ecosystem-light font-bold mb-1">درصد ثبت به‌موقع</div>
                     <div className="text-2xl font-black text-primary">
                       ٪{toPersianDigits(data.dailyReportsSummary?.onTimeRate || 0)}
                     </div>
                   </div>
 
-                  <div className="p-5 bg-white dark:bg-[#151C28] rounded-3xl border border-college-normal/30 bg-college-light/30 dark:bg-college-darker/20 shadow-sm col-span-2 sm:col-span-1">
+                  <div className="p-5 bg-white dark:bg-[#151C28] rounded-2xl border border-college-normal/30 bg-college-light/30 dark:bg-college-darker/20 shadow-sm col-span-2 sm:col-span-1">
                     <div className="text-xs text-college-darker dark:text-college-light font-bold mb-1">تعداد روزهای تقویمی</div>
                     <div className="text-2xl font-black text-college-normal">
                       {toPersianDigits(data.dateRange?.totalDays || 0)} روز
@@ -359,7 +359,7 @@ export default function UnifiedEmployeeReportPage() {
                 </div>
 
                 {/* Reports Feed */}
-                <div className="bg-white dark:bg-[#151C28] rounded-3xl border border-gray-200 dark:border-gray-800 p-6 shadow-sm space-y-4">
+                <div className="bg-white dark:bg-[#151C28] rounded-2xl border border-gray-200 dark:border-gray-800 p-6 shadow-sm space-y-4">
                   <h3 className="text-base font-black text-sec dark:text-white flex items-center gap-2">
                     <FileText className="w-5 h-5 text-primary" />
                     <span>سوابق گزارش‌های کار ثبت‌شده ({toPersianDigits(data.dailyReportsSummary?.reports?.length || 0)})</span>

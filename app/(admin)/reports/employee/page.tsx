@@ -53,7 +53,7 @@ export default function EmployeeReportsHubPage() {
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="p-4 bg-white dark:bg-[#151C28] rounded-3xl border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] flex flex-col sm:flex-row items-center gap-3">
+      <div className="p-4 bg-white dark:bg-[#151C28] rounded-2xl border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] flex flex-col sm:flex-row items-center gap-3">
         <div className="relative flex-1 w-full">
           <Search className="w-4 h-4 text-gray-400 absolute right-3.5 top-1/2 -translate-y-1/2" />
           <input
@@ -61,7 +61,7 @@ export default function EmployeeReportsHubPage() {
             placeholder="جستجوی نام یا سمت شغلی همکار..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full text-xs sm:text-sm font-medium pr-10 pl-4 py-2.5 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#121824] text-sec dark:text-white focus:border-primary focus:outline-none"
+            className="w-full text-xs sm:text-sm font-medium pr-10 pl-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#121824] text-sec dark:text-white focus:border-primary focus:outline-none"
           />
         </div>
 
@@ -69,7 +69,7 @@ export default function EmployeeReportsHubPage() {
           <select
             value={selectedDept}
             onChange={(e) => setSelectedDept(e.target.value)}
-            className="w-full text-xs sm:text-sm font-bold p-2.5 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#121824] focus:border-primary focus:outline-none text-sec dark:text-white"
+            className="w-full text-xs sm:text-sm font-bold p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#121824] focus:border-primary focus:outline-none text-sec dark:text-white"
           >
             <option value="all">همه دپارتمان‌ها</option>
             {departments.map((d) => (
@@ -87,7 +87,7 @@ export default function EmployeeReportsHubPage() {
           در حال بارگذاری لیست کارکنان...
         </div>
       ) : filteredEmployees.length === 0 ? (
-        <div className="p-12 bg-white dark:bg-[#151C28] rounded-3xl border border-gray-200 dark:border-gray-800 text-center text-xs text-gray-400">
+        <div className="p-12 bg-white dark:bg-[#151C28] rounded-2xl border border-gray-200 dark:border-gray-800 text-center text-xs text-gray-400">
           همکاری با این مشخصات یافت نشد.
         </div>
       ) : (
@@ -95,10 +95,10 @@ export default function EmployeeReportsHubPage() {
           {filteredEmployees.map((emp) => (
             <div
               key={emp.id}
-              className="p-5 bg-white dark:bg-[#151C28] rounded-3xl border border-gray-200 dark:border-gray-800 shadow-[2.5px_2.5px_0_#202A5A] dark:shadow-[2.5px_2.5px_0_#59BBAF] hover:border-primary/50 transition-all flex flex-col justify-between"
+              className="p-5 bg-white dark:bg-[#151C28] rounded-2xl border border-gray-200 dark:border-gray-800 shadow-[2.5px_2.5px_0_#202A5A] dark:shadow-[2.5px_2.5px_0_#59BBAF] hover:border-primary/50 transition-all flex flex-col justify-between"
             >
               <div className="flex items-start gap-3.5">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-ecosystem-dark text-white flex items-center justify-center font-black text-lg shadow-sm shrink-0">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-ecosystem-dark text-white flex items-center justify-center font-black text-lg shadow-sm shrink-0">
                   {emp.fullName.slice(0, 1)}
                 </div>
                 <div className="min-w-0">

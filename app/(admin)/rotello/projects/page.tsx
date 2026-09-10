@@ -148,7 +148,7 @@ export default function ProjectsListPage() {
   return (
     <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-300">
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 bg-gradient-to-r from-ecosystem-light via-white to-club-light/40 dark:from-[#151C28] dark:via-[#161E2C] dark:to-[#151C28] p-6 sm:p-7 rounded-3xl border-2 border-primary/20 dark:border-gray-800 shadow-[3px_3px_0_#59BBAF]">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 bg-gradient-to-r from-ecosystem-light via-white to-club-light/40 dark:from-[#151C28] dark:via-[#161E2C] dark:to-[#151C28] p-6 sm:p-7 rounded-2xl border-2 border-primary/20 dark:border-gray-800 shadow-[3px_3px_0_#59BBAF]">
         <div>
           <div className="flex items-center gap-2 text-sm font-black text-primary mb-1.5">
             <Kanban className="w-4 h-4" />
@@ -187,11 +187,11 @@ export default function ProjectsListPage() {
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-48 bg-white dark:bg-[#151C28] rounded-3xl border dark:border-gray-800 animate-pulse p-6" />
+            <div key={i} className="h-48 bg-white dark:bg-[#151C28] rounded-2xl border dark:border-gray-800 animate-pulse p-6" />
           ))}
         </div>
       ) : projects.length === 0 ? (
-        <div className="text-center py-16 bg-white dark:bg-[#151C28] rounded-3xl border border-dashed border-gray-300 dark:border-gray-700 p-8">
+        <div className="text-center py-16 bg-white dark:bg-[#151C28] rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-8">
           <FolderKanban className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
           <h3 className="text-base font-black text-sec dark:text-white">هیچ پروژه‌ای یافت نشد</h3>
           <p className="text-xs sm:text-sm text-ink-normal/60 dark:text-gray-400 mt-1">
@@ -210,7 +210,7 @@ export default function ProjectsListPage() {
               <Link
                 key={proj.id}
                 href={`/rotello/projects/${proj.id}`}
-                className="bg-white dark:bg-[#151C28] p-6 sm:p-7 rounded-3xl border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] hover:border-primary hover:shadow-[4px_4px_0_#59BBAF] transition-all flex flex-col justify-between group relative"
+                className="bg-white dark:bg-[#151C28] p-6 sm:p-7 rounded-2xl border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] hover:border-primary hover:shadow-[4px_4px_0_#59BBAF] transition-all flex flex-col justify-between group relative"
               >
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-3">

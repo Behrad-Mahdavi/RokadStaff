@@ -49,10 +49,10 @@ export default function MemberLoginPage() {
 
   return (
     <div className="min-h-screen bg-[#F5F8F8] dark:bg-[#0B0F17] flex flex-col justify-center items-center p-4 sm:p-6 font-vazirmatn text-right" dir="rtl">
-      <div className="w-full max-w-md bg-white dark:bg-[#151C28] rounded-3xl p-7 sm:p-9 border-2 border-primary/20 dark:border-gray-800 shadow-[4px_4px_0_#59BBAF]">
+      <div className="w-full max-w-md bg-white dark:bg-[#151C28] rounded-2xl p-7 sm:p-9 border-2 border-primary/20 dark:border-gray-800 shadow-[4px_4px_0_#59BBAF]">
         {/* Header & Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl overflow-hidden shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] border border-primary/30 mb-4 shrink-0">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl overflow-hidden shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] border border-primary/30 mb-4 shrink-0">
             <img src="/icon.png" alt="لوگوی روتلو" className="w-full h-full object-cover" />
           </div>
           <div className="flex items-center justify-center gap-2">

@@ -356,7 +356,7 @@ export default function ProjectBoardPage() {
         <div className="h-12 w-64 bg-gray-200 animate-pulse rounded-2xl" />
         <div className="flex gap-5 overflow-x-auto pb-4">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="w-80 h-[500px] bg-white rounded-3xl border animate-pulse shrink-0 p-5" />
+            <div key={i} className="w-80 h-[500px] bg-white rounded-2xl border animate-pulse shrink-0 p-5" />
           ))}
         </div>
       </div>
@@ -372,7 +372,7 @@ export default function ProjectBoardPage() {
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       {/* Board Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-[#151C28] p-5 sm:p-6 rounded-3xl border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF]">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-[#151C28] p-5 sm:p-6 rounded-2xl border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF]">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <Link
@@ -459,7 +459,7 @@ export default function ProjectBoardPage() {
               key={column.id}
               onDragOver={(e) => e.preventDefault()}
               onDrop={() => handleDropOnColumn(column.id)}
-              className="w-[85vw] sm:w-80 md:w-84 shrink-0 bg-[#F7F9F9] dark:bg-[#161D2A] rounded-3xl border border-gray-200/80 dark:border-gray-800 p-4 flex flex-col max-h-[calc(100vh-260px)] shadow-sm"
+              className="w-[85vw] sm:w-80 md:w-84 shrink-0 bg-[#F7F9F9] dark:bg-[#161D2A] rounded-2xl border border-gray-200/80 dark:border-gray-800 p-4 flex flex-col max-h-[calc(100vh-260px)] shadow-sm"
             >
               {/* Column Header */}
               <div className="flex items-center justify-between pb-3 mb-3 border-b border-gray-200 dark:border-gray-800 px-1">

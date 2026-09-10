@@ -91,7 +91,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8 animate-in fade-in duration-300">
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 bg-gradient-to-r from-ecosystem-light via-white to-college-light/40 dark:from-[#132824] dark:via-[#151C28] dark:to-[#221c1a] p-6 sm:p-7 rounded-3xl border-2 border-primary/20 shadow-[3px_3px_0_#59BBAF]">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 bg-gradient-to-r from-ecosystem-light via-white to-college-light/40 dark:from-[#132824] dark:via-[#151C28] dark:to-[#221c1a] p-6 sm:p-7 rounded-2xl border-2 border-primary/20 shadow-[3px_3px_0_#59BBAF]">
         <div>
           <div className="flex items-center gap-2 text-sm font-black text-primary mb-1.5">
             <Sparkles className="w-4 h-4" />
@@ -169,7 +169,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Department Participation Card */}
-      <div className="bg-white dark:bg-[#151C28] rounded-3xl p-5 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF]">
+      <div className="bg-white dark:bg-[#151C28] rounded-2xl p-5 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF]">
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-base sm:text-lg font-black text-sec dark:text-white">مشارکت ثبت گزارش به تفکیک دپارتمان</h2>
           <Link
@@ -188,7 +188,7 @@ export default function DashboardPage() {
             Object.entries(departments).map(([dept, info]: any) => {
               const percent = info.total > 0 ? Math.round((info.submitted / info.total) * 100) : 0;
               return (
-                <div key={dept} className="p-4 sm:p-5 rounded-2xl border border-gray-100 dark:border-gray-800 hover:border-primary/40 transition-colors bg-[#FCFDFD] dark:bg-[#1C2536]">
+                <div key={dept} className="p-4 sm:p-5 rounded-xl border border-gray-100 dark:border-gray-800 hover:border-primary/40 transition-colors bg-[#FCFDFD] dark:bg-[#1C2536]">
                   <div className="flex items-center justify-between text-xs sm:text-sm font-bold mb-3">
                     <span className="text-sec dark:text-white font-black text-sm sm:text-base">{dept}</span>
                     <span className="text-ink-normal/70 dark:text-gray-300">
@@ -209,7 +209,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Recent Submitted Reports Feed */}
-      <div className="bg-white dark:bg-[#151C28] rounded-3xl p-5 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF]">
+      <div className="bg-white dark:bg-[#151C28] rounded-2xl p-5 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF]">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
           <div>
             <h2 className="text-base sm:text-lg font-black text-sec dark:text-white">آخرین گزارش‌های دریافتی امروز</h2>

@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/client";
-import { dailyReports, employees, reportItems } from "@/lib/db/schema";
+import { dailyReports, employees, reportItems, reportHistory } from "@/lib/db/schema";
 import { eq, and, desc, inArray } from "drizzle-orm";
-import { getTehranDateString } from "@/lib/utils";
+import { getTehranDateString, isSubmissionLate } from "@/lib/utils";
 import { getSession } from "@/lib/auth/session";
 
 export async function GET(req: NextRequest) {
@@ -13,17 +13,26 @@ export async function GET(req: NextRequest) {
 
   try {
     const { searchParams } = new URL(req.url);
-    const dateParam = searchParams.get("date") || getTehranDateString();
-    const employeeId = searchParams.get("employeeId");
+    const allDates = searchParams.get("allDates") === "true";
+    const dateParam = searchParams.get("date");
+    let employeeId = searchParams.get("employeeId");
     const department = searchParams.get("department");
     const status = searchParams.get("status");
 
-    const db = getDb();
+    // If logged in as employee, always scope to their own employeeId
+    if (session.role === "employee" && session.employeeId) {
+      employeeId = session.employeeId;
+    }
 
+    const db = getDb();
     const conditions = [];
 
-    if (dateParam && dateParam !== "all") {
+    // Filter by date if specified and not 'all'
+    if (!allDates && dateParam && dateParam !== "all") {
       conditions.push(eq(dailyReports.reportDate, dateParam));
+    } else if (!allDates && !dateParam && session.role !== "employee") {
+      // Default to today's date for admin dashboard unless allDates is requested
+      conditions.push(eq(dailyReports.reportDate, getTehranDateString()));
     }
 
     if (employeeId && employeeId !== "all") {
@@ -52,7 +61,7 @@ export async function GET(req: NextRequest) {
       })
       .from(dailyReports)
       .innerJoin(employees, eq(dailyReports.employeeId, employees.id))
-      .orderBy(desc(dailyReports.submittedAt));
+      .orderBy(desc(dailyReports.reportDate), desc(dailyReports.submittedAt));
 
     if (conditions.length > 0) {
       // @ts-ignore
@@ -105,7 +114,7 @@ export async function GET(req: NextRequest) {
     });
 
     return NextResponse.json({
-      date: dateParam,
+      date: dateParam || getTehranDateString(),
       total: enhancedReports.length,
       reports: enhancedReports,
     });
@@ -116,5 +125,160 @@ export async function GET(req: NextRequest) {
       total: 0,
       reports: [],
     });
+  }
+}
+
+export async function POST(req: NextRequest) {
+  const session = await getSession();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const body = await req.json();
+    const { rawText, items, reportDate: customDate } = body;
+
+    // Determine target employee
+    const employeeId = session.role === "employee"
+      ? session.employeeId
+      : (body.employeeId || session.employeeId);
+
+    if (!employeeId) {
+      return NextResponse.json(
+        { error: "شناسه همکار برای ثبت گزارش مشخص نیست." },
+        { status: 400 }
+      );
+    }
+
+    const reportDateStr = customDate || getTehranDateString();
+
+    // Determine on_time vs late status
+    const isLate = isSubmissionLate();
+    const submissionStatus = isLate ? "late" : "on_time";
+
+    // Build rawText if not provided directly
+    let finalRawText = (rawText || "").trim();
+    const validItems: Array<{ description: string; status: string; taskOrder: number }> = [];
+
+    if (Array.isArray(items) && items.length > 0) {
+      items.forEach((it: any, index: number) => {
+        const desc = (it.description || "").trim();
+        if (desc) {
+          validItems.push({
+            description: desc,
+            status: it.status || "done",
+            taskOrder: index + 1,
+          });
+        }
+      });
+    }
+
+    if (!finalRawText && validItems.length > 0) {
+      finalRawText = `#گزارش_روزانه\n` + validItems.map((it) => {
+        const mark = it.status === "done" ? "✅" : it.status === "incomplete" ? "⏳" : "❌";
+        return `${mark} ${it.description}`;
+      }).join("\n");
+    }
+
+    if (!finalRawText && validItems.length === 0) {
+      return NextResponse.json(
+        { error: "متن گزارش یا حداقل یک آیتم کاری باید وارد شود." },
+        { status: 400 }
+      );
+    }
+
+    const db = getDb();
+
+    // Check if report already exists for this employee and date
+    const existing = await db
+      .select()
+      .from(dailyReports)
+      .where(
+        and(
+          eq(dailyReports.employeeId, employeeId),
+          eq(dailyReports.reportDate, reportDateStr)
+        )
+      )
+      .limit(1);
+
+    let reportId: string;
+    let isEdit = false;
+
+    if (existing.length > 0) {
+      // Overwrite / update existing report
+      isEdit = true;
+      const prev = existing[0];
+      reportId = prev.id;
+
+      // 1. Audit trail in reportHistory
+      try {
+        await db.insert(reportHistory).values({
+          originalReportId: prev.id,
+          employeeId: employeeId,
+          rawText: prev.rawText,
+          replacedAt: new Date(),
+        });
+      } catch (histErr) {
+        console.warn("Failed to write report history audit:", histErr);
+      }
+
+      // 2. Update daily_reports record
+      await db
+        .update(dailyReports)
+        .set({
+          rawText: finalRawText,
+          // If previous was already on_time, keep on_time; otherwise update
+          status: prev.status === "on_time" ? "on_time" : submissionStatus,
+          submittedAt: new Date(),
+          editedCount: (prev.editedCount || 0) + 1,
+        })
+        .where(eq(dailyReports.id, prev.id));
+
+      // 3. Clear previous items and re-insert
+      await db.delete(reportItems).where(eq(reportItems.reportId, prev.id));
+    } else {
+      // Insert brand new report
+      const inserted = await db
+        .insert(dailyReports)
+        .values({
+          employeeId,
+          reportDate: reportDateStr,
+          rawText: finalRawText,
+          status: submissionStatus,
+          submittedAt: new Date(),
+          editedCount: 0,
+        })
+        .returning({ id: dailyReports.id });
+
+      reportId = inserted[0].id;
+    }
+
+    // Insert task items
+    if (validItems.length > 0) {
+      await db.insert(reportItems).values(
+        validItems.map((it) => ({
+          reportId,
+          taskOrder: it.taskOrder,
+          description: it.description,
+          status: it.status,
+        }))
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      reportId,
+      status: submissionStatus,
+      isEdit,
+      message: isEdit
+        ? "گزارش روزانه شما با موفقیت ویرایش و به‌روزرسانی شد."
+        : "گزارش روزانه شما با موفقیت ثبت گردید.",
+    });
+  } catch (error: any) {
+    console.error("Submit report error:", error);
+    return NextResponse.json(
+      { error: error.message || "خطا در ثبت گزارش روزانه" },
+      { status: 500 }
+    );
   }
 }

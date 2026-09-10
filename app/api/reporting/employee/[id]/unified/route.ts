@@ -25,7 +25,19 @@ export async function GET(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const employeeId = params.id;
+  const employeeId = params.id === "me" ? session.employeeId : params.id;
+  if (!employeeId) {
+    return NextResponse.json({ error: "شناسه کارمند مشخص نشده است." }, { status: 400 });
+  }
+
+  // Employees can only view their own unified scorecard
+  if (session.role === "employee" && session.employeeId && session.employeeId !== employeeId) {
+    return NextResponse.json(
+      { error: "شما فقط به کارنامه عملکرد خود دسترسی دارید." },
+      { status: 403 }
+    );
+  }
+
   const { searchParams } = new URL(req.url);
   const fromParam = searchParams.get("from");
   const toParam = searchParams.get("to");

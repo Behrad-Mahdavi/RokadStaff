@@ -37,6 +37,23 @@ const EMPLOYEE_NAV_GROUPS = [
       },
     ],
   },
+  {
+    title: "گزارش‌ها و عملکرد",
+    items: [
+      {
+        title: "گزارش‌های روزانه من",
+        href: "/rotello/my-reports",
+        icon: FileCheck2,
+        badge: null,
+      },
+      {
+        title: "کارنامه عملکرد من",
+        href: "/rotello/my-scorecard",
+        icon: FileText,
+        badge: null,
+      },
+    ],
+  },
 ];
 
 const ADMIN_NAV_GROUPS = [
@@ -139,7 +156,7 @@ export default function Sidebar({ onCloseMobile }: SidebarProps) {
         {/* Brand Header */}
         <div className="h-20 px-6 flex items-center justify-between border-b border-[#EAEAEA] dark:border-gray-800">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl overflow-hidden shadow-[2.5px_2.5px_0_#202A5A] dark:shadow-[2.5px_2.5px_0_#59BBAF] border border-primary/30 shrink-0">
+            <div className="w-11 h-11 rounded-xl overflow-hidden shadow-[2.5px_2.5px_0_#202A5A] dark:shadow-[2.5px_2.5px_0_#59BBAF] border border-primary/30 shrink-0">
               <img src="/icon.png" alt="لوگوی روتلو" className="w-full h-full object-cover" />
             </div>
             <div>
@@ -198,7 +215,7 @@ export default function Sidebar({ onCloseMobile }: SidebarProps) {
                       href={item.href}
                       onClick={onCloseMobile}
                       className={cn(
-                        "flex items-center justify-between px-4 py-2.5 rounded-2xl text-[14px] font-bold transition-all duration-150 group",
+                        "flex items-center justify-between px-4 py-2.5 rounded-xl text-[14px] font-bold transition-all duration-150 group",
                         isActive
                           ? "bg-ecosystem-light dark:bg-ecosystem-darker/60 text-ecosystem-darker dark:text-ecosystem-light border border-primary/40 shadow-[2px_2px_0_#59BBAF]"
                           : "text-ink-normal/80 dark:text-gray-300 hover:bg-[#F5F7F9] dark:hover:bg-gray-800/60 hover:text-ink-normal dark:hover:text-white"

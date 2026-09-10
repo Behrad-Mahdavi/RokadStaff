@@ -56,7 +56,7 @@ export default function BotGuidePage() {
       {/* Interactive Simulator Card */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Input Editor */}
-        <div className="bg-white dark:bg-[#151C28] rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] flex flex-col justify-between">
+        <div className="bg-white dark:bg-[#151C28] rounded-2xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-base font-black text-sec dark:text-white flex items-center gap-2">
@@ -71,7 +71,7 @@ export default function BotGuidePage() {
               value={testText}
               onChange={(e) => setTestText(e.target.value)}
               placeholder="پیام /report خود را اینجا بنویسید..."
-              className="w-full p-4 rounded-2xl border border-gray-300 dark:border-gray-700 font-mono text-xs sm:text-sm focus:border-primary focus:outline-none bg-gray-50/50 dark:bg-[#1C2536] dark:text-white leading-relaxed"
+              className="w-full p-4 rounded-xl border border-gray-300 dark:border-gray-700 font-mono text-xs sm:text-sm focus:border-primary focus:outline-none bg-gray-50/50 dark:bg-[#1C2536] dark:text-white leading-relaxed"
             />
 
             <div className="mt-4 flex flex-wrap gap-2">
@@ -89,7 +89,7 @@ export default function BotGuidePage() {
         </div>
 
         {/* Right Live Parser Result */}
-        <div className="bg-white dark:bg-[#151C28] rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF]">
+        <div className="bg-white dark:bg-[#151C28] rounded-2xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF]">
           <h2 className="text-base font-black text-sec dark:text-white mb-4 flex items-center justify-between">
             <span className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-college-normal" />
@@ -115,7 +115,7 @@ export default function BotGuidePage() {
                 {parseResult.items.map((item, i) => (
                   <div
                     key={i}
-                    className="p-3.5 bg-gray-50 dark:bg-[#1C2536] rounded-2xl border border-gray-200 dark:border-gray-800 flex items-center justify-between text-xs sm:text-sm"
+                    className="p-3.5 bg-gray-50 dark:bg-[#1C2536] rounded-xl border border-gray-200 dark:border-gray-800 flex items-center justify-between text-xs sm:text-sm"
                   >
                     <div className="flex items-center gap-2.5">
                       <span className="w-7 h-7 rounded-full bg-primary/20 text-primary font-black flex items-center justify-center text-xs">
@@ -138,7 +138,7 @@ export default function BotGuidePage() {
       {/* Guide Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Connection Flow Guide */}
-        <div className="bg-white dark:bg-[#151C28] rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF]">
+        <div className="bg-white dark:bg-[#151C28] rounded-2xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF]">
           <h3 className="text-base sm:text-lg font-black text-sec dark:text-white mb-3.5 flex items-center gap-2">
             <ShieldCheck className="w-5 h-5 text-primary" />
             <span>مراحل احراز هویت و اتصال (`/link`)</span>
@@ -151,7 +151,7 @@ export default function BotGuidePage() {
         </div>
 
         {/* Report Flow Guide */}
-        <div className="bg-white dark:bg-[#151C28] rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF]">
+        <div className="bg-white dark:bg-[#151C28] rounded-2xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF]">
           <h3 className="text-base sm:text-lg font-black text-sec dark:text-white mb-3.5 flex items-center gap-2">
             <Info className="w-5 h-5 text-college-normal" />
             <span>نحوه ارسال گزارش کار (`/report`)</span>

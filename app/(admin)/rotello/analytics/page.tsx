@@ -51,7 +51,7 @@ export default function RotelloAnalyticsPage() {
   return (
     <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-300">
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 bg-gradient-to-r from-ecosystem-light via-white to-club-light/40 dark:from-[#151C28] dark:via-[#161E2C] dark:to-[#151C28] p-6 sm:p-7 rounded-3xl border-2 border-primary/20 dark:border-gray-800 shadow-[3px_3px_0_#59BBAF]">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 bg-gradient-to-r from-ecosystem-light via-white to-club-light/40 dark:from-[#151C28] dark:via-[#161E2C] dark:to-[#151C28] p-6 sm:p-7 rounded-2xl border-2 border-primary/20 dark:border-gray-800 shadow-[3px_3px_0_#59BBAF]">
         <div>
           <div className="flex items-center gap-2 text-sm font-black text-primary mb-1.5">
             <Layers className="w-4 h-4" />
@@ -102,7 +102,7 @@ export default function RotelloAnalyticsPage() {
       {/* Two Columns Grid: Priority Breakdown & Team Workload */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Priority Breakdown Card */}
-        <div className="bg-white dark:bg-[#151C28] rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] space-y-5">
+        <div className="bg-white dark:bg-[#151C28] rounded-2xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] space-y-5">
           <div>
             <h2 className="text-base sm:text-lg font-black text-sec dark:text-white">توزیع وظایف باز بر اساس اولویت</h2>
             <p className="text-xs sm:text-sm text-ink-normal/60 dark:text-gray-400 mt-0.5 font-medium">
@@ -112,7 +112,7 @@ export default function RotelloAnalyticsPage() {
 
           <div className="space-y-4">
             {/* Urgent */}
-            <div className="p-4 bg-female-light/40 dark:bg-female-darker/30 rounded-2xl border border-female-normal/20 dark:border-female-normal/30 space-y-2">
+            <div className="p-4 bg-female-light/40 dark:bg-female-darker/30 rounded-xl border border-female-normal/20 dark:border-female-normal/30 space-y-2">
               <div className="flex items-center justify-between text-xs sm:text-sm font-black">
                 <span className="text-female-darker dark:text-female-light flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-female-normal" />
@@ -133,7 +133,7 @@ export default function RotelloAnalyticsPage() {
             </div>
 
             {/* Important */}
-            <div className="p-4 bg-college-light/40 dark:bg-college-darker/30 rounded-2xl border border-college-normal/20 dark:border-college-normal/30 space-y-2">
+            <div className="p-4 bg-college-light/40 dark:bg-college-darker/30 rounded-xl border border-college-normal/20 dark:border-college-normal/30 space-y-2">
               <div className="flex items-center justify-between text-xs sm:text-sm font-black">
                 <span className="text-college-darker dark:text-college-light flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-college-normal" />
@@ -154,7 +154,7 @@ export default function RotelloAnalyticsPage() {
             </div>
 
             {/* Normal */}
-            <div className="p-4 bg-gray-50 dark:bg-gray-800/60 rounded-2xl border border-gray-200 dark:border-gray-700 space-y-2">
+            <div className="p-4 bg-gray-50 dark:bg-gray-800/60 rounded-xl border border-gray-200 dark:border-gray-700 space-y-2">
               <div className="flex items-center justify-between text-xs sm:text-sm font-black">
                 <span className="text-ink-normal/70 dark:text-gray-300 flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-gray-400" />
@@ -175,7 +175,7 @@ export default function RotelloAnalyticsPage() {
         </div>
 
         {/* Team Workload Distribution Card */}
-        <div className="bg-white dark:bg-[#151C28] rounded-3xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] space-y-5">
+        <div className="bg-white dark:bg-[#151C28] rounded-2xl p-6 sm:p-7 border border-[#EAEAEA] dark:border-gray-800 shadow-[3px_3px_0_#202A5A] dark:shadow-[3px_3px_0_#59BBAF] space-y-5">
           <div>
             <h2 className="text-base sm:text-lg font-black text-sec dark:text-white">توزیع بار کاری همکاران</h2>
             <p className="text-xs sm:text-sm text-ink-normal/60 dark:text-gray-400 mt-0.5 font-medium">
@@ -195,7 +195,7 @@ export default function RotelloAnalyticsPage() {
                 return (
                   <div
                     key={staff.employeeId}
-                    className="p-3.5 bg-gray-50 dark:bg-gray-800/60 rounded-2xl border border-gray-200 dark:border-gray-700 space-y-2"
+                    className="p-3.5 bg-gray-50 dark:bg-gray-800/60 rounded-xl border border-gray-200 dark:border-gray-700 space-y-2"
                   >
                     <div className="flex items-center justify-between text-xs sm:text-sm font-black">
                       <span className="text-sec dark:text-white">

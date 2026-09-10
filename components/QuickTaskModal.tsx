@@ -200,8 +200,8 @@ export default function QuickTaskModal({
       <div className="font-vazirmatn space-y-6">
         {/* Success Banner */}
         {createdResult ? (
-          <div className="p-6 bg-ecosystem-light dark:bg-[#152422] rounded-3xl border-2 border-primary/30 text-center space-y-4 shadow-sm animate-in fade-in">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-primary text-white rounded-2xl flex items-center justify-center mx-auto shadow-md">
+          <div className="p-6 bg-ecosystem-light dark:bg-[#152422] rounded-2xl border-2 border-primary/30 text-center space-y-4 shadow-sm animate-in fade-in">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-primary text-white rounded-xl flex items-center justify-center mx-auto shadow-md">
               <CheckCircle2 className="w-7 h-7" />
             </div>
             <div>
