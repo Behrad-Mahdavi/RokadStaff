@@ -347,9 +347,6 @@ export default function EmployeesPage() {
           >
             <Building2 className="w-4 h-4 text-primary" />
             <span>مدیریت دپارتمان‌ها</span>
-            <span className="bg-ecosystem-light dark:bg-ecosystem-darker/60 text-primary text-[10px] px-1.5 py-0.5 rounded-full font-mono font-bold">
-              {toPersianDigits(departments.length)}
-            </span>
           </button>
 
           <button
