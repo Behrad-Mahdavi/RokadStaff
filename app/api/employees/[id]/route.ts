@@ -49,7 +49,7 @@ export async function PATCH(
 
   try {
     const body = await req.json();
-    const { fullName, department, position, isActive } = body;
+    const { fullName, department, position, isActive, role } = body;
 
     const db = getDb();
     const updateData: Record<string, any> = {
@@ -60,6 +60,7 @@ export async function PATCH(
     if (department !== undefined) updateData.department = department ? department.trim() : null;
     if (position !== undefined) updateData.position = position ? position.trim() : null;
     if (isActive !== undefined) updateData.isActive = Boolean(isActive);
+    if (role !== undefined) updateData.role = role === "admin" || role === "supervisor" ? role : "employee";
 
     const [updated] = await db
       .update(employees)

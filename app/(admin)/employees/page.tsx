@@ -60,6 +60,7 @@ export default function EmployeesPage() {
   const [fullName, setFullName] = useState("");
   const [department, setDepartment] = useState("پسرانه");
   const [position, setPosition] = useState("");
+  const [employeeRole, setEmployeeRole] = useState("employee");
   const [formLoading, setFormLoading] = useState(false);
   const [createdCodeInfo, setCreatedCodeInfo] = useState<{ name: string; code: string } | null>(null);
   const [copied, setCopied] = useState(false);
@@ -214,7 +215,7 @@ export default function EmployeesPage() {
       const res = await fetch("/api/employees", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fullName, department, position }),
+        body: JSON.stringify({ fullName, department, position, role: employeeRole }),
       });
 
       const data = await res.json();
@@ -226,8 +227,9 @@ export default function EmployeesPage() {
         });
         setIsCodeModalOpen(true);
         setFullName("");
-        setDepartment("پسرانه");
+        setDepartment(departments[0]?.name || "پسرانه");
         setPosition("");
+        setEmployeeRole("employee");
         fetchEmployees();
       } else {
         alert(data.error || "خطا در ایجاد کارمند");
@@ -253,6 +255,7 @@ export default function EmployeesPage() {
           fullName: selectedEmployee.fullName,
           department: selectedEmployee.department,
           position: selectedEmployee.position,
+          role: selectedEmployee.role || "employee",
           isActive: selectedEmployee.isActive,
         }),
       });
@@ -432,7 +435,18 @@ export default function EmployeesPage() {
                 employees.map((emp) => (
                   <tr key={emp.id} className="hover:bg-gray-50/70 dark:hover:bg-[#1C2536]/50 transition-colors">
                     <td className="py-3.5 px-4 font-bold text-sec dark:text-white">
-                      {emp.fullName}
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span>{emp.fullName}</span>
+                        <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                          emp.role === "admin"
+                            ? "bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border border-purple-300/40"
+                            : emp.role === "supervisor"
+                            ? "bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-300/40"
+                            : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300"
+                        }`}>
+                          {emp.role === "admin" ? "مدیر کل" : emp.role === "supervisor" ? "سرپرست" : "همکار"}
+                        </span>
+                      </div>
                     </td>
                     <td className="py-3.5 px-4 text-ink-normal/70 dark:text-gray-300">
                       <div className="font-bold text-sec dark:text-white">{emp.department || "پسرانه"}</div>
@@ -587,6 +601,19 @@ export default function EmployeesPage() {
             />
           </div>
 
+          <div>
+            <label className="block text-xs font-bold text-sec dark:text-gray-200 mb-1">سطح دسترسی سازمانی</label>
+            <select
+              value={employeeRole}
+              onChange={(e) => setEmployeeRole(e.target.value)}
+              className="w-full px-3 py-2 rounded-xl border border-gray-300 dark:border-gray-700 text-xs focus:border-primary focus:outline-none font-bold text-sec dark:text-white bg-white dark:bg-[#1C2536]"
+            >
+              <option value="employee">همکار عادی (ثبت گزارش و کارها)</option>
+              <option value="supervisor">سرپرست دپارتمان</option>
+              <option value="admin">مدیر کل سیستم</option>
+            </select>
+          </div>
+
           <div className="pt-3 border-t border-gray-100 dark:border-gray-800 flex items-center justify-end gap-2">
             <button
               type="button"
@@ -662,6 +689,19 @@ export default function EmployeesPage() {
                 onChange={(e) => setSelectedEmployee({ ...selectedEmployee, position: e.target.value })}
                 className="w-full px-3 py-2 rounded-xl border border-gray-300 dark:border-gray-700 text-xs focus:border-primary focus:outline-none dark:bg-[#1C2536] dark:text-white"
               />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-sec dark:text-gray-200 mb-1">سطح دسترسی سازمانی</label>
+              <select
+                value={selectedEmployee.role || "employee"}
+                onChange={(e) => setSelectedEmployee({ ...selectedEmployee, role: e.target.value })}
+                className="w-full px-3 py-2 rounded-xl border border-gray-300 dark:border-gray-700 text-xs focus:border-primary focus:outline-none font-bold text-sec dark:text-white bg-white dark:bg-[#1C2536]"
+              >
+                <option value="employee">همکار عادی (ثبت گزارش و کارها)</option>
+                <option value="supervisor">سرپرست دپارتمان</option>
+                <option value="admin">مدیر کل سیستم</option>
+              </select>
             </div>
 
             <div className="flex items-center gap-2 pt-2">

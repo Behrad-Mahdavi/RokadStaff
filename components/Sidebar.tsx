@@ -16,6 +16,7 @@ import {
   ChevronLeft,
   X,
   FileText,
+  ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -116,6 +117,12 @@ const ADMIN_NAV_GROUPS = [
         title: "مدیریت همکاران",
         href: "/employees",
         icon: Users,
+        badge: null,
+      },
+      {
+        title: "کاربران و سطوح دسترسی",
+        href: "/users",
+        icon: ShieldCheck,
         badge: null,
       },
       {

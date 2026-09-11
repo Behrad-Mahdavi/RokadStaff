@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { fullName, department, position } = body;
+    const { fullName, department, position, role } = body;
 
     if (!fullName || typeof fullName !== "string" || fullName.trim().length === 0) {
       return NextResponse.json(
@@ -75,6 +75,7 @@ export async function POST(req: NextRequest) {
 
     const linkCode = generateLinkCode();
     const linkCodeExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    const cleanRole = role === "admin" || role === "supervisor" ? role : "employee";
 
     try {
       const db = getDb();
@@ -84,6 +85,7 @@ export async function POST(req: NextRequest) {
           fullName: fullName.trim(),
           department: department?.trim() || null,
           position: position?.trim() || null,
+          role: cleanRole,
           linkCode,
           linkCodeExpiresAt,
           isActive: true,

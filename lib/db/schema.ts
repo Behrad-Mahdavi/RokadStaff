@@ -26,6 +26,7 @@ export const employees = pgTable(
     fullName: text("full_name").notNull(),
     department: text("department"), // "پسرانه" | "دخترانه"
     position: text("position"),
+    role: text("role").default("employee").notNull(), // 'admin' | 'supervisor' | 'employee'
     telegramChatId: bigint("telegram_chat_id", { mode: "bigint" }).unique(),
     linkCode: varchar("link_code", { length: 6 }),
     linkCodeExpiresAt: timestamp("link_code_expires_at", { withTimezone: true }),
@@ -46,6 +47,7 @@ export const adminUsers = pgTable("admin_users", {
   role: text("role").default("admin").notNull(), // 'admin' | 'supervisor'
   assignedDepartment: text("assigned_department"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
 export const departments = pgTable(

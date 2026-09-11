@@ -13,10 +13,12 @@ import {
   User,
   Briefcase,
   ShieldCheck,
+  UserCog,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import QuickTaskModal from "@/components/QuickTaskModal";
+import ProfileModal from "@/components/ProfileModal";
 
 interface NavbarProps {
   onToggleMobileMenu?: () => void;
@@ -33,10 +35,12 @@ export default function Navbar({
   const [currentDate, setCurrentDate] = useState<string>("");
   const [isQuickTaskOpen, setIsQuickTaskOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [user, setUser] = useState<{
     id?: string;
     fullName?: string;
+    email?: string;
     role?: string;
     department?: string;
     phone?: string;
@@ -227,6 +231,18 @@ export default function Navbar({
                 {/* Divider */}
                 <div className="my-1.5 border-t border-gray-100 dark:border-gray-800" />
 
+                {/* Profile Edit Button */}
+                <button
+                  onClick={() => {
+                    setIsProfileMenuOpen(false);
+                    setIsProfileModalOpen(true);
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-sec dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-850 hover:text-primary transition-colors text-right"
+                >
+                  <UserCog className="w-4 h-4 text-primary" />
+                  <span>پروفایل و مشخصات من</span>
+                </button>
+
                 {/* Logout Button */}
                 <button
                   onClick={() => {
@@ -252,6 +268,16 @@ export default function Navbar({
           if (typeof window !== "undefined") {
             window.dispatchEvent(new Event("task-created"));
           }
+        }}
+      />
+
+      {/* Senior Admin Profile Modal */}
+      <ProfileModal
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+        currentUser={user}
+        onProfileUpdated={(updated) => {
+          setUser((prev) => (prev ? { ...prev, ...updated } : updated));
         }}
       />
     </>
