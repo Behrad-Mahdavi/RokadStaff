@@ -72,6 +72,8 @@ export async function POST(req: NextRequest) {
       email: user.email,
       role: user.role,
       fullName: user.fullName || "مدیر سیستم",
+      department: user.assignedDepartment || undefined,
+      assignedDepartment: user.assignedDepartment || undefined,
     });
 
     return NextResponse.json({
@@ -81,6 +83,8 @@ export async function POST(req: NextRequest) {
         email: user.email,
         fullName: user.fullName,
         role: user.role,
+        department: user.assignedDepartment || null,
+        assignedDepartment: user.assignedDepartment || null,
       },
     });
   } catch (error: any) {

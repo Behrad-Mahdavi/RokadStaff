@@ -7,7 +7,7 @@ export default function UsersRedirectPage() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace("/employees?tab=access");
+    router.replace("/employees");
   }, [router]);
 
   return (

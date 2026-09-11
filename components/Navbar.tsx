@@ -116,8 +116,10 @@ export default function Navbar({
   const userSubtitle =
     user?.role === "admin"
       ? "مدیر ارشد سیستم"
+      : user?.role === "supervisor"
+      ? `سرپرست دپارتمان ${user?.department || (user as any)?.assignedDepartment || ""}`
       : user?.department
-      ? `دپارتمان ${user.department}`
+      ? `همکار دپارتمان ${user.department}`
       : "همکار";
 
   const canQuickAdd = user?.role === "admin" || user?.role === "supervisor";

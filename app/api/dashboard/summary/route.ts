@@ -14,14 +14,18 @@ export async function GET(req: NextRequest) {
   try {
     const todayStr = getTehranDateString();
     const db = getDb();
+    const supervisorDept = session.role === "supervisor" ? session.assignedDepartment : null;
 
     // 1. Total employees stats
-    const allEmployees: any[] = await db.select().from(employees);
+    let allEmployees: any[] = await db.select().from(employees);
+    if (supervisorDept) {
+      allEmployees = allEmployees.filter((e: any) => e.department === supervisorDept);
+    }
     const activeEmployees = allEmployees.filter((e: any) => e.isActive);
     const linkedEmployees = activeEmployees.filter((e: any) => !!e.telegramChatId);
 
     // 2. Today's reports
-    const todayReports: any[] = await db
+    let todayReports: any[] = await db
       .select({
         id: dailyReports.id,
         employeeId: dailyReports.employeeId,
@@ -38,6 +42,10 @@ export async function GET(req: NextRequest) {
       .innerJoin(employees, eq(dailyReports.employeeId, employees.id))
       .where(eq(dailyReports.reportDate, todayStr))
       .orderBy(desc(dailyReports.submittedAt));
+
+    if (supervisorDept) {
+      todayReports = todayReports.filter((r: any) => r.employeeDepartment === supervisorDept);
+    }
 
     const onTimeCount = todayReports.filter((r: any) => r.status === "on_time").length;
     const lateCount = todayReports.filter((r: any) => r.status === "late").length;

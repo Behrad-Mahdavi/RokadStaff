@@ -70,9 +70,14 @@ export async function GET(req: NextRequest) {
 
     const reports = await reportsQuery;
 
-    // Filter department in-memory if requested (or inside query)
-    const filteredReports = department && department !== "all"
-      ? reports.filter((r: any) => r.employeeDepartment === department)
+    // Filter department: strictly enforce supervisor department if supervisor
+    const effectiveDept =
+      session.role === "supervisor" && session.assignedDepartment
+        ? session.assignedDepartment
+        : department;
+
+    const filteredReports = effectiveDept && effectiveDept !== "all"
+      ? reports.filter((r: any) => r.employeeDepartment === effectiveDept)
       : reports;
 
     // Fetch all items for these reports

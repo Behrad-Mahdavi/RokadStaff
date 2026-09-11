@@ -51,6 +51,13 @@ export async function PATCH(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  if (session.role !== "admin") {
+    return NextResponse.json(
+      { error: "دسترسی غیرمجاز: تنها مدیر ارشد مجاز به ویرایش مشخصات دپارتمان است." },
+      { status: 403 }
+    );
+  }
+
   try {
     const body = await req.json();
     const { name, description } = body;
@@ -149,6 +156,13 @@ export async function DELETE(
   const session = await getSession();
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (session.role !== "admin") {
+    return NextResponse.json(
+      { error: "دسترسی غیرمجاز: تنها مدیر ارشد مجاز به حذف دپارتمان است." },
+      { status: 403 }
+    );
   }
 
   try {

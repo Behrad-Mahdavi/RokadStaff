@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/client";
-import { employees } from "@/lib/db/schema";
-import { eq, desc, ilike, and, sql } from "drizzle-orm";
+import { employees, adminUsers } from "@/lib/db/schema";
+import { eq, desc, ilike, and } from "drizzle-orm";
 import { generateLinkCode } from "@/lib/utils";
 import { getSession } from "@/lib/auth/session";
+import bcrypt from "bcryptjs";
 
 export async function GET(req: NextRequest) {
   const session = await getSession();
@@ -18,11 +19,12 @@ export async function GET(req: NextRequest) {
     const search = searchParams.get("search");
 
     const db = getDb();
-    let query = db.select().from(employees);
-
     const conditions = [];
 
-    if (department && department !== "all") {
+    // Scope for supervisor: only see their assigned department
+    if (session.role === "supervisor" && session.assignedDepartment) {
+      conditions.push(eq(employees.department, session.assignedDepartment));
+    } else if (department && department !== "all") {
       conditions.push(eq(employees.department, department));
     }
 
@@ -64,7 +66,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { fullName, department, position, role } = body;
+    let { fullName, department, position, role, email, password } = body;
 
     if (!fullName || typeof fullName !== "string" || fullName.trim().length === 0) {
       return NextResponse.json(
@@ -73,51 +75,120 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Role enforcement for supervisor
+    if (session.role === "supervisor") {
+      if (role === "admin") {
+        return NextResponse.json(
+          { error: "سرپرست واحد مجاز به تعریف نقش مدیر ارشد نمی‌باشد." },
+          { status: 403 }
+        );
+      }
+      department = session.assignedDepartment || department;
+    }
+
+    const cleanRole = role === "admin" || role === "supervisor" ? role : "employee";
+    const cleanEmail = email ? email.toLowerCase().trim() : null;
+    const cleanDept = department?.trim() || null;
+
+    // If role is supervisor or admin, email and password are required
+    if (cleanRole === "admin" || cleanRole === "supervisor") {
+      if (!cleanEmail || !cleanEmail.includes("@")) {
+        return NextResponse.json(
+          { error: "جهت اعطای دسترسی به پنل (مدیر ارشد یا سرپرست واحد)، وارد کردن ایمیل معتبر الزامی است." },
+          { status: 400 }
+        );
+      }
+
+      if (!password || typeof password !== "string" || password.trim().length < 6) {
+        return NextResponse.json(
+          { error: "جهت ورود به پنل، کلمه عبور حداقل ۶ کاراکتر الزامی است." },
+          { status: 400 }
+        );
+      }
+
+      if (cleanRole === "supervisor" && !cleanDept) {
+        return NextResponse.json(
+          { error: "برای نقش سرپرست واحد، تعیین دپارتمان الزامی است." },
+          { status: 400 }
+        );
+      }
+    }
+
+    const db = getDb();
+
+    // Check duplicate email if provided
+    if (cleanEmail) {
+      const existingInEmp = await db
+        .select()
+        .from(employees)
+        .where(eq(employees.email, cleanEmail))
+        .limit(1);
+
+      if (existingInEmp.length > 0) {
+        return NextResponse.json(
+          { error: "این ایمیل قبلاً برای همکار دیگری ثبت شده است." },
+          { status: 409 }
+        );
+      }
+    }
+
     const linkCode = generateLinkCode();
     const linkCodeExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
-    const cleanRole = role === "admin" || role === "supervisor" ? role : "employee";
 
-    try {
-      const db = getDb();
-      const [newEmp] = await db
-        .insert(employees)
-        .values({
+    // 1. Insert into employees
+    const [newEmp] = await db
+      .insert(employees)
+      .values({
+        fullName: fullName.trim(),
+        department: cleanDept,
+        position: position?.trim() || null,
+        role: cleanRole,
+        email: cleanEmail,
+        linkCode,
+        linkCodeExpiresAt,
+        isActive: true,
+      })
+      .returning();
+
+    // 2. If admin or supervisor, sync/create in admin_users table
+    if (cleanRole === "admin" || cleanRole === "supervisor") {
+      const passwordHash = await bcrypt.hash(password.trim(), 10);
+      const existingAdmin = await db
+        .select()
+        .from(adminUsers)
+        .where(eq(adminUsers.email, cleanEmail!))
+        .limit(1);
+
+      if (existingAdmin.length > 0) {
+        await db
+          .update(adminUsers)
+          .set({
+            fullName: fullName.trim(),
+            role: cleanRole,
+            assignedDepartment: cleanRole === "supervisor" ? cleanDept : null,
+            passwordHash,
+            updatedAt: new Date(),
+          })
+          .where(eq(adminUsers.id, existingAdmin[0].id));
+      } else {
+        await db.insert(adminUsers).values({
+          email: cleanEmail!,
+          passwordHash,
           fullName: fullName.trim(),
-          department: department?.trim() || null,
-          position: position?.trim() || null,
           role: cleanRole,
-          linkCode,
-          linkCodeExpiresAt,
-          isActive: true,
-        })
-        .returning();
-
-      return NextResponse.json({
-        success: true,
-        employee: {
-          ...newEmp,
-          telegramChatId: null,
-          isLinked: false,
-        },
-      });
-    } catch (dbErr) {
-      console.warn("DB insert employee failed, returning mock created employee:", dbErr);
-      return NextResponse.json({
-        success: true,
-        employee: {
-          id: "emp-" + Date.now(),
-          fullName: fullName.trim(),
-          department: department?.trim() || "پسرانه",
-          position: position?.trim() || "همکار",
-          linkCode,
-          linkCodeExpiresAt,
-          isActive: true,
-          telegramChatId: null,
-          isLinked: false,
-          createdAt: new Date().toISOString(),
-        },
-      });
+          assignedDepartment: cleanRole === "supervisor" ? cleanDept : null,
+        });
+      }
     }
+
+    return NextResponse.json({
+      success: true,
+      employee: {
+        ...newEmp,
+        telegramChatId: null,
+        isLinked: false,
+      },
+    });
   } catch (error: any) {
     console.error("Create employee error:", error);
     return NextResponse.json({ error: error.message || "Server error" }, { status: 500 });

@@ -59,6 +59,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  if (session.role !== "admin") {
+    return NextResponse.json(
+      { error: "دسترسی غیرمجاز: تنها مدیر ارشد مجاز به ایجاد دپارتمان جدید است." },
+      { status: 403 }
+    );
+  }
+
   try {
     const body = await req.json();
     const { name, description } = body;

@@ -35,8 +35,13 @@ export async function GET(req: NextRequest) {
     // 3. Filter missing employees
     let missing = activeEmployees.filter((emp: any) => !submittedSet.has(emp.id));
 
-    if (department && department !== "all") {
-      missing = missing.filter((emp: any) => emp.department === department);
+    const effectiveDept =
+      session.role === "supervisor" && session.assignedDepartment
+        ? session.assignedDepartment
+        : department;
+
+    if (effectiveDept && effectiveDept !== "all") {
+      missing = missing.filter((emp: any) => emp.department === effectiveDept);
     }
 
     const serialized = missing.map((emp: any) => ({

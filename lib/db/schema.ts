@@ -27,6 +27,7 @@ export const employees = pgTable(
     department: text("department"), // "پسرانه" | "دخترانه"
     position: text("position"),
     role: text("role").default("employee").notNull(), // 'admin' | 'supervisor' | 'employee'
+    email: text("email"),
     telegramChatId: bigint("telegram_chat_id", { mode: "bigint" }).unique(),
     linkCode: varchar("link_code", { length: 6 }),
     linkCodeExpiresAt: timestamp("link_code_expires_at", { withTimezone: true }),

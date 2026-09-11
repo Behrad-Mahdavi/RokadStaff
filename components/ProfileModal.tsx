@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Modal from "@/components/Modal";
-import { User, Mail, Lock, ShieldCheck, Check, AlertCircle, Eye, EyeOff } from "lucide-react";
+import { User, Mail, Lock, ShieldCheck, Check, AlertCircle, Eye, EyeOff, Building2 } from "lucide-react";
 
 interface ProfileModalProps {
   isOpen: boolean;
@@ -12,6 +12,7 @@ interface ProfileModalProps {
     fullName?: string;
     email?: string;
     role?: string;
+    department?: string;
     assignedDepartment?: string;
   } | null;
   onProfileUpdated?: (updatedUser: any) => void;
@@ -117,31 +118,67 @@ export default function ProfileModal({
     }
   };
 
+  const isSupervisor = currentUser?.role === "supervisor";
+  const isAdmin = currentUser?.role === "admin";
+  const supervisorDept = currentUser?.assignedDepartment || currentUser?.department || "";
+
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="پروفایل کاربری مدیر ارشد"
+      title="پروفایل و مشخصات من"
       maxWidth="md"
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Role Badge Banner */}
-        <div className="p-3.5 rounded-2xl bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-primary/20 flex items-center justify-between">
+        <div className={`p-3.5 rounded-2xl border flex items-center justify-between ${
+          isAdmin
+            ? "bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border-primary/20"
+            : isSupervisor
+            ? "bg-gradient-to-r from-blue-500/10 via-blue-500/5 to-transparent border-blue-500/20"
+            : "bg-gray-50 dark:bg-gray-800/60 border-gray-200 dark:border-gray-700"
+        }`}>
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-xl bg-sec dark:bg-primary text-white dark:text-sec flex items-center justify-center font-black shadow-xs">
-              <ShieldCheck className="w-5 h-5" />
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black shadow-xs ${
+              isAdmin
+                ? "bg-sec dark:bg-primary text-white dark:text-sec"
+                : isSupervisor
+                ? "bg-blue-600 text-white"
+                : "bg-gray-600 text-white"
+            }`}>
+              {isAdmin ? (
+                <ShieldCheck className="w-5 h-5" />
+              ) : isSupervisor ? (
+                <Building2 className="w-5 h-5" />
+              ) : (
+                <User className="w-5 h-5" />
+              )}
             </div>
             <div>
               <div className="text-xs font-black text-sec dark:text-white">
-                سطح دسترسی شما
+                {isAdmin
+                  ? "مدیر ارشد سیستم (Super Admin)"
+                  : isSupervisor
+                  ? `سرپرست دپارتمان ${supervisorDept}`
+                  : "همکار سامانه"}
               </div>
-              <div className="text-[11px] text-primary font-bold">
-                مدیر ارشد سیستم (Super Admin)
+              <div className="text-[11px] text-ink-normal/70 dark:text-gray-400 font-medium mt-0.5">
+                {isAdmin
+                  ? "دسترسی سراسری و نامحدود به کلیه بخش‌ها و دپارتمان‌ها"
+                  : isSupervisor
+                  ? `نظارت و مدیریت بر گزارش‌ها و اعضای دپارتمان ${supervisorDept}`
+                  : "دسترسی ثبت گزارش و وظایف سازمانی"}
               </div>
             </div>
           </div>
-          <span className="text-[10px] px-2.5 py-1 rounded-full bg-ecosystem-light dark:bg-ecosystem-darker/60 text-primary font-bold border border-primary/30">
-            دسترسی کامل
+          <span className={`text-[10px] px-2.5 py-1 rounded-full font-bold border ${
+            isAdmin
+              ? "bg-ecosystem-light dark:bg-ecosystem-darker/60 text-primary border-primary/30"
+              : isSupervisor
+              ? "bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800"
+              : "bg-gray-100 text-gray-700 border-gray-300"
+          }`}>
+            {isAdmin ? "دسترسی کامل" : isSupervisor ? "سرپرست واحد" : "پرسنل"}
           </span>
         </div>
 
