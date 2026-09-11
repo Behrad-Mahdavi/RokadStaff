@@ -115,12 +115,12 @@ export default function Navbar({
 
   const userSubtitle =
     user?.role === "admin"
-      ? "مدیر ارشد سیستم"
+      ? "راهبر ارشد سیستم"
       : user?.role === "supervisor"
-      ? `سرپرست دپارتمان ${user?.department || (user as any)?.assignedDepartment || ""}`
+      ? `راهبر دپارتمان ${user?.department || (user as any)?.assignedDepartment || ""}`
       : user?.department
-      ? `همکار دپارتمان ${user.department}`
-      : "همکار";
+      ? `عضو دپارتمان ${user.department}`
+      : "عضو تیم";
 
   const canQuickAdd = user?.role === "admin" || user?.role === "supervisor";
 
@@ -140,54 +140,49 @@ export default function Navbar({
             }}
             className="p-2.5 rounded-xl text-sec dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700 transition-all duration-150 flex items-center justify-center group shadow-sm active:scale-95"
             title={isSidebarOpen ? "بستن منوی کناری (سایدبار)" : "باز کردن منوی کناری (سایدبار)"}
-            aria-label="تغییر وضعیت منوی کناری"
           >
             <Menu className="w-5 h-5 text-sec dark:text-gray-200 group-hover:text-primary transition-colors" />
           </button>
 
-          <div className="flex items-center gap-1.5 sm:gap-2 bg-ecosystem-light dark:bg-ecosystem-darker/50 text-ecosystem-darker dark:text-ecosystem-light px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-full border border-ecosystem-normal/30 text-[11px] sm:text-xs md:text-sm font-bold truncate max-w-[150px] xs:max-w-[200px] sm:max-w-none">
-            <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary shrink-0" />
-            <span className="truncate">{currentDate || "در حال بارگذاری..."}</span>
-          </div>
-
-          <div className="hidden md:flex items-center gap-2 text-xs sm:text-sm text-ink-normal/80 dark:text-gray-300 bg-[#F5F5F5] dark:bg-gray-800/80 px-3.5 py-2 rounded-full font-medium border border-gray-200/50 dark:border-gray-700/50">
-            <span className="w-2.5 h-2.5 rounded-full bg-accent-green animate-pulse shrink-0"></span>
-            <span>سرور تلگرام متصل</span>
-          </div>
-        </div>
-
-        {/* User Actions & Profile */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          {/* Quick Add Task */}
+          {/* Quick Task Create Button */}
           {canQuickAdd && (
             <button
               onClick={() => setIsQuickTaskOpen(true)}
-              className="flex items-center gap-1.5 px-3 sm:px-3.5 py-2 rounded-xl bg-gradient-to-r from-primary to-ecosystem-dark text-white text-xs sm:text-sm font-black shadow-[2px_2px_0_#202A5A] dark:shadow-[2px_2px_0_#1F413D] hover:opacity-95 transition"
+              className="rokad-btn-primary px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-xl flex items-center gap-1.5 shadow-xs font-bold"
+              title="ایجاد وظیفه جدید"
             >
               <Plus className="w-4 h-4" />
-              <span className="hidden sm:inline">وظیفه جدید</span>
+              <span className="hidden md:inline">ثبت وظیفه جدید</span>
             </button>
           )}
 
-          {/* Theme Toggle Button */}
+          {/* Current Jalali Date Display */}
+          <div className="hidden lg:flex items-center gap-2 text-xs text-ink-normal/60 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/60 px-3.5 py-2 rounded-xl border border-gray-100 dark:border-gray-700/60 font-bold">
+            <Calendar className="w-3.5 h-3.5 text-primary shrink-0" />
+            <span>{currentDate || "امروز"}</span>
+          </div>
+        </div>
+
+        {/* Action Controls & User Profile (Left side in RTL) */}
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          {/* Dark Mode Toggle Button */}
           <button
             onClick={toggleTheme}
-            aria-label="تغییر حالت شب و روز"
-            title={isDarkMode ? "تغییر به حالت روشن" : "تغییر به حالت تاریک"}
-            className="w-10 h-10 flex items-center justify-center rounded-xl bg-gray-50 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 text-ink-normal/70 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-all duration-150"
+            className="p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-ink-normal/70 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex items-center justify-center"
+            title={isDarkMode ? "تغییر به تم روز" : "تغییر به تم شب"}
           >
             {isDarkMode ? (
-              <Sun className="w-4 h-4 text-college-normal transition-transform duration-200 rotate-0" />
+              <Sun className="w-4 h-4 text-amber-400" />
             ) : (
-              <Moon className="w-4 h-4 text-sec transition-transform duration-200" />
+              <Moon className="w-4 h-4 text-sec" />
             )}
           </button>
 
-          {/* Elevated User Profile Dropdown */}
+          {/* User Profile Dropdown Menu */}
           <div className="relative" ref={profileMenuRef}>
             <button
               onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-              className="flex items-center gap-2.5 p-1.5 sm:px-3 sm:py-1.5 rounded-2xl border border-gray-200 dark:border-gray-700/80 hover:border-primary/50 dark:hover:border-primary/50 bg-gray-50/70 dark:bg-gray-800/60 transition-all duration-150 group"
+              className="flex items-center gap-2.5 sm:gap-3 p-1.5 sm:pr-3 sm:pl-2 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-800/80 transition-colors border border-transparent hover:border-gray-200 dark:hover:border-gray-700 select-none"
             >
               <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-br from-primary to-ecosystem-dark text-white flex items-center justify-center font-black text-xs sm:text-sm shadow-sm shrink-0">
                 {user?.fullName ? user.fullName.slice(0, 1) : "ک"}
@@ -213,7 +208,7 @@ export default function Navbar({
             {isProfileMenuOpen && (
               <div className="absolute left-0 mt-2 w-64 bg-white dark:bg-[#161D2A] rounded-2xl border border-gray-200 dark:border-gray-700 shadow-xl p-2 z-50 animate-in fade-in zoom-in-95 duration-150">
                 {/* User Info Header */}
-                <div className="p-3 bg-gray-50 dark:bg-gray-800/60 rounded-xl mb-1.5">
+                <div className="p-3 bg-gray-50 dark:bg-[#1C2536] rounded-xl mb-1.5">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-ecosystem-dark text-white font-black flex items-center justify-center text-sm shadow-xs shrink-0">
                       {user?.fullName ? user.fullName.slice(0, 1) : "ک"}
@@ -239,7 +234,7 @@ export default function Navbar({
                     setIsProfileMenuOpen(false);
                     setIsProfileModalOpen(true);
                   }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-sec dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-850 hover:text-primary transition-colors text-right"
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-sec dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#1C2536] hover:text-primary dark:hover:text-primary transition-colors text-right"
                 >
                   <UserCog className="w-4 h-4 text-primary" />
                   <span>پروفایل و مشخصات من</span>
@@ -251,7 +246,7 @@ export default function Navbar({
                     setIsProfileMenuOpen(false);
                     handleLogout();
                   }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-female-normal hover:bg-female-light/50 dark:hover:bg-female-normal/10 transition-colors text-right"
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-female-normal hover:bg-female-light/50 dark:hover:bg-female-normal/20 transition-colors text-right"
                 >
                   <LogOut className="w-4 h-4" />
                   <span>خروج از حساب کاربری</span>

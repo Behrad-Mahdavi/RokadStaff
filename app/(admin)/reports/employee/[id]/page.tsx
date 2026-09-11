@@ -122,10 +122,10 @@ export default function UnifiedEmployeeReportPage() {
                 </h1>
                 <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-ecosystem-light dark:bg-ecosystem-darker/60 text-ecosystem-darker dark:text-ecosystem-light border border-primary/20">
                   {data?.employee?.role === "admin"
-                    ? "مدیر کل"
+                    ? "راهبر ارشد"
                     : data?.employee?.role === "supervisor"
-                    ? "سرپرست"
-                    : "همکار"}
+                    ? "راهبر"
+                    : "عضو تیم"}
                 </span>
               </div>
               <p className="text-xs sm:text-sm text-ink-normal/60 dark:text-gray-400 mt-1 font-medium">

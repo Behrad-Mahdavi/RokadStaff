@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
         user = {
           id: "00000000-0000-0000-0000-000000000001",
           email: "admin@rokad.ir",
-          fullName: "مدیر ارشد رُکاد",
+          fullName: "راهبر ارشد رُکاد",
           role: "admin",
         };
       }

@@ -157,10 +157,10 @@ export default function ProfileModal({
             <div>
               <div className="text-xs font-black text-sec dark:text-white">
                 {isAdmin
-                  ? "مدیر ارشد سیستم (Super Admin)"
+                  ? "راهبر ارشد سیستم (Lead Admin)"
                   : isSupervisor
-                  ? `سرپرست دپارتمان ${supervisorDept}`
-                  : "همکار سامانه"}
+                  ? `راهبر دپارتمان ${supervisorDept}`
+                  : "عضو تیم سامانه"}
               </div>
               <div className="text-[11px] text-ink-normal/70 dark:text-gray-400 font-medium mt-0.5">
                 {isAdmin
@@ -178,7 +178,7 @@ export default function ProfileModal({
               ? "bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800"
               : "bg-gray-100 text-gray-700 border-gray-300"
           }`}>
-            {isAdmin ? "دسترسی کامل" : isSupervisor ? "سرپرست واحد" : "پرسنل"}
+            {isAdmin ? "دسترسی کامل" : isSupervisor ? "راهبر واحد" : "عضو تیم"}
           </span>
         </div>
 
@@ -193,7 +193,7 @@ export default function ProfileModal({
               required
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              placeholder="مثال: مدیر ارشد رُکاد"
+              placeholder="مثال: راهبر ارشد رُکاد"
               className="w-full pl-3 pr-10 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 text-xs focus:border-primary focus:outline-none dark:bg-[#1C2536] dark:text-white"
             />
             <User className="w-4 h-4 text-gray-400 absolute right-3 top-3" />

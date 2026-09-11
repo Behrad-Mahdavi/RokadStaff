@@ -71,26 +71,27 @@ export async function PATCH(
 
     const existingEmp = target[0];
 
-    // Supervisor restrictions
+    // Supervisor restrictions: supervisor can only edit team members in their department, and cannot promote to supervisor or admin
     if (session.role === "supervisor") {
       if (session.assignedDepartment && existingEmp.department !== session.assignedDepartment) {
         return NextResponse.json(
-          { error: "دسترسی غیرمجاز: شما تنها مجاز به ویرایش همکاران دپارتمان خود هستید." },
+          { error: "دسترسی غیرمجاز: شما تنها مجاز به ویرایش اعضای تیم دپارتمان خود هستید." },
           { status: 403 }
         );
       }
-      if (existingEmp.role === "admin") {
+      if (existingEmp.role === "admin" || existingEmp.role === "supervisor") {
         return NextResponse.json(
-          { error: "سرپرست واحد مجاز به ویرایش حساب مدیر ارشد نمی‌باشد." },
+          { error: "راهبر واحد مجاز به ویرایش حساب سایر راهبران یا راهبر ارشد نمی‌باشد." },
           { status: 403 }
         );
       }
-      if (role === "admin") {
+      if (role && role !== "employee") {
         return NextResponse.json(
-          { error: "سرپرست واحد مجاز به اعطای نقش مدیر ارشد نمی‌باشد." },
+          { error: "راهبر واحد مجاز به اعطای نقش راهبر یا راهبر ارشد نمی‌باشد." },
           { status: 403 }
         );
       }
+      role = "employee";
       department = session.assignedDepartment || existingEmp.department;
     }
 
@@ -125,7 +126,7 @@ export async function PATCH(
     // Role requirements
     if ((targetRole === "admin" || targetRole === "supervisor") && !cleanEmail) {
       return NextResponse.json(
-        { error: "برای نقش‌های دارای دسترسی به پنل (سرپرست یا مدیر ارشد)، ایمیل الزامی است." },
+        { error: "برای نقش‌های دارای دسترسی به پنل (راهبر یا راهبر ارشد)، ایمیل الزامی است." },
         { status: 400 }
       );
     }
@@ -221,13 +222,13 @@ export async function DELETE(
     if (session.role === "supervisor") {
       if (session.assignedDepartment && emp.department !== session.assignedDepartment) {
         return NextResponse.json(
-          { error: "دسترسی غیرمجاز: شما تنها مجاز به حذف همکاران دپارتمان خود هستید." },
+          { error: "دسترسی غیرمجاز: شما تنها مجاز به حذف اعضای دپارتمان خود هستید." },
           { status: 403 }
         );
       }
-      if (emp.role === "admin") {
+      if (emp.role === "admin" || emp.role === "supervisor") {
         return NextResponse.json(
-          { error: "سرپرست واحد مجاز به حذف مدیر ارشد نمی‌باشد." },
+          { error: "راهبر واحد مجاز به حذف سایر راهبران یا راهبر ارشد نمی‌باشد." },
           { status: 403 }
         );
       }

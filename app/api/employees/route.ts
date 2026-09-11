@@ -75,14 +75,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Role enforcement for supervisor
+    // Role enforcement for supervisor: supervisor can ONLY create regular team member (employee)!
     if (session.role === "supervisor") {
-      if (role === "admin") {
+      if (role && role !== "employee") {
         return NextResponse.json(
-          { error: "سرپرست واحد مجاز به تعریف نقش مدیر ارشد نمی‌باشد." },
+          { error: "راهبر واحد تنها مجاز به تعریف عضو تیم می‌باشد و امکان تعیین سطح دسترسی راهبر یا راهبر ارشد را ندارد." },
           { status: 403 }
         );
       }
+      role = "employee";
       department = session.assignedDepartment || department;
     }
 
@@ -94,7 +95,7 @@ export async function POST(req: NextRequest) {
     if (cleanRole === "admin" || cleanRole === "supervisor") {
       if (!cleanEmail || !cleanEmail.includes("@")) {
         return NextResponse.json(
-          { error: "جهت اعطای دسترسی به پنل (مدیر ارشد یا سرپرست واحد)، وارد کردن ایمیل معتبر الزامی است." },
+          { error: "جهت اعطای دسترسی به پنل (راهبر ارشد یا راهبر واحد)، وارد کردن ایمیل معتبر الزامی است." },
           { status: 400 }
         );
       }
@@ -108,7 +109,7 @@ export async function POST(req: NextRequest) {
 
       if (cleanRole === "supervisor" && !cleanDept) {
         return NextResponse.json(
-          { error: "برای نقش سرپرست واحد، تعیین دپارتمان الزامی است." },
+          { error: "برای نقش راهبر واحد، تعیین دپارتمان الزامی است." },
           { status: 400 }
         );
       }

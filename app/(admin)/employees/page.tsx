@@ -189,11 +189,15 @@ export default function EmployeesPage() {
 
   // Open Edit Modal
   const handleOpenEditModal = (emp: any) => {
+    if (isSupervisor && emp.role !== "employee") {
+      alert("راهبر واحد فقط مجاز به مدیریت اعضای تیم است.");
+      return;
+    }
     setSelectedEmployee(emp);
     setFormFullName(emp.fullName || "");
     setFormDepartment(isSupervisor ? supervisorDepartment : emp.department || departments[0]?.name || "پسرانه");
     setFormPosition(emp.position || "");
-    setFormRole(emp.role || "employee");
+    setFormRole(isSupervisor ? "employee" : (emp.role || "employee"));
     setFormEmail(emp.email || "");
     setFormPassword("");
     setFormError(null);
@@ -207,6 +211,11 @@ export default function EmployeesPage() {
 
     if (!formFullName.trim()) {
       setFormError("نام و نام خانوادگی کارمند الزامی است.");
+      return;
+    }
+
+    if (isSupervisor && formRole !== "employee") {
+      setFormError("راهبر واحد فقط مجاز به تعریف عضو تیم است.");
       return;
     }
 
@@ -271,6 +280,11 @@ export default function EmployeesPage() {
 
     if (!formFullName.trim()) {
       setFormError("نام و نام خانوادگی کارمند الزامی است.");
+      return;
+    }
+
+    if (isSupervisor && formRole !== "employee") {
+      setFormError("راهبر واحد فقط مجاز به ویرایش به عنوان عضو تیم است.");
       return;
     }
 
@@ -591,7 +605,7 @@ export default function EmployeesPage() {
 
         <div className="rokad-card p-4 rounded-2xl border border-gray-100 dark:border-gray-800 flex items-center justify-between">
           <div>
-            <div className="text-[11px] font-bold text-ink-normal/60 dark:text-gray-400">سرپرستان و مدیران</div>
+            <div className="text-[11px] font-bold text-ink-normal/60 dark:text-gray-400">راهبران و مدیران</div>
             <div className="text-xl sm:text-2xl font-black text-sec dark:text-white mt-1">
               {toPersianDigits(managersCount)}
             </div>
@@ -653,9 +667,9 @@ export default function EmployeesPage() {
             className="px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-[#1C2536] text-xs font-bold text-sec dark:text-gray-200 focus:outline-none focus:border-primary"
           >
             <option value="all">تمام سطوح دسترسی</option>
-            <option value="admin">مدیر ارشد</option>
-            <option value="supervisor">سرپرست واحد</option>
-            <option value="employee">کارمند عادی</option>
+            <option value="admin">راهبر ارشد</option>
+            <option value="supervisor">راهبر واحد</option>
+            <option value="employee">عضو تیم</option>
           </select>
 
           {/* Telegram Connection Status Filter */}
@@ -756,17 +770,17 @@ export default function EmployeesPage() {
                         {isEmpAdmin ? (
                           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-ecosystem-light dark:bg-primary/15 text-primary dark:text-primary font-bold text-[11px] border border-primary/25 dark:border-primary/40">
                             <ShieldCheck className="w-3.5 h-3.5" />
-                            <span>مدیر ارشد</span>
+                            <span>راهبر ارشد</span>
                           </span>
                         ) : isEmpSupervisor ? (
                           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 font-bold text-[11px] border border-blue-200 dark:border-blue-800/60">
                             <Building2 className="w-3.5 h-3.5" />
-                            <span>سرپرست واحد</span>
+                            <span>راهبر واحد</span>
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-gray-100 dark:bg-gray-800/80 text-gray-600 dark:text-gray-300 font-bold text-[11px] border border-transparent dark:border-gray-700/50">
                             <User className="w-3.5 h-3.5" />
-                            <span>کارمند عادی</span>
+                            <span>عضو تیم</span>
                           </span>
                         )}
                       </td>
@@ -824,8 +838,8 @@ export default function EmployeesPage() {
                       {/* Actions */}
                       <td className="py-3.5 px-4 text-center">
                         <div className="flex items-center justify-center gap-1.5">
-                          {/* Quick Password Reset for Web Users */}
-                          {hasWebAccess && (
+                          {/* Quick Password Reset for Web Users (Admins only) */}
+                          {isAdmin && hasWebAccess && (
                             <button
                               onClick={() => handleOpenPasswordModal(emp)}
                               title="تنظیم رمز عبور پنل"
@@ -836,16 +850,18 @@ export default function EmployeesPage() {
                           )}
 
                           {/* Edit Details */}
-                          <button
-                            onClick={() => handleOpenEditModal(emp)}
-                            title="ویرایش مشخصات"
-                            className="p-1.5 rounded-lg text-gray-400 dark:text-gray-400 hover:text-primary dark:hover:text-primary hover:bg-primary/5 dark:hover:bg-primary/10 transition-colors"
-                          >
-                            <Edit2 className="w-4 h-4" />
-                          </button>
+                          {(isAdmin || (isSupervisor && emp.role === "employee")) && (
+                            <button
+                              onClick={() => handleOpenEditModal(emp)}
+                              title="ویرایش مشخصات"
+                              className="p-1.5 rounded-lg text-gray-400 dark:text-gray-400 hover:text-primary dark:hover:text-primary hover:bg-primary/5 dark:hover:bg-primary/10 transition-colors"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                          )}
 
                           {/* Unlink Telegram */}
-                          {emp.isLinked && (
+                          {(isAdmin || (isSupervisor && emp.role === "employee")) && emp.isLinked && (
                             <button
                               onClick={() => handleUnlink(emp.id)}
                               title="قطع اتصال تلگرام"
@@ -856,13 +872,15 @@ export default function EmployeesPage() {
                           )}
 
                           {/* Delete Employee */}
-                          <button
-                            onClick={() => handleDeleteEmployee(emp)}
-                            title="حذف همکار"
-                            className="p-1.5 rounded-lg text-gray-400 dark:text-gray-400 hover:text-accent-red dark:hover:text-red-400 hover:bg-accent-red/5 dark:hover:bg-red-950/30 transition-colors"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                          {(isAdmin || (isSupervisor && emp.role === "employee")) && (
+                            <button
+                              onClick={() => handleDeleteEmployee(emp)}
+                              title="حذف همکار"
+                              className="p-1.5 rounded-lg text-gray-400 dark:text-gray-400 hover:text-accent-red dark:hover:text-red-400 hover:bg-accent-red/5 dark:hover:bg-red-950/30 transition-colors"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -946,84 +964,103 @@ export default function EmployeesPage() {
             <label className="block text-xs font-bold text-sec dark:text-gray-200 mb-2">
               سطح دسترسی در سامانه *
             </label>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              {/* Option 1: Employee */}
-              <label
-                className={`p-3 rounded-xl border cursor-pointer flex flex-col justify-between transition-all ${
-                  formRole === "employee"
-                    ? "border-primary bg-primary/5 text-primary"
-                    : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-850 text-sec dark:text-gray-300"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-xs">کارمند عادی</span>
-                  <input
-                    type="radio"
-                    name="formRole"
-                    value="employee"
-                    checked={formRole === "employee"}
-                    onChange={() => setFormRole("employee")}
-                    className="sr-only"
-                  />
-                  <User className="w-4 h-4" />
+            {isSupervisor ? (
+              <div className="p-3.5 rounded-xl border border-primary/30 bg-primary/5 dark:bg-primary/10 flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center text-primary">
+                    <User className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="font-bold text-xs text-primary dark:text-primary">عضو تیم</span>
+                    <p className="text-[10px] text-ink-normal/60 dark:text-gray-400 mt-0.5">
+                      ثبت گزارش کار در تلگرام و روتلو
+                    </p>
+                  </div>
                 </div>
-                <p className="text-[10px] text-ink-normal/60 dark:text-gray-400 mt-1">
-                  ثبت گزارش کار در تلگرام و روتلو
-                </p>
-              </label>
-
-              {/* Option 2: Supervisor */}
-              <label
-                className={`p-3 rounded-xl border cursor-pointer flex flex-col justify-between transition-all ${
-                  formRole === "supervisor"
-                    ? "border-blue-500 bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400"
-                    : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-850 text-sec dark:text-gray-300"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-xs">سرپرست واحد</span>
-                  <input
-                    type="radio"
-                    name="formRole"
-                    value="supervisor"
-                    checked={formRole === "supervisor"}
-                    onChange={() => setFormRole("supervisor")}
-                    className="sr-only"
-                  />
-                  <Building2 className="w-4 h-4 text-blue-500" />
-                </div>
-                <p className="text-[10px] text-ink-normal/60 dark:text-gray-400 mt-1">
-                  دسترسی به پنل برای واحد انتخابی
-                </p>
-              </label>
-
-              {/* Option 3: Admin (Disabled if current user is supervisor) */}
-              {isAdmin && (
+                <span className="text-[10px] bg-primary/10 text-primary px-2.5 py-1 rounded-full font-bold">
+                  تعریف عضو واحد
+                </span>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                {/* Option 1: Employee */}
                 <label
                   className={`p-3 rounded-xl border cursor-pointer flex flex-col justify-between transition-all ${
-                    formRole === "admin"
-                      ? "border-sec dark:border-primary bg-sec/5 dark:bg-primary/10 text-sec dark:text-white"
-                      : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-850 text-sec dark:text-gray-300"
+                    formRole === "employee"
+                      ? "border-primary bg-primary/5 text-primary"
+                      : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-[#1C2536] text-sec dark:text-gray-300"
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-xs">مدیر ارشد</span>
+                    <span className="font-bold text-xs">عضو تیم</span>
                     <input
                       type="radio"
                       name="formRole"
-                      value="admin"
-                      checked={formRole === "admin"}
-                      onChange={() => setFormRole("admin")}
+                      value="employee"
+                      checked={formRole === "employee"}
+                      onChange={() => setFormRole("employee")}
                       className="sr-only"
                     />
-                    <ShieldCheck className="w-4 h-4 text-primary" />
+                    <User className="w-4 h-4" />
                   </div>
                   <p className="text-[10px] text-ink-normal/60 dark:text-gray-400 mt-1">
-                    دسترسی کامل به تمام دپارتمان‌ها
+                    ثبت گزارش کار در تلگرام و روتلو
                   </p>
                 </label>
-              )}
-            </div>
+
+                {/* Option 2: Supervisor */}
+                <label
+                  className={`p-3 rounded-xl border cursor-pointer flex flex-col justify-between transition-all ${
+                    formRole === "supervisor"
+                      ? "border-blue-500 bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400"
+                      : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-[#1C2536] text-sec dark:text-gray-300"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-xs">راهبر واحد</span>
+                    <input
+                      type="radio"
+                      name="formRole"
+                      value="supervisor"
+                      checked={formRole === "supervisor"}
+                      onChange={() => setFormRole("supervisor")}
+                      className="sr-only"
+                    />
+                    <Building2 className="w-4 h-4 text-blue-500" />
+                  </div>
+                  <p className="text-[10px] text-ink-normal/60 dark:text-gray-400 mt-1">
+                    دسترسی به پنل برای واحد انتخابی
+                  </p>
+                </label>
+
+                {/* Option 3: Admin */}
+                {isAdmin && (
+                  <label
+                    className={`p-3 rounded-xl border cursor-pointer flex flex-col justify-between transition-all ${
+                      formRole === "admin"
+                        ? "border-sec dark:border-primary bg-sec/5 dark:bg-primary/10 text-sec dark:text-white"
+                        : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-[#1C2536] text-sec dark:text-gray-300"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-xs">راهبر ارشد</span>
+                      <input
+                        type="radio"
+                        name="formRole"
+                        value="admin"
+                        checked={formRole === "admin"}
+                        onChange={() => setFormRole("admin")}
+                        className="sr-only"
+                      />
+                      <ShieldCheck className="w-4 h-4 text-primary" />
+                    </div>
+                    <p className="text-[10px] text-ink-normal/60 dark:text-gray-400 mt-1">
+                      دسترسی کامل به تمام دپارتمان‌ها
+                    </p>
+                  </label>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Web Access Credentials Box (If supervisor or admin) */}
@@ -1171,81 +1208,100 @@ export default function EmployeesPage() {
             <label className="block text-xs font-bold text-sec dark:text-gray-200 mb-2">
               سطح دسترسی در سامانه *
             </label>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              <label
-                className={`p-3 rounded-xl border cursor-pointer flex flex-col justify-between transition-all ${
-                  formRole === "employee"
-                    ? "border-primary bg-primary/5 text-primary"
-                    : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-850 text-sec dark:text-gray-300"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-xs">کارمند عادی</span>
-                  <input
-                    type="radio"
-                    name="editFormRole"
-                    value="employee"
-                    checked={formRole === "employee"}
-                    onChange={() => setFormRole("employee")}
-                    className="sr-only"
-                  />
-                  <User className="w-4 h-4" />
+            {isSupervisor ? (
+              <div className="p-3.5 rounded-xl border border-primary/30 bg-primary/5 dark:bg-primary/10 flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center text-primary">
+                    <User className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="font-bold text-xs text-primary dark:text-primary">عضو تیم</span>
+                    <p className="text-[10px] text-ink-normal/60 dark:text-gray-400 mt-0.5">
+                      ثبت گزارش کار در تلگرام و روتلو
+                    </p>
+                  </div>
                 </div>
-                <p className="text-[10px] text-ink-normal/60 dark:text-gray-400 mt-1">
-                  ثبت گزارش کار در تلگرام و روتلو
-                </p>
-              </label>
-
-              <label
-                className={`p-3 rounded-xl border cursor-pointer flex flex-col justify-between transition-all ${
-                  formRole === "supervisor"
-                    ? "border-blue-500 bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400"
-                    : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-850 text-sec dark:text-gray-300"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-xs">سرپرست واحد</span>
-                  <input
-                    type="radio"
-                    name="editFormRole"
-                    value="supervisor"
-                    checked={formRole === "supervisor"}
-                    onChange={() => setFormRole("supervisor")}
-                    className="sr-only"
-                  />
-                  <Building2 className="w-4 h-4 text-blue-500" />
-                </div>
-                <p className="text-[10px] text-ink-normal/60 dark:text-gray-400 mt-1">
-                  دسترسی به پنل برای واحد انتخابی
-                </p>
-              </label>
-
-              {isAdmin && (
+                <span className="text-[10px] bg-primary/10 text-primary px-2.5 py-1 rounded-full font-bold">
+                  عضو واحد
+                </span>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 <label
                   className={`p-3 rounded-xl border cursor-pointer flex flex-col justify-between transition-all ${
-                    formRole === "admin"
-                      ? "border-sec dark:border-primary bg-sec/5 dark:bg-primary/10 text-sec dark:text-white"
-                      : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-850 text-sec dark:text-gray-300"
+                    formRole === "employee"
+                      ? "border-primary bg-primary/5 text-primary"
+                      : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-[#1C2536] text-sec dark:text-gray-300"
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-xs">مدیر ارشد</span>
+                    <span className="font-bold text-xs">عضو تیم</span>
                     <input
                       type="radio"
                       name="editFormRole"
-                      value="admin"
-                      checked={formRole === "admin"}
-                      onChange={() => setFormRole("admin")}
+                      value="employee"
+                      checked={formRole === "employee"}
+                      onChange={() => setFormRole("employee")}
                       className="sr-only"
                     />
-                    <ShieldCheck className="w-4 h-4 text-primary" />
+                    <User className="w-4 h-4" />
                   </div>
                   <p className="text-[10px] text-ink-normal/60 dark:text-gray-400 mt-1">
-                    دسترسی کامل به تمام دپارتمان‌ها
+                    ثبت گزارش کار در تلگرام و روتلو
                   </p>
                 </label>
-              )}
-            </div>
+
+                <label
+                  className={`p-3 rounded-xl border cursor-pointer flex flex-col justify-between transition-all ${
+                    formRole === "supervisor"
+                      ? "border-blue-500 bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400"
+                      : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-[#1C2536] text-sec dark:text-gray-300"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-xs">راهبر واحد</span>
+                    <input
+                      type="radio"
+                      name="editFormRole"
+                      value="supervisor"
+                      checked={formRole === "supervisor"}
+                      onChange={() => setFormRole("supervisor")}
+                      className="sr-only"
+                    />
+                    <Building2 className="w-4 h-4 text-blue-500" />
+                  </div>
+                  <p className="text-[10px] text-ink-normal/60 dark:text-gray-400 mt-1">
+                    دسترسی به پنل برای واحد انتخابی
+                  </p>
+                </label>
+
+                {isAdmin && (
+                  <label
+                    className={`p-3 rounded-xl border cursor-pointer flex flex-col justify-between transition-all ${
+                      formRole === "admin"
+                        ? "border-sec dark:border-primary bg-sec/5 dark:bg-primary/10 text-sec dark:text-white"
+                        : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-[#1C2536] text-sec dark:text-gray-300"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-xs">راهبر ارشد</span>
+                      <input
+                        type="radio"
+                        name="editFormRole"
+                        value="admin"
+                        checked={formRole === "admin"}
+                        onChange={() => setFormRole("admin")}
+                        className="sr-only"
+                      />
+                      <ShieldCheck className="w-4 h-4 text-primary" />
+                    </div>
+                    <p className="text-[10px] text-ink-normal/60 dark:text-gray-400 mt-1">
+                      دسترسی کامل به تمام دپارتمان‌ها
+                    </p>
+                  </label>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Web Access Credentials Box */}

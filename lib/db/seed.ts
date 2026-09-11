@@ -14,7 +14,7 @@ export async function seedDatabase() {
       await db.insert(adminUsers).values({
         email: "admin@rokad.ir",
         passwordHash,
-        fullName: "مدیر ارشد رُکاد",
+        fullName: "راهبر ارشد رُکاد",
         role: "admin",
       });
       console.log("✅ Admin user created: admin@rokad.ir / admin123456");

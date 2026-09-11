@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
 
   if (session.role !== "admin") {
     return NextResponse.json(
-      { error: "دسترسی غیرمجاز: تنها مدیر ارشد می‌تواند لیست کاربران سیستم را مشاهده کند." },
+      { error: "دسترسی غیرمجاز: تنها راهبر ارشد می‌تواند لیست کاربران سیستم را مشاهده کند." },
       { status: 403 }
     );
   }
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
 
   if (session.role !== "admin") {
     return NextResponse.json(
-      { error: "دسترسی غیرمجاز: تنها مدیر ارشد می‌تواند کاربر جدید با سطح دسترسی تعریف کند." },
+      { error: "دسترسی غیرمجاز: تنها راهبر ارشد می‌تواند کاربر جدید با سطح دسترسی تعریف کند." },
       { status: 403 }
     );
   }
@@ -67,12 +67,12 @@ export async function POST(req: NextRequest) {
 
     const cleanEmail = email.toLowerCase().trim();
     const cleanRole = role === "admin" ? "admin" : "supervisor";
-    const cleanName = fullName?.trim() || (cleanRole === "admin" ? "مدیر سیستم" : "سرپرست دپارتمان");
+    const cleanName = fullName?.trim() || (cleanRole === "admin" ? "راهبر ارشد سیستم" : "راهبر دپارتمان");
     const cleanDept = cleanRole === "supervisor" ? assignedDepartment?.trim() || null : null;
 
     if (cleanRole === "supervisor" && !cleanDept) {
       return NextResponse.json(
-        { error: "برای نقش سرپرست، انتخاب دپارتمان الزامی است." },
+        { error: "برای نقش راهبر واحد، انتخاب دپارتمان الزامی است." },
         { status: 400 }
       );
     }

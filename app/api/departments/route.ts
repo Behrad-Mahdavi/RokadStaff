@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
 
   if (session.role !== "admin") {
     return NextResponse.json(
-      { error: "دسترسی غیرمجاز: تنها مدیر ارشد مجاز به ایجاد دپارتمان جدید است." },
+      { error: "دسترسی غیرمجاز: تنها راهبر ارشد مجاز به ایجاد دپارتمان جدید است." },
       { status: 403 }
     );
   }

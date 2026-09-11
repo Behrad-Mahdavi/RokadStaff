@@ -122,7 +122,7 @@ export async function POST(req: NextRequest) {
   // Only Admin or Supervisor can create individual direct tasks
   if (session.role === "employee") {
     return NextResponse.json(
-      { error: "فقط مدیران و سرپرستان سیستم مجاز به ایجاد تسک‌های فردی هستند." },
+      { error: "فقط راهبران و راهبران ارشد مجاز به ایجاد تسک‌های فردی هستند." },
       { status: 403 }
     );
   }

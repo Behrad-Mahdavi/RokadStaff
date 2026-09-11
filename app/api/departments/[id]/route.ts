@@ -53,7 +53,7 @@ export async function PATCH(
 
   if (session.role !== "admin") {
     return NextResponse.json(
-      { error: "دسترسی غیرمجاز: تنها مدیر ارشد مجاز به ویرایش مشخصات دپارتمان است." },
+      { error: "دسترسی غیرمجاز: تنها راهبر ارشد مجاز به ویرایش مشخصات دپارتمان است." },
       { status: 403 }
     );
   }
@@ -160,7 +160,7 @@ export async function DELETE(
 
   if (session.role !== "admin") {
     return NextResponse.json(
-      { error: "دسترسی غیرمجاز: تنها مدیر ارشد مجاز به حذف دپارتمان است." },
+      { error: "دسترسی غیرمجاز: تنها راهبر ارشد مجاز به حذف دپارتمان است." },
       { status: 403 }
     );
   }

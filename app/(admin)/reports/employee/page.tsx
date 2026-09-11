@@ -107,7 +107,7 @@ export default function EmployeeReportsHubPage() {
                     {emp.position || "همکار"} • دپارتمان {emp.department || "عمومی"}
                   </div>
                   <div className="inline-block mt-2 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-ecosystem-light dark:bg-ecosystem-darker/60 text-ecosystem-darker dark:text-ecosystem-light border border-primary/20">
-                    {emp.role === "admin" ? "مدیر کل" : emp.role === "supervisor" ? "سرپرست" : "همکار"}
+                    {emp.role === "admin" ? "راهبر ارشد" : emp.role === "supervisor" ? "راهبر" : "عضو تیم"}
                   </div>
                 </div>
               </div>

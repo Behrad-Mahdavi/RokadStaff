@@ -58,7 +58,7 @@ export async function GET(req: NextRequest) {
       userRecord = {
         id: session.userId || "admin-dev",
         email: session.email || "admin@rokad.ir",
-        fullName: session.fullName || "مدیر ارشد رُکاد",
+        fullName: session.fullName || "راهبر ارشد رُکاد",
         role: session.role || "admin",
         assignedDepartment: session.assignedDepartment || null,
         createdAt: new Date(),

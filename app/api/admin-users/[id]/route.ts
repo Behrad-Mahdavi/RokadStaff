@@ -16,7 +16,7 @@ export async function PATCH(
 
   if (session.role !== "admin") {
     return NextResponse.json(
-      { error: "دسترسی غیرمجاز: تنها مدیر ارشد می‌تواند سطح دسترسی کاربران را ویرایش کند." },
+      { error: "دسترسی غیرمجاز: تنها راهبر ارشد می‌تواند سطح دسترسی کاربران را ویرایش کند." },
       { status: 403 }
     );
   }
@@ -88,7 +88,7 @@ export async function PATCH(
       if (role === "supervisor") {
         if (!assignedDepartment && !targetUser.assignedDepartment) {
           return NextResponse.json(
-            { error: "برای نقش سرپرست، انتخاب دپارتمان الزامی است." },
+            { error: "برای نقش راهبر واحد، انتخاب دپارتمان الزامی است." },
             { status: 400 }
           );
         }
@@ -145,7 +145,7 @@ export async function DELETE(
 
   if (session.role !== "admin") {
     return NextResponse.json(
-      { error: "دسترسی غیرمجاز: تنها مدیر ارشد می‌تواند کاربران را حذف کند." },
+      { error: "دسترسی غیرمجاز: تنها راهبر ارشد می‌تواند کاربران را حذف کند." },
       { status: 403 }
     );
   }
@@ -165,7 +165,7 @@ export async function DELETE(
     // Safety check: Cannot delete your own active account
     if (targetUser.id === session.userId || targetUser.email === session.email) {
       return NextResponse.json(
-        { error: "امکان حذف حساب کاربری مدیر ارشد در حال استفاده وجود ندارد." },
+        { error: "امکان حذف حساب کاربری راهبر ارشد در حال استفاده وجود ندارد." },
         { status: 400 }
       );
     }
