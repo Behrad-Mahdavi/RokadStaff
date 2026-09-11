@@ -21,6 +21,7 @@ import {
   formatTehranTime,
   getTehranDateString,
   toPersianDigits,
+  isFriday,
 } from "@/lib/utils";
 import PersianDatePicker from "@/components/PersianDatePicker";
 
@@ -31,7 +32,10 @@ function ReportsContent() {
   const [activeTab, setActiveTab] = useState<"submitted" | "missing">(initialTab);
 
   // Shared filters
-  const [selectedDate, setSelectedDate] = useState(getTehranDateString());
+  const [selectedDate, setSelectedDate] = useState<string>(
+    searchParams.get("date") || getTehranDateString()
+  );
+  const isSelectedFriday = isFriday(selectedDate);
   const [selectedDept, setSelectedDept] = useState("all");
   const [search, setSearch] = useState("");
 
@@ -118,7 +122,11 @@ function ReportsContent() {
       const res = await fetch("/api/cron/reminder", { method: "POST" });
       const data = await res.json();
       if (res.ok) {
-        setNotificationMsg(`پیام یادآوری با موفقیت برای ${toPersianDigits(data.sentCount)} نفر ارسال شد.`);
+        if (data.isFriday) {
+          setNotificationMsg(data.message || "امروز جمعه و روز تعطیل است؛ پیام یادآوری ارسال نمی‌شود.");
+        } else {
+          setNotificationMsg(`پیام یادآوری با موفقیت برای ${toPersianDigits(data.sentCount)} نفر ارسال شد.`);
+        }
       } else {
         setNotificationMsg(`خطا: ${data.error}`);
       }
@@ -283,11 +291,17 @@ function ReportsContent() {
         {activeTab === "missing" && (
           <button
             onClick={handleSendReminderAll}
-            disabled={sendingReminder || missingList.length === 0}
-            className="w-full md:w-auto rokad-btn-sec px-4 py-2.5 text-xs sm:text-sm rounded-xl font-bold flex items-center justify-center gap-2 shrink-0 dark:bg-college-dark dark:border-college-normal"
+            disabled={sendingReminder || missingList.length === 0 || isSelectedFriday}
+            className="w-full md:w-auto rokad-btn-sec px-4 py-2.5 text-xs sm:text-sm rounded-xl font-bold flex items-center justify-center gap-2 shrink-0 dark:bg-college-dark dark:border-college-normal disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Bell className="w-4 h-4 text-primary" />
-            <span>{sendingReminder ? "در حال ارسال..." : "ارسال یادآوری به غایبان"}</span>
+            <span>
+              {sendingReminder
+                ? "در حال ارسال..."
+                : isSelectedFriday
+                ? "جمعه (روز تعطیل)"
+                : "ارسال یادآوری به غایبان"}
+            </span>
           </button>
         )}
       </div>
@@ -403,7 +417,9 @@ function ReportsContent() {
                 ) : filteredMissingList.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="text-center py-12 text-sm text-accent-green font-bold">
-                      🎉 تبریک! همه کارکنان در این تاریخ گزارش خود را ثبت کرده‌اند.
+                      {isSelectedFriday
+                        ? "🌿 این تاریخ روز جمعه و تعطیل رسمی است؛ عدم ثبت گزارش غیبت کاری محسوب نمی‌شود."
+                        : "🎉 تبریک! همه کارکنان در این تاریخ گزارش خود را ثبت کرده‌اند."}
                     </td>
                   </tr>
                 ) : (

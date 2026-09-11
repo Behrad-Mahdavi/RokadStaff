@@ -3,7 +3,7 @@ import { getDb } from "@/lib/db/client";
 import { employees, dailyReports } from "@/lib/db/schema";
 import { eq, and, isNotNull } from "drizzle-orm";
 import { bot, ensureBotInitialized } from "@/lib/telegram/bot";
-import { getTehranDateString, formatToJalali } from "@/lib/utils";
+import { getTehranDateString, formatToJalali, isFriday } from "@/lib/utils";
 import { getSession } from "@/lib/auth/session";
 
 // Delay helper to respect Telegram API rate limits (max ~30 msg/sec)
@@ -45,6 +45,24 @@ async function handleReminder(req: NextRequest) {
   const db = getDb();
   const todayStr = getTehranDateString();
   const jalaliToday = formatToJalali(new Date());
+
+  const { searchParams } = new URL(req.url);
+  const force = searchParams.get("force") === "true";
+
+  // Friday is the official weekend/holiday in Iran: do not send reminders on Friday
+  if (isFriday(todayStr) && !force) {
+    return NextResponse.json({
+      success: true,
+      isFriday: true,
+      today: todayStr,
+      jalaliToday,
+      message: "امروز جمعه و روز تعطیل است؛ پیام یادآوری برای همکاران ارسال نمی‌شود.",
+      sentCount: 0,
+      failedCount: 0,
+      pendingCount: 0,
+      totalLinkedActive: 0,
+    });
+  }
 
   try {
     // Ensure bot is initialized for serverless environment

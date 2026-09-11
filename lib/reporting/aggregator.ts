@@ -6,7 +6,7 @@ import {
   reportItems,
 } from "../db/schema";
 import { eq, and, inArray } from "drizzle-orm";
-import { getTehranDateString } from "../utils";
+import { getTehranDateString, isFriday } from "../utils";
 
 /**
  * Aggregates daily report metrics for a specific date and writes into daily_stats table (idempotent UPSERT).
@@ -53,6 +53,8 @@ export async function aggregateDailyStats(targetDate?: string) {
     totalTasks = items.length;
   }
 
+  const targetIsFriday = isFriday(statDate);
+
   // 3. Organization-wide aggregation (department = null)
   const orgSubmittedCount = dateReports.length;
   const orgOnTimeCount = dateReports.filter((r: any) => r.status === "on_time").length;
@@ -71,7 +73,8 @@ export async function aggregateDailyStats(targetDate?: string) {
     {
       statDate,
       department: null,
-      activeEmployees: activeEmployees.length,
+      // On Friday, absence is not tracked; required active employees equals submittedCount
+      activeEmployees: targetIsFriday ? orgSubmittedCount : activeEmployees.length,
       submittedCount: orgSubmittedCount,
       onTimeCount: orgOnTimeCount,
       lateCount: orgLateCount,
@@ -94,7 +97,7 @@ export async function aggregateDailyStats(targetDate?: string) {
     resultsToUpsert.push({
       statDate,
       department: dept as string,
-      activeEmployees: deptActive.length,
+      activeEmployees: targetIsFriday ? deptReports.length : deptActive.length,
       submittedCount: deptReports.length,
       onTimeCount: deptOnTime,
       lateCount: deptLate,

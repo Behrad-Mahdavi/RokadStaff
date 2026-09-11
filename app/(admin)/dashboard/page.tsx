@@ -50,7 +50,11 @@ export default function DashboardPage() {
       const res = await fetch("/api/cron/reminder", { method: "POST" });
       const result = await res.json();
       if (res.ok) {
-        setCronResult(`ارسال شد: ${result.sentCount} پیام به افراد غایب`);
+        if (result.isFriday) {
+          setCronResult(result.message || "امروز جمعه است و پیام یادآوری ارسال نشد.");
+        } else {
+          setCronResult(`ارسال شد: ${result.sentCount} پیام به افراد غایب`);
+        }
       } else {
         setCronResult(`خطا: ${result.error}`);
       }

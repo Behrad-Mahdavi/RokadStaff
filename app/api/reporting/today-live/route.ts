@@ -3,7 +3,7 @@ import { getDb } from "@/lib/db/client";
 import { dailyReports, employees } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { getSession } from "@/lib/auth/session";
-import { getTehranDateString } from "@/lib/utils";
+import { getTehranDateString, isFriday } from "@/lib/utils";
 
 export async function GET(req: NextRequest) {
   const session = await getSession();
@@ -13,6 +13,7 @@ export async function GET(req: NextRequest) {
 
   try {
     const todayStr = getTehranDateString();
+    const todayIsFriday = isFriday(todayStr);
     const db = getDb();
 
     const { searchParams } = new URL(req.url);
@@ -49,15 +50,16 @@ export async function GET(req: NextRequest) {
     const onTimeCount = filteredReports.filter((r: any) => r.status === "on_time").length;
     const lateCount = filteredReports.filter((r: any) => r.status === "late").length;
     const submittedCount = filteredReports.length;
-    const missingCount = Math.max(0, activeEmployees.length - submittedCount);
+    // On Friday, missing is 0 since it is a holiday/weekend
+    const missingCount = todayIsFriday ? 0 : Math.max(0, activeEmployees.length - submittedCount);
 
-    const completionRate =
-      activeEmployees.length > 0
-        ? Math.round((submittedCount / activeEmployees.length) * 100)
-        : 0;
+    const completionRate = todayIsFriday
+      ? 100
+      : (activeEmployees.length > 0 ? Math.round((submittedCount / activeEmployees.length) * 100) : 0);
 
     return NextResponse.json({
       todayDate: todayStr,
+      isFriday: todayIsFriday,
       department: department || "all",
       activeEmployees: activeEmployees.length,
       submittedCount,

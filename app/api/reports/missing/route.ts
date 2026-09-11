@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/client";
 import { employees, dailyReports } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
-import { getTehranDateString } from "@/lib/utils";
+import { getTehranDateString, isFriday } from "@/lib/utils";
 import { getSession } from "@/lib/auth/session";
 
 export async function GET(req: NextRequest) {
@@ -14,6 +14,17 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const dateParam = searchParams.get("date") || getTehranDateString();
   const department = searchParams.get("department");
+
+  // Friday is not an active workday; employees are not considered missing
+  if (isFriday(dateParam)) {
+    return NextResponse.json({
+      date: dateParam,
+      isFriday: true,
+      totalMissing: 0,
+      missingEmployees: [],
+      message: "روز جمعه تعطیل رسمی است و عدم ارسال گزارش به منزله غیبت کاری محسوب نمی‌شود.",
+    });
+  }
 
   try {
     const db = getDb();

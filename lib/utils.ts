@@ -117,8 +117,38 @@ export function generateLinkCode(): string {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
+// Check if a given Date or YYYY-MM-DD string is Friday in Tehran timezone
+export function isFriday(date: Date | string = new Date()): boolean {
+  try {
+    if (typeof date === "string") {
+      const parts = date.split("-").map((p) => parseInt(p, 10));
+      if (parts.length === 3) {
+        const d = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2], 12, 0, 0));
+        return d.getUTCDay() === 5;
+      }
+    }
+    const d = date instanceof Date ? date : new Date(date);
+    if (isNaN(d.getTime())) return false;
+    const dayStr = new Intl.DateTimeFormat("en-US", {
+      timeZone: process.env.APP_TIMEZONE || "Asia/Tehran",
+      weekday: "short",
+    }).format(d);
+    return dayStr === "Fri";
+  } catch {
+    return false;
+  }
+}
+
+// Check if a given Date or YYYY-MM-DD string is a standard Iranian workday (Saturday to Thursday)
+export function isWorkday(date: Date | string = new Date()): boolean {
+  return !isFriday(date);
+}
+
 // Determine if submission is after workplace cutoff hour
 export function isSubmissionLate(now: Date = new Date()): boolean {
+  // Friday is a weekend/holiday: voluntary reports submitted on Friday are never considered late
+  if (isFriday(now)) return false;
+
   const endHourConfig = process.env.WORK_END_HOUR || "18:00";
   const [targetH, targetM] = endHourConfig.split(":").map((v) => parseInt(v, 10));
 
@@ -136,3 +166,4 @@ export function isSubmissionLate(now: Date = new Date()): boolean {
   if (hour === targetH && minute > targetM) return true;
   return false;
 }
+

@@ -16,6 +16,8 @@ import {
   getTehranDateString,
   formatToJalali,
   toEnglishDigits,
+  isSubmissionLate,
+  isFriday,
 } from "../utils";
 
 const botToken = process.env.TELEGRAM_BOT_TOKEN || "";
@@ -35,26 +37,6 @@ export async function ensureBotInitialized() {
     });
   }
   await initPromise;
-}
-
-// Helper to determine if current time is considered "late" based on WORK_END_HOUR
-export function isSubmissionLate(now: Date = new Date()): boolean {
-  const endHourConfig = process.env.WORK_END_HOUR || "18:00";
-  const [targetH, targetM] = endHourConfig.split(":").map((v) => parseInt(v, 10));
-
-  const formatter = new Intl.DateTimeFormat("en-US", {
-    timeZone: process.env.APP_TIMEZONE || "Asia/Tehran",
-    hour: "numeric",
-    minute: "numeric",
-    hour12: false,
-  });
-  const parts = formatter.formatToParts(now);
-  const hour = parseInt(parts.find((p) => p.type === "hour")?.value || "0", 10);
-  const minute = parseInt(parts.find((p) => p.type === "minute")?.value || "0", 10);
-
-  if (hour > targetH) return true;
-  if (hour === targetH && minute > targetM) return true;
-  return false;
 }
 
 // Log raw update
@@ -299,12 +281,14 @@ bot.on("message:text", async (ctx) => {
 
     // Send confirmation message
     const jalaliDate = formatToJalali(new Date());
+    const isFridayReport = isFriday(reportDateStr);
     const confirmation = buildReportConfirmationMessage(
       employee.fullName,
       jalaliDate,
       parseResult.items,
       isLate,
-      isEdit
+      isEdit,
+      isFridayReport
     );
 
     await ctx.reply(confirmation);

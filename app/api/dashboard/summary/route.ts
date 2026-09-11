@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/client";
 import { employees, dailyReports } from "@/lib/db/schema";
 import { eq, desc } from "drizzle-orm";
-import { getTehranDateString } from "@/lib/utils";
+import { getTehranDateString, isFriday } from "@/lib/utils";
 import { getSession } from "@/lib/auth/session";
 
 export async function GET(req: NextRequest) {
@@ -47,14 +47,15 @@ export async function GET(req: NextRequest) {
       todayReports = todayReports.filter((r: any) => r.employeeDepartment === supervisorDept);
     }
 
+    const todayIsFriday = isFriday(todayStr);
     const onTimeCount = todayReports.filter((r: any) => r.status === "on_time").length;
     const lateCount = todayReports.filter((r: any) => r.status === "late").length;
     const submittedCount = todayReports.length;
-    const missingCount = Math.max(0, activeEmployees.length - submittedCount);
-    const participationRate =
-      activeEmployees.length > 0
-        ? Math.round((submittedCount / activeEmployees.length) * 100)
-        : 0;
+    // On Friday, absence is not tracked: missing count is 0
+    const missingCount = todayIsFriday ? 0 : Math.max(0, activeEmployees.length - submittedCount);
+    const participationRate = todayIsFriday
+      ? (activeEmployees.length > 0 && submittedCount > 0 ? Math.round((submittedCount / activeEmployees.length) * 100) : 100)
+      : (activeEmployees.length > 0 ? Math.round((submittedCount / activeEmployees.length) * 100) : 0);
 
     // 3. Department breakdown
     const departmentStats: Record<string, { total: number; submitted: number }> = {};
@@ -75,6 +76,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       todayDate: todayStr,
+      isFriday: todayIsFriday,
       overview: {
         totalStaff: allEmployees.length,
         activeStaff: activeEmployees.length,

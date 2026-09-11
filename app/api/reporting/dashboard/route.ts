@@ -3,7 +3,7 @@ import { getDb } from "@/lib/db/client";
 import { dailyStats, dailyReports, employees } from "@/lib/db/schema";
 import { eq, and, gte, lte, isNull } from "drizzle-orm";
 import { getSession } from "@/lib/auth/session";
-import { getTehranDateString } from "@/lib/utils";
+import { getTehranDateString, isFriday } from "@/lib/utils";
 
 export async function GET(req: NextRequest) {
   const session = await getSession();
@@ -13,21 +13,18 @@ export async function GET(req: NextRequest) {
 
   try {
     const { searchParams } = new URL(req.url);
-    const todayStr = getTehranDateString();
+    const fromParam = searchParams.get("from") || getTehranDateString();
+    const toParam = searchParams.get("to") || getTehranDateString();
+    let department = searchParams.get("department");
 
-    const defaultFrom = new Date();
-    defaultFrom.setDate(defaultFrom.getDate() - 30);
-    const fromParam = searchParams.get("from") || getTehranDateString(defaultFrom);
-    const toParam = searchParams.get("to") || todayStr;
-
-    let department = searchParams.get("department") || undefined;
     if (session.role === "supervisor" && (session as any).assignedDepartment) {
       department = (session as any).assignedDepartment;
     }
 
     const db = getDb();
+    const todayStr = getTehranDateString();
 
-    // 1. Query historical aggregated stats from daily_stats
+    // 1. Fetch aggregated stats from daily_stats table
     const conditions = [
       gte(dailyStats.statDate, fromParam),
       lte(dailyStats.statDate, toParam),
@@ -42,14 +39,11 @@ export async function GET(req: NextRequest) {
     const historicalStats: any[] = await db
       .select()
       .from(dailyStats)
-      .where(and(...conditions))
-      .orderBy(dailyStats.statDate);
+      .where(and(...conditions));
 
-    // 2. Check if the range includes "today"
-    let todayIncluded = toParam >= todayStr && fromParam <= todayStr;
+    // 2. If today is within range, fetch today's live stats
     let todayLiveStat: any = null;
-
-    if (todayIncluded) {
+    if (todayStr >= fromParam && todayStr <= toParam) {
       const allEmployees: any[] = await db.select().from(employees);
       let activeEmployees = allEmployees.filter((e: any) => e.isActive);
       if (department && department !== "all") {
@@ -96,10 +90,20 @@ export async function GET(req: NextRequest) {
     let totalLate = 0;
 
     for (const stat of mergedStats) {
-      totalActiveEmployeesDays += stat.activeEmployees;
-      totalSubmitted += stat.submittedCount;
-      totalOnTime += stat.onTimeCount;
-      totalLate += stat.lateCount;
+      const dayIsFriday = isFriday(stat.statDate);
+      if (dayIsFriday) {
+        // Friday is not a mandatory workday:
+        // Submitted reports on Friday are counted, but unsubmitted staff are not counted as missing
+        totalActiveEmployeesDays += stat.submittedCount;
+        totalSubmitted += stat.submittedCount;
+        totalOnTime += stat.onTimeCount;
+        totalLate += stat.lateCount;
+      } else {
+        totalActiveEmployeesDays += stat.activeEmployees;
+        totalSubmitted += stat.submittedCount;
+        totalOnTime += stat.onTimeCount;
+        totalLate += stat.lateCount;
+      }
     }
 
     const completionRate =
@@ -112,6 +116,11 @@ export async function GET(req: NextRequest) {
 
     const totalMissing = Math.max(0, totalActiveEmployeesDays - totalSubmitted);
 
+    const enrichedDailyBreakdown = mergedStats.map((s: any) => ({
+      ...s,
+      isFriday: isFriday(s.statDate),
+    }));
+
     return NextResponse.json({
       period: { from: fromParam, to: toParam, department: department || "all" },
       kpis: {
@@ -123,7 +132,7 @@ export async function GET(req: NextRequest) {
         totalLate,
         activeEmployeeDays: totalActiveEmployeesDays,
       },
-      dailyBreakdown: mergedStats,
+      dailyBreakdown: enrichedDailyBreakdown,
     });
   } catch (error: any) {
     console.error("Reporting dashboard error:", error);

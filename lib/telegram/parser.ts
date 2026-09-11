@@ -107,7 +107,8 @@ export function buildReportConfirmationMessage(
   reportDateJalali: string,
   items: ParsedTaskItem[],
   isLate: boolean,
-  isEdit: boolean
+  isEdit: boolean,
+  isFridayReport: boolean = false
 ): string {
   const lines: string[] = [];
   lines.push(`🌿 *رُکاد‌استاف | ثبت گزارش روزانه*`);
@@ -119,7 +120,9 @@ export function buildReportConfirmationMessage(
       : `گزارش شما برای تاریخ *${reportDateJalali}* با موفقیت ثبت گردید.`
   );
 
-  if (isLate) {
+  if (isFridayReport) {
+    lines.push(`🌟 _وضعیت: ثبت گزارش در روز تعطیل (جمعه) — با تشکر از تعهد کاری شما_`);
+  } else if (isLate) {
     lines.push(`⚠️ _وضعیت: ثبت با تأخیر (پس از ساعت کاری)_`);
   } else {
     lines.push(`✨ _وضعیت: ثبت به‌موقع_`);

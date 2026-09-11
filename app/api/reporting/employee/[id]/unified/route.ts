@@ -14,6 +14,7 @@ import {
 } from "@/lib/db/schema";
 import { eq, and, desc, inArray, gte, lte, sql } from "drizzle-orm";
 import { getSession } from "@/lib/auth/session";
+import { isFriday } from "@/lib/utils";
 
 // GET /api/reporting/employee/[id]/unified?from=YYYY-MM-DD&to=YYYY-MM-DD
 export async function GET(
@@ -293,12 +294,10 @@ export async function GET(
 
     while (curr <= end) {
       const dStr = curr.toISOString().split("T")[0];
-      // Exclude Friday (day 5 in JS Date UTC is Friday depending on timezone)
-      // Iran workday is Saturday (6) to Thursday (4)
-      const dayOfWeek = curr.getUTCDay();
-      const isFriday = dayOfWeek === 5;
+      // Exclude Friday: Iran workday is Saturday to Thursday
+      const dayIsFriday = isFriday(dStr);
 
-      if (!isFriday && !reportedDates.has(dStr)) {
+      if (!dayIsFriday && !reportedDates.has(dStr)) {
         missingDates.push(dStr);
       }
       curr.setDate(curr.getDate() + 1);
