@@ -114,15 +114,9 @@ const ADMIN_NAV_GROUPS = [
     title: "سازمان و ابزارها",
     items: [
       {
-        title: "مدیریت همکاران",
+        title: "مدیریت کارکنان",
         href: "/employees",
         icon: Users,
-        badge: null,
-      },
-      {
-        title: "کاربران و سطوح دسترسی",
-        href: "/users",
-        icon: ShieldCheck,
         badge: null,
       },
       {
