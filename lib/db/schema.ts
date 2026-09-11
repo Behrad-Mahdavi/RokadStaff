@@ -48,6 +48,20 @@ export const adminUsers = pgTable("admin_users", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
+export const departments = pgTable(
+  "departments",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    name: text("name").unique().notNull(),
+    description: text("description"),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => ({
+    nameIdx: index("idx_departments_name").on(table.name),
+  })
+);
+
 // One-time Magic Link Tokens for Employee Web Login (Rotello)
 export const loginTokens = pgTable(
   "login_tokens",
@@ -463,6 +477,8 @@ export const taskActivityLogRelations = relations(taskActivityLog, ({ one }) => 
 export type Employee = typeof employees.$inferSelect;
 export type NewEmployee = typeof employees.$inferInsert;
 export type AdminUser = typeof adminUsers.$inferSelect;
+export type Department = typeof departments.$inferSelect;
+export type NewDepartment = typeof departments.$inferInsert;
 export type LoginToken = typeof loginTokens.$inferSelect;
 export type DailyReport = typeof dailyReports.$inferSelect;
 export type ReportItem = typeof reportItems.$inferSelect;

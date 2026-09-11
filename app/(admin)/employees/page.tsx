@@ -14,12 +14,21 @@ import {
   Edit2,
   Sparkles,
   FileText,
+  Building2,
+  Trash2,
+  Plus,
+  X,
 } from "lucide-react";
 import Modal from "@/components/Modal";
 import { toPersianDigits } from "@/lib/utils";
 import Link from "next/link";
 
-const DEPARTMENTS = ["پسرانه", "دخترانه"];
+interface DepartmentItem {
+  id: string;
+  name: string;
+  description?: string | null;
+  employeeCount?: number;
+}
 
 export default function EmployeesPage() {
   const [employees, setEmployees] = useState<any[]>([]);
@@ -27,6 +36,19 @@ export default function EmployeesPage() {
   const [search, setSearch] = useState("");
   const [selectedDept, setSelectedDept] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
+
+  // Departments state
+  const [departments, setDepartments] = useState<DepartmentItem[]>([
+    { id: "1", name: "پسرانه", employeeCount: 0 },
+    { id: "2", name: "دخترانه", employeeCount: 0 },
+  ]);
+  const [isDeptModalOpen, setIsDeptModalOpen] = useState(false);
+  const [deptFormName, setDeptFormName] = useState("");
+  const [deptFormDesc, setDeptFormDesc] = useState("");
+  const [editingDept, setEditingDept] = useState<DepartmentItem | null>(null);
+  const [deptActionLoading, setDeptActionLoading] = useState(false);
+  const [deptError, setDeptError] = useState<string | null>(null);
+  const [deptSuccess, setDeptSuccess] = useState<string | null>(null);
 
   // Modals state
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -65,6 +87,122 @@ export default function EmployeesPage() {
   useEffect(() => {
     fetchEmployees();
   }, [search, selectedDept, selectedStatus]);
+
+  const fetchDepartments = async () => {
+    try {
+      const res = await fetch("/api/departments");
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.departments) && data.departments.length > 0) {
+          setDepartments(data.departments);
+          if (data.departments[0]?.name) {
+            setDepartment((prev) => prev || data.departments[0].name);
+          }
+        }
+      }
+    } catch (err) {
+      console.error("Error loading departments:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchDepartments();
+  }, []);
+
+  const handleSaveDepartment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!deptFormName.trim()) return;
+
+    setDeptActionLoading(true);
+    setDeptError(null);
+    setDeptSuccess(null);
+
+    try {
+      if (editingDept) {
+        const res = await fetch(`/api/departments/${editingDept.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: deptFormName.trim(),
+            description: deptFormDesc.trim(),
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          setDeptError(data.error || "خطا در ویرایش دپارتمان");
+        } else {
+          setDeptSuccess("دپارتمان با موفقیت ویرایش شد.");
+          setDeptFormName("");
+          setDeptFormDesc("");
+          setEditingDept(null);
+          await fetchDepartments();
+          await fetchEmployees();
+        }
+      } else {
+        const res = await fetch("/api/departments", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: deptFormName.trim(),
+            description: deptFormDesc.trim(),
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          setDeptError(data.error || "خطا در ایجاد دپارتمان");
+        } else {
+          setDeptSuccess("دپارتمان جدید با موفقیت ثبت شد.");
+          setDeptFormName("");
+          setDeptFormDesc("");
+          await fetchDepartments();
+        }
+      }
+    } catch (err: any) {
+      setDeptError("خطا در برقراری ارتباط با سرور");
+    } finally {
+      setDeptActionLoading(false);
+    }
+  };
+
+  const handleStartEditDept = (dept: DepartmentItem) => {
+    setEditingDept(dept);
+    setDeptFormName(dept.name);
+    setDeptFormDesc(dept.description || "");
+    setDeptError(null);
+    setDeptSuccess(null);
+  };
+
+  const handleCancelEditDept = () => {
+    setEditingDept(null);
+    setDeptFormName("");
+    setDeptFormDesc("");
+    setDeptError(null);
+    setDeptSuccess(null);
+  };
+
+  const handleDeleteDepartment = async (dept: DepartmentItem) => {
+    if (dept.employeeCount && dept.employeeCount > 0) {
+      alert(`امکان حذف دپارتمان «${dept.name}» وجود ندارد؛ زیرا ${toPersianDigits(dept.employeeCount)} همکار در این دپارتمان عضو هستند.`);
+      return;
+    }
+
+    if (!confirm(`آیا از حذف دپارتمان «${dept.name}» اطمینان دارید؟`)) return;
+
+    try {
+      const res = await fetch(`/api/departments/${dept.id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error || "خطا در حذف دپارتمان");
+      } else {
+        await fetchDepartments();
+        await fetchEmployees();
+      }
+    } catch (err) {
+      alert("خطا در برقراری ارتباط با سرور");
+    }
+  };
 
   // Handle Add Employee
   const handleAddEmployee = async (e: React.FormEvent) => {
@@ -195,13 +333,33 @@ export default function EmployeesPage() {
           </p>
         </div>
 
-        <button
-          onClick={() => setIsAddModalOpen(true)}
-          className="rokad-btn-primary px-4 py-2.5 text-xs rounded-xl"
-        >
-          <UserPlus className="w-4 h-4" />
-          <span>افزودن کارمند جدید</span>
-        </button>
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <button
+            onClick={() => {
+              setDeptError(null);
+              setDeptSuccess(null);
+              setEditingDept(null);
+              setDeptFormName("");
+              setDeptFormDesc("");
+              setIsDeptModalOpen(true);
+            }}
+            className="px-3.5 py-2.5 text-xs rounded-xl font-bold bg-white dark:bg-[#1C2536] border border-gray-200 dark:border-gray-700 text-sec dark:text-white hover:border-primary/60 hover:text-primary transition-all flex items-center gap-1.5 shadow-sm"
+          >
+            <Building2 className="w-4 h-4 text-primary" />
+            <span>مدیریت دپارتمان‌ها</span>
+            <span className="bg-ecosystem-light dark:bg-ecosystem-darker/60 text-primary text-[10px] px-1.5 py-0.5 rounded-full font-mono font-bold">
+              {toPersianDigits(departments.length)}
+            </span>
+          </button>
+
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="rokad-btn-primary px-4 py-2.5 text-xs rounded-xl flex items-center gap-1.5"
+          >
+            <UserPlus className="w-4 h-4" />
+            <span>افزودن کارمند جدید</span>
+          </button>
+        </div>
       </div>
 
       {/* Filter Bar */}
@@ -226,8 +384,8 @@ export default function EmployeesPage() {
             className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-xs bg-[#FAFAFA] dark:bg-[#1C2536] dark:text-white focus:border-primary focus:outline-none font-bold text-sec dark:text-white"
           >
             <option value="all">همه دپارتمان‌ها</option>
-            {DEPARTMENTS.map((d) => (
-              <option key={d} value={d}>{d}</option>
+            {departments.map((d) => (
+              <option key={d.id} value={d.name}>{d.name}</option>
             ))}
           </select>
         </div>
@@ -393,14 +551,30 @@ export default function EmployeesPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-sec dark:text-gray-200 mb-1">دپارتمان *</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-xs font-bold text-sec dark:text-gray-200">دپارتمان *</label>
+              <button
+                type="button"
+                onClick={() => {
+                  setDeptError(null);
+                  setDeptSuccess(null);
+                  setEditingDept(null);
+                  setDeptFormName("");
+                  setDeptFormDesc("");
+                  setIsDeptModalOpen(true);
+                }}
+                className="text-[11px] text-primary hover:underline font-bold flex items-center gap-1"
+              >
+                + مدیریت دپارتمان‌ها
+              </button>
+            </div>
             <select
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
               className="w-full px-3 py-2 rounded-xl border border-gray-300 dark:border-gray-700 text-xs focus:border-primary focus:outline-none font-bold text-sec dark:text-white bg-white dark:bg-[#1C2536]"
             >
-              {DEPARTMENTS.map((d) => (
-                <option key={d} value={d}>{d}</option>
+              {departments.map((d) => (
+                <option key={d.id} value={d.name}>{d.name}</option>
               ))}
             </select>
           </div>
@@ -455,14 +629,30 @@ export default function EmployeesPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-sec dark:text-gray-200 mb-1">دپارتمان</label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-xs font-bold text-sec dark:text-gray-200">دپارتمان</label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDeptError(null);
+                    setDeptSuccess(null);
+                    setEditingDept(null);
+                    setDeptFormName("");
+                    setDeptFormDesc("");
+                    setIsDeptModalOpen(true);
+                  }}
+                  className="text-[11px] text-primary hover:underline font-bold flex items-center gap-1"
+                >
+                  + مدیریت دپارتمان‌ها
+                </button>
+              </div>
               <select
-                value={selectedEmployee.department || "پسرانه"}
+                value={selectedEmployee.department || departments[0]?.name || "پسرانه"}
                 onChange={(e) => setSelectedEmployee({ ...selectedEmployee, department: e.target.value })}
                 className="w-full px-3 py-2 rounded-xl border border-gray-300 dark:border-gray-700 text-xs focus:border-primary focus:outline-none font-bold text-sec dark:text-white bg-white dark:bg-[#1C2536]"
               >
-                {DEPARTMENTS.map((d) => (
-                  <option key={d} value={d}>{d}</option>
+                {departments.map((d) => (
+                  <option key={d.id} value={d.name}>{d.name}</option>
                 ))}
               </select>
             </div>
@@ -556,6 +746,191 @@ export default function EmployeesPage() {
             </div>
           </div>
         )}
+      </Modal>
+
+      {/* Modal 4: Manage Departments */}
+      <Modal
+        isOpen={isDeptModalOpen}
+        onClose={() => {
+          setIsDeptModalOpen(false);
+          handleCancelEditDept();
+        }}
+        title="مدیریت دپارتمان‌های سازمان"
+        maxWidth="lg"
+      >
+        <div className="space-y-6">
+          {/* Create / Edit Form */}
+          <div className="p-4 rounded-2xl bg-gray-50 dark:bg-[#1C2536] border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-xs font-black text-sec dark:text-white flex items-center gap-1.5">
+                {editingDept ? (
+                  <>
+                    <Edit2 className="w-3.5 h-3.5 text-primary" />
+                    <span>ویرایش دپارتمان: {editingDept.name}</span>
+                  </>
+                ) : (
+                  <>
+                    <Plus className="w-3.5 h-3.5 text-primary" />
+                    <span>افزودن دپارتمان جدید</span>
+                  </>
+                )}
+              </h4>
+              {editingDept && (
+                <button
+                  type="button"
+                  onClick={handleCancelEditDept}
+                  className="text-[11px] text-gray-500 hover:text-red-500 font-bold flex items-center gap-1 transition-colors"
+                >
+                  <X className="w-3.5 h-3.5" />
+                  <span>انصراف از ویرایش</span>
+                </button>
+              )}
+            </div>
+
+            <form onSubmit={handleSaveDepartment} className="space-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-bold text-sec dark:text-gray-300 mb-1">
+                    نام دپارتمان *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={deptFormName}
+                    onChange={(e) => setDeptFormName(e.target.value)}
+                    placeholder="مثال: آموزش، اداری و مالی، روابط عمومی..."
+                    className="w-full px-3 py-2 rounded-xl border border-gray-300 dark:border-gray-700 text-xs focus:border-primary focus:outline-none dark:bg-[#151C28] dark:text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-sec dark:text-gray-300 mb-1">
+                    توضیحات (اختیاری)
+                  </label>
+                  <input
+                    type="text"
+                    value={deptFormDesc}
+                    onChange={(e) => setDeptFormDesc(e.target.value)}
+                    placeholder="توضیحات مختصری درباره این دپارتمان..."
+                    className="w-full px-3 py-2 rounded-xl border border-gray-300 dark:border-gray-700 text-xs focus:border-primary focus:outline-none dark:bg-[#151C28] dark:text-white"
+                  />
+                </div>
+              </div>
+
+              {deptError && (
+                <div className="text-[11px] font-bold text-accent-red bg-accent-red/10 p-2 rounded-lg flex items-center gap-1.5">
+                  <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                  <span>{deptError}</span>
+                </div>
+              )}
+
+              {deptSuccess && (
+                <div className="text-[11px] font-bold text-accent-green bg-accent-green/10 p-2 rounded-lg flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                  <span>{deptSuccess}</span>
+                </div>
+              )}
+
+              <div className="flex justify-end pt-1">
+                <button
+                  type="submit"
+                  disabled={deptActionLoading || !deptFormName.trim()}
+                  className="rokad-btn-primary px-4 py-2 text-xs rounded-xl flex items-center gap-1.5 disabled:opacity-50"
+                >
+                  {deptActionLoading ? (
+                    <span>در حال ذخیره...</span>
+                  ) : editingDept ? (
+                    <>
+                      <Check className="w-3.5 h-3.5" />
+                      <span>ذخیره تغییرات دپارتمان</span>
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>افزودن دپارتمان</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+
+          {/* Department List */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between px-1">
+              <span className="text-xs font-bold text-ink-normal/70 dark:text-gray-400">
+                فهرست دپارتمان‌های فعال ({toPersianDigits(departments.length)})
+              </span>
+              <span className="text-[11px] text-ink-normal/50 dark:text-gray-500">
+                با ویرایش نام، نام بخش برای تمامی اعضای آن نیز به‌روز می‌شود.
+              </span>
+            </div>
+
+            <div className="divide-y divide-gray-100 dark:divide-gray-800 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden bg-white dark:bg-[#151C28]">
+              {departments.length === 0 ? (
+                <div className="p-6 text-center text-gray-400 text-xs">
+                  دپارتمانی ثبت نشده است.
+                </div>
+              ) : (
+                departments.map((dept) => (
+                  <div
+                    key={dept.id}
+                    className={`p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors ${
+                      editingDept?.id === dept.id
+                        ? "bg-primary/5 dark:bg-primary/10 border-r-4 border-r-primary"
+                        : "hover:bg-gray-50/70 dark:hover:bg-[#1C2536]/50"
+                    }`}
+                  >
+                    <div className="space-y-0.5">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-xs sm:text-sm text-sec dark:text-white">
+                          {dept.name}
+                        </span>
+                        <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-ecosystem-light dark:bg-ecosystem-darker/50 text-ecosystem-darker dark:text-ecosystem-light border border-primary/30">
+                          <Users className="w-3 h-3 text-primary" />
+                          {toPersianDigits(dept.employeeCount || 0)} همکار
+                        </span>
+                      </div>
+                      {dept.description && (
+                        <p className="text-[11px] text-ink-normal/60 dark:text-gray-400">
+                          {dept.description}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-1.5 self-end sm:self-center">
+                      <button
+                        onClick={() => handleStartEditDept(dept)}
+                        title="ویرایش نام و مشخصات دپارتمان"
+                        className="px-2.5 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 text-xs font-bold text-sec dark:text-gray-200 hover:text-primary hover:border-primary/50 transition-colors flex items-center gap-1"
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                        <span>ویرایش</span>
+                      </button>
+
+                      <button
+                        onClick={() => handleDeleteDepartment(dept)}
+                        disabled={!!(dept.employeeCount && dept.employeeCount > 0)}
+                        title={
+                          dept.employeeCount && dept.employeeCount > 0
+                            ? "به دلیل وجود کارمند در این دپارتمان امکان حذف نیست"
+                            : "حذف دپارتمان"
+                        }
+                        className={`px-2.5 py-1.5 rounded-lg border text-xs font-bold transition-colors flex items-center gap-1 ${
+                          dept.employeeCount && dept.employeeCount > 0
+                            ? "border-gray-200 dark:border-gray-800 text-gray-400 cursor-not-allowed opacity-60"
+                            : "border-gray-200 dark:border-gray-700 text-accent-red hover:bg-accent-red/10 hover:border-accent-red/40"
+                        }`}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>حذف</span>
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
       </Modal>
     </div>
   );
