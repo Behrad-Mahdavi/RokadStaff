@@ -17,6 +17,7 @@ import {
   X,
   FileText,
   ShieldCheck,
+  Calendar,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -34,6 +35,12 @@ const EMPLOYEE_NAV_GROUPS = [
         title: "پروژه‌ها",
         href: "/rotello/projects",
         icon: Kanban,
+        badge: null,
+      },
+      {
+        title: "تقویم اجرایی",
+        href: "/calendar",
+        icon: Calendar,
         badge: null,
       },
     ],
@@ -71,6 +78,12 @@ const ADMIN_NAV_GROUPS = [
         title: "پروژه‌ها",
         href: "/rotello/projects",
         icon: Kanban,
+        badge: null,
+      },
+      {
+        title: "تقویم اجرایی",
+        href: "/calendar",
+        icon: Calendar,
         badge: null,
       },
       {

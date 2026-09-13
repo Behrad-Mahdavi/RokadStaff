@@ -354,6 +354,60 @@ export const taskActivityLog = pgTable(
 );
 
 // ==========================================
+// 4. Executive Operations Calendar (Events & Meetings)
+// ==========================================
+
+export const calendarEvents = pgTable(
+  "calendar_events",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    title: text("title").notNull(),
+    description: text("description"),
+    type: text("type").default("meeting").notNull(), // 'meeting' | 'event'
+    department: text("department").notNull(),
+    color: text("color").default("#59BBAF").notNull(),
+    startDate: date("start_date").notNull(), // YYYY-MM-DD
+    endDate: date("end_date"), // YYYY-MM-DD (optional, default same as startDate)
+    startTime: text("start_time"), // HH:mm e.g. "09:30"
+    endTime: text("end_time"), // HH:mm e.g. "11:00"
+    isAllDay: boolean("is_all_day").default(false).notNull(),
+    location: text("location"), // Physical room or online URL
+    status: text("status").default("scheduled").notNull(), // 'scheduled' | 'in_progress' | 'completed' | 'cancelled'
+    reminder: text("reminder").default("none").notNull(), // 'none' | '15m' | '30m' | '1h' | '1d'
+    createdBy: uuid("created_by").references(() => employees.id),
+    createdByName: text("created_by_name"),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => ({
+    startDateIdx: index("idx_calendar_events_start_date").on(table.startDate),
+    departmentIdx: index("idx_calendar_events_department").on(table.department),
+    typeIdx: index("idx_calendar_events_type").on(table.type),
+  })
+);
+
+export const calendarEventAttendees = pgTable(
+  "calendar_event_attendees",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    eventId: uuid("event_id")
+      .notNull()
+      .references(() => calendarEvents.id, { onDelete: "cascade" }),
+    employeeId: uuid("employee_id")
+      .notNull()
+      .references(() => employees.id, { onDelete: "cascade" }),
+    role: text("role").default("attendee").notNull(), // 'organizer' | 'attendee'
+    status: text("status").default("pending").notNull(), // 'accepted' | 'declined' | 'pending'
+    addedAt: timestamp("added_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => ({
+    eventEmployeeUnique: unique("uniq_calendar_event_employee").on(table.eventId, table.employeeId),
+    eventIdIdx: index("idx_calendar_attendees_event").on(table.eventId),
+    employeeIdIdx: index("idx_calendar_attendees_employee").on(table.employeeId),
+  })
+);
+
+// ==========================================
 // Relations
 // ==========================================
 
@@ -367,6 +421,8 @@ export const employeesRelations = relations(employees, ({ many }) => ({
   createdTasks: many(tasks),
   taskReports: many(taskReports),
   activities: many(taskActivityLog),
+  calendarEvents: many(calendarEvents),
+  calendarAttendances: many(calendarEventAttendees),
 }));
 
 export const projectsRelations = relations(projects, ({ one, many }) => ({
@@ -473,6 +529,25 @@ export const taskActivityLogRelations = relations(taskActivityLog, ({ one }) => 
   }),
 }));
 
+export const calendarEventsRelations = relations(calendarEvents, ({ one, many }) => ({
+  creator: one(employees, {
+    fields: [calendarEvents.createdBy],
+    references: [employees.id],
+  }),
+  attendees: many(calendarEventAttendees),
+}));
+
+export const calendarEventAttendeesRelations = relations(calendarEventAttendees, ({ one }) => ({
+  event: one(calendarEvents, {
+    fields: [calendarEventAttendees.eventId],
+    references: [calendarEvents.id],
+  }),
+  employee: one(employees, {
+    fields: [calendarEventAttendees.employeeId],
+    references: [employees.id],
+  }),
+}));
+
 // ==========================================
 // Types
 // ==========================================
@@ -505,3 +580,8 @@ export type TaskReport = typeof taskReports.$inferSelect;
 export type NewTaskReport = typeof taskReports.$inferInsert;
 export type TaskActivityLog = typeof taskActivityLog.$inferSelect;
 export type NewTaskActivityLog = typeof taskActivityLog.$inferInsert;
+
+export type CalendarEvent = typeof calendarEvents.$inferSelect;
+export type NewCalendarEvent = typeof calendarEvents.$inferInsert;
+export type CalendarEventAttendee = typeof calendarEventAttendees.$inferSelect;
+export type NewCalendarEventAttendee = typeof calendarEventAttendees.$inferInsert;
