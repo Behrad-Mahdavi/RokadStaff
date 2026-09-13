@@ -6,14 +6,10 @@ import {
   ChevronRight,
   ChevronLeft,
   Plus,
-  Filter,
-  Users,
-  CalendarDays,
   Clock,
+  CalendarDays,
   Briefcase,
-  CheckCircle2,
 } from "lucide-react";
-import { toPersianDigits } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
 export type CalendarViewMode = "month" | "week" | "day";
@@ -52,73 +48,72 @@ export default function CalendarHeader({
   onNewEvent,
 }: CalendarHeaderProps) {
   return (
-    <div className="bg-white dark:bg-[#151C28] rounded-3xl border border-gray-200 dark:border-gray-800 p-4 sm:p-5 shadow-[2.75px_2.75px_0_#202A5A] dark:shadow-[2.75px_2.75px_0_#59BBAF] space-y-4">
-      {/* Top row: Title & Primary Action */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-ecosystem-light dark:bg-ecosystem-normal/20 border-2 border-primary text-primary flex items-center justify-center shadow-[2px_2px_0_#202A5A] dark:shadow-[2px_2px_0_#59BBAF] shrink-0">
-            <CalendarIcon className="w-6 h-6" />
+    <div className="bg-white dark:bg-[#151C28] rounded-2xl sm:rounded-3xl border border-gray-200 dark:border-gray-800 p-3.5 sm:p-5 shadow-[2px_2px_0_#202A5A] sm:shadow-[2.75px_2.75px_0_#202A5A] dark:shadow-[2px_2px_0_#59BBAF] sm:dark:shadow-[2.75px_2.75px_0_#59BBAF] space-y-3 sm:space-y-4">
+      {/* Top row: Title & Primary Action Button */}
+      <div className="flex items-center justify-between gap-2.5">
+        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-ecosystem-light dark:bg-ecosystem-normal/20 border-2 border-primary text-primary flex items-center justify-center shadow-[1.5px_1.5px_0_#202A5A] sm:shadow-[2px_2px_0_#202A5A] dark:shadow-[1.5px_1.5px_0_#59BBAF] shrink-0">
+            <CalendarIcon className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
-          <div>
-            <h1 className="text-xl sm:text-2xl font-black text-sec dark:text-white flex items-center gap-2">
+          <div className="min-w-0">
+            <h1 className="text-base sm:text-xl md:text-2xl font-black text-sec dark:text-white truncate">
               تقویم اجرایی سازمان
-              <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-primary/15 text-primary border border-primary/30">
-                عملیات و رویدادها
-              </span>
             </h1>
           </div>
         </div>
 
-        {/* New Event Button */}
+        {/* New Event Button (responsive: compact icon+text on mobile) */}
         <button
           onClick={onNewEvent}
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl bg-ecosystem-normal hover:bg-ecosystem-darker text-white font-bold text-sm shadow-[2.5px_2.5px_0_#202A5A] dark:shadow-[2.5px_2.5px_0_#59BBAF] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer"
+          className="inline-flex items-center justify-center gap-1.5 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl bg-ecosystem-normal hover:bg-ecosystem-darker text-white font-bold text-xs sm:text-sm shadow-[2px_2px_0_#202A5A] dark:shadow-[2px_2px_0_#59BBAF] active:translate-x-0.5 active:translate-y-0.5 transition-all shrink-0 cursor-pointer"
         >
           <Plus className="w-4 h-4 stroke-[3]" />
-          <span>افزودن جلسه یا رویداد</span>
+          <span>جلسه / رویداد جدید</span>
         </button>
       </div>
 
       {/* Middle row: Date navigation & View mode switch */}
-      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 pt-3 border-t border-gray-100 dark:border-gray-800/80">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 pt-2.5 sm:pt-3 border-t border-gray-100 dark:border-gray-800/80">
         {/* Navigation Controls */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={onNext}
-            className="p-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sec dark:text-gray-200 hover:border-primary hover:bg-ecosystem-light dark:hover:bg-gray-700 shadow-sm transition-all"
-            title="بازه بعد"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
+        <div className="flex items-center justify-between sm:justify-start gap-1.5 sm:gap-2">
+          <div className="flex items-center gap-1">
+            <button
+              onClick={onNext}
+              className="p-1.5 sm:p-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sec dark:text-gray-200 hover:border-primary hover:bg-ecosystem-light dark:hover:bg-gray-700 transition-all cursor-pointer"
+              title="بعدی"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
 
-          <button
-            onClick={onToday}
-            className="px-3.5 py-1.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sec dark:text-gray-200 text-xs font-bold hover:border-primary hover:text-primary transition-all shadow-sm"
-          >
-            امروز
-          </button>
+            <button
+              onClick={onToday}
+              className="px-2.5 sm:px-3.5 py-1.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sec dark:text-gray-200 text-xs font-bold hover:border-primary hover:text-primary transition-all shadow-xs cursor-pointer"
+            >
+              امروز
+            </button>
 
-          <button
-            onClick={onPrev}
-            className="p-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sec dark:text-gray-200 hover:border-primary hover:bg-ecosystem-light dark:hover:bg-gray-700 shadow-sm transition-all"
-            title="بازه قبل"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
+            <button
+              onClick={onPrev}
+              className="p-1.5 sm:p-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sec dark:text-gray-200 hover:border-primary hover:bg-ecosystem-light dark:hover:bg-gray-700 transition-all cursor-pointer"
+              title="قبلی"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+          </div>
 
-          <div className="text-base sm:text-lg font-black text-sec dark:text-white mr-2 tracking-tight">
+          <div className="text-sm sm:text-base md:text-lg font-black text-sec dark:text-white mr-1 sm:mr-2 truncate">
             {title}
           </div>
         </div>
 
         {/* View Mode Toggle (Day / Week / Month) */}
-        <div className="flex items-center p-1 bg-gray-100 dark:bg-[#1A2333] rounded-2xl border border-gray-200 dark:border-gray-700 self-start md:self-auto">
+        <div className="flex items-center justify-center p-1 bg-gray-100 dark:bg-[#1A2333] rounded-xl sm:rounded-2xl border border-gray-200 dark:border-gray-700 shrink-0">
           <button
             onClick={() => onViewModeChange("day")}
             className={cn(
-              "px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5",
+              "flex-1 sm:flex-initial px-3 sm:px-3.5 py-1.5 rounded-lg sm:rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1 cursor-pointer",
               viewMode === "day"
-                ? "bg-white dark:bg-[#151C28] text-sec dark:text-white shadow-sm border border-gray-200 dark:border-gray-700 text-primary"
+                ? "bg-white dark:bg-[#151C28] text-primary shadow-xs border border-gray-200 dark:border-gray-700"
                 : "text-ink-normal/60 dark:text-gray-400 hover:text-sec dark:hover:text-white"
             )}
           >
@@ -129,9 +124,9 @@ export default function CalendarHeader({
           <button
             onClick={() => onViewModeChange("week")}
             className={cn(
-              "px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5",
+              "flex-1 sm:flex-initial px-3 sm:px-3.5 py-1.5 rounded-lg sm:rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1 cursor-pointer",
               viewMode === "week"
-                ? "bg-white dark:bg-[#151C28] text-sec dark:text-white shadow-sm border border-gray-200 dark:border-gray-700 text-primary"
+                ? "bg-white dark:bg-[#151C28] text-primary shadow-xs border border-gray-200 dark:border-gray-700"
                 : "text-ink-normal/60 dark:text-gray-400 hover:text-sec dark:hover:text-white"
             )}
           >
@@ -142,9 +137,9 @@ export default function CalendarHeader({
           <button
             onClick={() => onViewModeChange("month")}
             className={cn(
-              "px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5",
+              "flex-1 sm:flex-initial px-3 sm:px-3.5 py-1.5 rounded-lg sm:rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1 cursor-pointer",
               viewMode === "month"
-                ? "bg-white dark:bg-[#151C28] text-sec dark:text-white shadow-sm border border-gray-200 dark:border-gray-700 text-primary"
+                ? "bg-white dark:bg-[#151C28] text-primary shadow-xs border border-gray-200 dark:border-gray-700"
                 : "text-ink-normal/60 dark:text-gray-400 hover:text-sec dark:hover:text-white"
             )}
           >
@@ -154,19 +149,19 @@ export default function CalendarHeader({
         </div>
       </div>
 
-      {/* Bottom row: Filters */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-gray-100 dark:border-gray-800/80 text-xs">
-        <div className="flex flex-wrap items-center gap-2">
+      {/* Bottom row: Filters (Horizontally scrollable on mobile for flawless layout) */}
+      <div className="flex items-center justify-between gap-3 pt-2.5 sm:pt-3 border-t border-gray-100 dark:border-gray-800/80 text-xs overflow-x-auto pb-1 no-scrollbar">
+        <div className="flex items-center gap-2 shrink-0">
           {/* Department Filter */}
           <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-gray-800/60 px-2.5 py-1.5 rounded-xl border border-gray-200 dark:border-gray-700">
-            <Briefcase className="w-3.5 h-3.5 text-primary" />
-            <span className="font-bold text-ink-normal/70 dark:text-gray-300">دپارتمان:</span>
+            <Briefcase className="w-3.5 h-3.5 text-primary shrink-0" />
+            <span className="font-bold text-ink-normal/70 dark:text-gray-300 shrink-0">دپارتمان:</span>
             <select
               value={selectedDepartment}
               onChange={(e) => onDepartmentChange(e.target.value)}
               className="bg-transparent text-sec dark:text-white font-bold outline-none cursor-pointer pr-1"
             >
-              <option value="all" className="dark:bg-[#151C28]">همه دپارتمان‌ها</option>
+              <option value="all" className="dark:bg-[#151C28]">همه</option>
               {departments.map((d) => (
                 <option key={d.id} value={d.name} className="dark:bg-[#151C28]">
                   {d.name}
@@ -176,13 +171,13 @@ export default function CalendarHeader({
           </div>
 
           {/* Type Filter */}
-          <div className="flex items-center gap-1 bg-gray-50 dark:bg-gray-800/60 p-1 rounded-xl border border-gray-200 dark:border-gray-700">
+          <div className="flex items-center gap-1 bg-gray-50 dark:bg-gray-800/60 p-1 rounded-xl border border-gray-200 dark:border-gray-700 shrink-0">
             <button
               onClick={() => onTypeChange("all")}
               className={cn(
-                "px-2.5 py-1 rounded-lg font-bold transition-all",
+                "px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer",
                 selectedType === "all"
-                  ? "bg-white dark:bg-gray-700 text-primary shadow-xs"
+                  ? "bg-white dark:bg-gray-700 text-primary shadow-2xs"
                   : "text-ink-normal/60 dark:text-gray-400 hover:text-sec dark:hover:text-white"
               )}
             >
@@ -191,9 +186,9 @@ export default function CalendarHeader({
             <button
               onClick={() => onTypeChange("meeting")}
               className={cn(
-                "px-2.5 py-1 rounded-lg font-bold transition-all",
+                "px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer",
                 selectedType === "meeting"
-                  ? "bg-white dark:bg-gray-700 text-sec dark:text-white shadow-xs"
+                  ? "bg-white dark:bg-gray-700 text-sec dark:text-white shadow-2xs"
                   : "text-ink-normal/60 dark:text-gray-400 hover:text-sec dark:hover:text-white"
               )}
             >
@@ -202,9 +197,9 @@ export default function CalendarHeader({
             <button
               onClick={() => onTypeChange("event")}
               className={cn(
-                "px-2.5 py-1 rounded-lg font-bold transition-all",
+                "px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer",
                 selectedType === "event"
-                  ? "bg-white dark:bg-gray-700 text-primary shadow-xs"
+                  ? "bg-white dark:bg-gray-700 text-primary shadow-2xs"
                   : "text-ink-normal/60 dark:text-gray-400 hover:text-sec dark:hover:text-white"
               )}
             >
@@ -214,14 +209,14 @@ export default function CalendarHeader({
         </div>
 
         {/* My Events Toggle */}
-        <label className="flex items-center gap-2 cursor-pointer select-none font-bold text-sec dark:text-gray-200">
+        <label className="flex items-center gap-1.5 cursor-pointer select-none font-bold text-sec dark:text-gray-200 shrink-0 whitespace-nowrap mr-2">
           <input
             type="checkbox"
             checked={myOnly}
             onChange={(e) => onMyOnlyChange(e.target.checked)}
             className="w-4 h-4 rounded-md accent-primary cursor-pointer"
           />
-          <span>فقط جلسات و رویدادهای من</span>
+          <span>جلسات من</span>
         </label>
       </div>
     </div>
