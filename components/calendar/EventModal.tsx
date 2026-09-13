@@ -80,8 +80,6 @@ export default function EventModal({
     }
   }, [isOpen, onClose]);
 
-  if (!isOpen) return null;
-
   const isEditMode = !!eventToEdit;
 
   // Determine if current user can edit
@@ -90,14 +88,14 @@ export default function EventModal({
     if (currentSession?.role === "admin") return true;
 
     const currentEmpId = currentSession?.employeeId || currentSession?.userId;
-    if (eventToEdit.createdBy && currentEmpId && eventToEdit.createdBy === currentEmpId) {
+    if (eventToEdit?.createdBy && currentEmpId && eventToEdit.createdBy === currentEmpId) {
       return true;
     }
 
     if (
       currentSession?.role === "supervisor" &&
       currentSession?.assignedDepartment &&
-      eventToEdit.department === currentSession?.assignedDepartment
+      eventToEdit?.department === currentSession?.assignedDepartment
     ) {
       return true;
     }
@@ -105,56 +103,92 @@ export default function EventModal({
     return false;
   })();
 
-  // Form states
-  const [type, setType] = useState<"meeting" | "event">(
-    eventToEdit?.type || "meeting"
-  );
-  const [title, setTitle] = useState(eventToEdit?.title || "");
-  const [description, setDescription] = useState(eventToEdit?.description || "");
-  const [department, setDepartment] = useState(
-    eventToEdit?.department ||
-      currentSession?.assignedDepartment ||
-      departments[0]?.name ||
-      "پسرانه"
-  );
-  const [color, setColor] = useState(
-    eventToEdit?.color ||
-      (department === "دخترانه" ? "#E0195B" : department === "پسرانه" ? "#202A5A" : "#59BBAF")
-  );
-  const [startDate, setStartDate] = useState(
-    eventToEdit?.startDate || initialDateIso || new Date().toISOString().split("T")[0]
-  );
-  const [isAllDay, setIsAllDay] = useState(eventToEdit?.isAllDay || false);
+  // Form states (all declared unconditionally at top level)
+  const [type, setType] = useState<"meeting" | "event">("meeting");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [department, setDepartment] = useState("پسرانه");
+  const [color, setColor] = useState("#59BBAF");
+  const [startDate, setStartDate] = useState(new Date().toISOString().split("T")[0]);
+  const [isAllDay, setIsAllDay] = useState(false);
 
   // Time split into hours & minutes
-  const initStartTime = eventToEdit?.startTime || initialTime || "10:00";
-  const [startHour, setStartHour] = useState(initStartTime.split(":")[0] || "10");
-  const [startMinute, setStartMinute] = useState(initStartTime.split(":")[1] || "00");
+  const [startHour, setStartHour] = useState("10");
+  const [startMinute, setStartMinute] = useState("00");
+  const [endHour, setEndHour] = useState("11");
+  const [endMinute, setEndMinute] = useState("30");
 
-  const initEndTime = eventToEdit?.endTime || "11:30";
-  const [endHour, setEndHour] = useState(initEndTime.split(":")[0] || "11");
-  const [endMinute, setEndMinute] = useState(initEndTime.split(":")[1] || "30");
-
-  const [formatType, setFormatType] = useState<"in_person" | "online">(
-    eventToEdit?.location?.startsWith("http") ? "online" : "in_person"
-  );
-  const [location, setLocation] = useState(eventToEdit?.location || "");
-  const [status, setStatus] = useState(eventToEdit?.status || "scheduled");
-  const [reminder, setReminder] = useState(eventToEdit?.reminder || "15m");
+  const [formatType, setFormatType] = useState<"in_person" | "online">("in_person");
+  const [location, setLocation] = useState("");
+  const [status, setStatus] = useState("scheduled");
+  const [reminder, setReminder] = useState("15m");
 
   // Attendees
-  const [selectedAttendeeIds, setSelectedAttendeeIds] = useState<string[]>(() => {
-    if (eventToEdit?.attendees) {
-      return eventToEdit.attendees.map((a: any) => a.employeeId);
-    }
-    return [];
-  });
+  const [selectedAttendeeIds, setSelectedAttendeeIds] = useState<string[]>([]);
   const [attendeeSearch, setAttendeeSearch] = useState("");
   const [isAttendeeDropdownOpen, setIsAttendeeDropdownOpen] = useState(false);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+
+  // Sync state when modal opens or props change
+  useEffect(() => {
+    if (isOpen) {
+      if (eventToEdit) {
+        setType(eventToEdit.type || "meeting");
+        setTitle(eventToEdit.title || "");
+        setDescription(eventToEdit.description || "");
+        setDepartment(eventToEdit.department || departments[0]?.name || "پسرانه");
+        setColor(eventToEdit.color || "#59BBAF");
+        setStartDate(eventToEdit.startDate || new Date().toISOString().split("T")[0]);
+        setIsAllDay(eventToEdit.isAllDay || false);
+        const sTime = eventToEdit.startTime || "10:00";
+        setStartHour(sTime.split(":")[0] || "10");
+        setStartMinute(sTime.split(":")[1] || "00");
+        const eTime = eventToEdit.endTime || "11:30";
+        setEndHour(eTime.split(":")[0] || "11");
+        setEndMinute(eTime.split(":")[1] || "30");
+        setFormatType(eventToEdit.location?.startsWith("http") ? "online" : "in_person");
+        setLocation(eventToEdit.location || "");
+        setStatus(eventToEdit.status || "scheduled");
+        setReminder(eventToEdit.reminder || "15m");
+        setSelectedAttendeeIds(
+          eventToEdit.attendees ? eventToEdit.attendees.map((a: any) => a.employeeId) : []
+        );
+      } else {
+        setType("meeting");
+        setTitle("");
+        setDescription("");
+        const defaultDept =
+          currentSession?.assignedDepartment || departments[0]?.name || "پسرانه";
+        setDepartment(defaultDept);
+        setColor(
+          defaultDept === "دخترانه"
+            ? "#E0195B"
+            : defaultDept === "پسرانه"
+            ? "#202A5A"
+            : "#59BBAF"
+        );
+        setStartDate(initialDateIso || new Date().toISOString().split("T")[0]);
+        setIsAllDay(false);
+        const sTime = initialTime || "10:00";
+        setStartHour(sTime.split(":")[0] || "10");
+        setStartMinute(sTime.split(":")[1] || "00");
+        const eHourNum = (parseInt(sTime.split(":")[0] || "10", 10) + 1) % 24;
+        setEndHour(String(eHourNum).padStart(2, "0"));
+        setEndMinute(sTime.split(":")[1] || "00");
+        setFormatType("in_person");
+        setLocation("");
+        setStatus("scheduled");
+        setReminder("15m");
+        setSelectedAttendeeIds([]);
+      }
+      setIsAttendeeDropdownOpen(false);
+      setAttendeeSearch("");
+      setErrorMessage("");
+    }
+  }, [isOpen, eventToEdit, initialDateIso, initialTime, departments, currentSession]);
 
   const handleDepartmentChange = (newDept: string) => {
     setDepartment(newDept);
@@ -235,6 +269,8 @@ export default function EventModal({
       setIsDeleting(false);
     }
   };
+
+  if (!isOpen) return null;
 
   return (
     <div
