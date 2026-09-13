@@ -102,9 +102,6 @@ export default function DashboardPage() {
             <span>گزارش جامع عملکرد امروز</span>
           </div>
           <h1 className="text-xl sm:text-2xl font-black text-sec dark:text-white tracking-tight">داشبورد عملکرد روزانه</h1>
-          <p className="text-xs sm:text-sm text-ink-normal/70 dark:text-gray-300 mt-1 font-medium">
-            وضعیت دریافت گزارش کار پایان روز کارکنان در تاریخ {formatToJalali(new Date())}
-          </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">

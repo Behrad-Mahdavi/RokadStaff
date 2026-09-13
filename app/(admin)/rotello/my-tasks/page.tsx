@@ -61,9 +61,6 @@ export default function PersonalWorkspacePage() {
             <span>میز کار جامع وظایف</span>
           </div>
           <h1 className="text-xl sm:text-2xl font-black text-sec dark:text-white tracking-tight">میز کار من</h1>
-          <p className="text-xs sm:text-sm text-ink-normal/70 dark:text-gray-400 mt-1 font-medium">
-            مشاهده یکپارچه تمام وظایف واگذارشده به شما از پروژه‌های مختلف
-          </p>
         </div>
 
         <button

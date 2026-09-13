@@ -66,9 +66,6 @@ export default function CalendarHeader({
                 عملیات و رویدادها
               </span>
             </h1>
-            <p className="text-xs sm:text-sm text-ink-normal/60 dark:text-gray-400 mt-0.5 font-medium">
-              برنامه‌ریزی، مدیریت و پیگیری هوشمند تمامی جلسات کاری و رویدادهای دپارتمان‌ها
-            </p>
           </div>
         </div>
 

@@ -153,9 +153,6 @@ function ReportsContent() {
           <h1 className="text-xl sm:text-2xl font-black text-sec dark:text-white tracking-tight">
             گزارش‌های روزانه
           </h1>
-          <p className="text-xs sm:text-sm text-ink-normal/70 dark:text-gray-300 mt-1 font-medium">
-            مشاهده گزارش‌های روزانه کارکنان و پیگیری هوشمند غایبان
-          </p>
         </div>
 
         {/* Action Bar */}

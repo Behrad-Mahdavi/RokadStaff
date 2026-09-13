@@ -547,11 +547,6 @@ export default function EmployeesPage() {
               </span>
             )}
           </h1>
-          <p className="text-xs sm:text-sm text-ink-normal/70 dark:text-gray-400 mt-1">
-            {isSupervisor
-              ? `مدیریت همکاران، تعیین دسترسی‌ها و پیگیری وضعیت گزارش‌های واحد ${supervisorDepartment}`
-              : "مدیریت اعضای سازمان، تعیین سطوح دسترسی، اتصال به بات تلگرام و مدیریت دپارتمان‌ها"}
-          </p>
         </div>
 
         <div className="flex items-center gap-2.5 flex-wrap">

@@ -194,9 +194,6 @@ export default function MyDailyReportsPage() {
           <h1 className="text-xl sm:text-2xl font-black text-sec dark:text-white tracking-tight">
             گزارش‌های روزانه من
           </h1>
-          <p className="text-xs sm:text-sm text-ink-normal/70 dark:text-gray-400 mt-1 font-medium">
-            ثبت فعالیت‌های روزانه، پایش نظم ارسال و مشاهده سوابق گزارش‌های کاری
-          </p>
         </div>
 
         <div className="flex items-center gap-3">

@@ -135,9 +135,6 @@ export default function AnalyticsPage() {
             <span>ماژول پیشرفته تحلیل و پایش</span>
           </div>
           <h1 className="text-xl sm:text-2xl font-black text-sec dark:text-white tracking-tight">گزارش‌گیری و تحلیل عملکرد</h1>
-          <p className="text-xs sm:text-sm text-ink-normal/70 dark:text-gray-300 mt-1 font-medium">
-            پایش هوشمند شاخص‌های عملکرد، انضباط کاری و دریافت خروجی اکسل و PDF
-          </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5 self-start md:self-auto no-print">

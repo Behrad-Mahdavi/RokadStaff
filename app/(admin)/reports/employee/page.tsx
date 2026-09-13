@@ -46,9 +46,6 @@ export default function EmployeeReportsHubPage() {
             <Users className="w-7 h-7 text-primary" />
             <span>گزارش جامع و کارنامه همکاران</span>
           </h1>
-          <p className="text-xs sm:text-sm text-ink-normal/60 dark:text-gray-400 mt-1 font-medium">
-            مشاهده یکپارچه وظایف پروژه‌ها و گزارش‌های روزانه تلگرام به تفکیک هر همکار
-          </p>
         </div>
       </div>
 

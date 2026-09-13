@@ -48,9 +48,6 @@ export default function BotGuidePage() {
           <span>مستندات و محیط آزمایش تعاملی</span>
         </div>
         <h1 className="text-xl sm:text-2xl font-black text-sec dark:text-white tracking-tight">راهنما و شبیه‌ساز ربات تلگرام</h1>
-        <p className="text-xs sm:text-sm text-ink-normal/70 dark:text-gray-300 mt-1 font-medium">
-          بررسی ساختار پیام‌ها و تست زنده پردازش گزارش‌های ورودی
-        </p>
       </div>
 
       {/* Interactive Simulator Card */}

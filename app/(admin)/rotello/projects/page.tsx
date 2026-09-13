@@ -155,9 +155,6 @@ export default function ProjectsListPage() {
             <span>مدیریت و نظارت بر پروژه‌ها</span>
           </div>
           <h1 className="text-xl sm:text-2xl font-black text-sec dark:text-white tracking-tight">پروژه‌ها</h1>
-          <p className="text-xs sm:text-sm text-ink-normal/70 dark:text-gray-400 mt-1 font-medium">
-            ایجاد بورد، پیگیری پیشرفت مرحله‌ای وظایف و همکاری تیمی اعضا
-          </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">

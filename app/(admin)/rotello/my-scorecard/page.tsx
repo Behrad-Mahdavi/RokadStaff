@@ -113,9 +113,6 @@ export default function MyPerformanceScorecardPage() {
             <h1 className="text-xl sm:text-2xl font-black text-sec dark:text-white tracking-tight">
               کارنامه عملکرد من
             </h1>
-            <p className="text-xs sm:text-sm text-ink-normal/70 dark:text-gray-400 mt-1 font-medium">
-              مشاهده تجمیعی نرخ تحویل به‌موقع پروژه‌ها و انضباط گزارش‌دهی کاری
-            </p>
           </div>
 
           <div className="flex items-center gap-3">
