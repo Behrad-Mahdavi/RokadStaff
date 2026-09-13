@@ -29,7 +29,7 @@ export default function CalendarPage() {
   const todayJ = getJalaliToday();
   const todayIso = jalaliToIso(todayJ.jy, todayJ.jm, todayJ.jd);
 
-  const [viewMode, setViewMode] = useState<CalendarViewMode>("month");
+  const [viewMode, setViewMode] = useState<CalendarViewMode>("week");
   const [viewYear, setViewYear] = useState<number>(todayJ.jy);
   const [viewMonth, setViewMonth] = useState<number>(todayJ.jm);
   const [currentDateIso, setCurrentDateIso] = useState<string>(todayIso);

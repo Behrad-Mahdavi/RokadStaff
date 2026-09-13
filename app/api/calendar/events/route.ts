@@ -113,27 +113,6 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    // If DB returned 0 rows, check if mock store has seed items
-    if (combined.length === 0) {
-      let mockList = getMockCalendarEvents();
-      if (departmentParam && departmentParam !== "all") {
-        mockList = mockList.filter((e) => e.department === departmentParam);
-      }
-      if (typeParam && typeParam !== "all") {
-        mockList = mockList.filter((e) => e.type === typeParam);
-      }
-      if (searchParam) {
-        mockList = mockList.filter(
-          (e) =>
-            e.title.toLowerCase().includes(searchParam) ||
-            e.description?.toLowerCase().includes(searchParam)
-        );
-      }
-      if (mockList.length > 0) {
-        return NextResponse.json({ events: mockList });
-      }
-    }
-
     return NextResponse.json({ events: combined });
   } catch (error: any) {
     console.warn("DB query failed, returning fallback mock store:", error);
