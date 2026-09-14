@@ -60,7 +60,7 @@ export async function GET(req: NextRequest) {
     // 3. Department breakdown
     const departmentStats: Record<string, { total: number; submitted: number }> = {};
     activeEmployees.forEach((emp: any) => {
-      const dept = emp.department || "پسرانه";
+      const dept = emp.department || "عمومی";
       if (!departmentStats[dept]) {
         departmentStats[dept] = { total: 0, submitted: 0 };
       }
@@ -68,7 +68,7 @@ export async function GET(req: NextRequest) {
     });
 
     todayReports.forEach((rep: any) => {
-      const dept = rep.employeeDepartment || "پسرانه";
+      const dept = rep.employeeDepartment || "عمومی";
       if (departmentStats[dept]) {
         departmentStats[dept].submitted++;
       }

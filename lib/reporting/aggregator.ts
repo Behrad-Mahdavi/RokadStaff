@@ -85,12 +85,12 @@ export async function aggregateDailyStats(targetDate?: string) {
 
   // 4. Per-department aggregation
   const departments = Array.from(
-    new Set(activeEmployees.map((e: any) => e.department || "پسرانه").filter(Boolean))
+    new Set(activeEmployees.map((e: any) => e.department).filter(Boolean))
   );
 
   for (const dept of departments) {
-    const deptActive = activeEmployees.filter((e: any) => (e.department || "پسرانه") === dept);
-    const deptReports = dateReports.filter((r: any) => (r.employeeDepartment || "پسرانه") === dept);
+    const deptActive = activeEmployees.filter((e: any) => e.department === dept);
+    const deptReports = dateReports.filter((r: any) => r.employeeDepartment === dept);
     const deptOnTime = deptReports.filter((r: any) => r.status === "on_time").length;
     const deptLate = deptReports.filter((r: any) => r.status === "late").length;
 

@@ -162,6 +162,8 @@ export async function POST(req: NextRequest) {
 
       // Determine creator employee id
       let creatorId = session.employeeId;
+      if (creatorId === "emp-1") creatorId = undefined;
+
       if (!creatorId && session.email) {
         const empMatch: any[] = await db
           .select({ id: employees.id })
@@ -171,14 +173,18 @@ export async function POST(req: NextRequest) {
         creatorId = empMatch[0]?.id;
       }
 
-      if (!creatorId) {
-        // If created without employee record, find default admin employee
-        const firstEmp: any[] = await db.select().from(employees).limit(1);
-        creatorId = firstEmp[0]?.id;
+      if (!creatorId && session.role === "admin") {
+        const adminEmp: any[] = await db
+          .select({ id: employees.id })
+          .from(employees)
+          .where(eq(employees.role, "admin"))
+          .limit(1);
+        creatorId = adminEmp[0]?.id;
       }
 
       if (!creatorId) {
-        creatorId = "emp-1";
+        const firstEmp: any[] = await db.select().from(employees).limit(1);
+        creatorId = firstEmp[0]?.id;
       }
 
       // 1. Create project

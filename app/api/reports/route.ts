@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/client";
 import { dailyReports, employees, reportItems, reportHistory } from "@/lib/db/schema";
 import { eq, and, desc, inArray } from "drizzle-orm";
-import { getTehranDateString, isSubmissionLate } from "@/lib/utils";
+import { getTehranDateString, isSubmissionLate, matchesDepartment } from "@/lib/utils";
 import { getSession } from "@/lib/auth/session";
 
 export async function GET(req: NextRequest) {
@@ -77,7 +77,7 @@ export async function GET(req: NextRequest) {
         : department;
 
     const filteredReports = effectiveDept && effectiveDept !== "all"
-      ? reports.filter((r: any) => r.employeeDepartment === effectiveDept)
+      ? reports.filter((r: any) => matchesDepartment(r.employeeDepartment, effectiveDept))
       : reports;
 
     // Fetch all items for these reports

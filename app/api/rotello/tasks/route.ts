@@ -45,6 +45,26 @@ export async function POST(req: NextRequest) {
 
     // Determine creator employee id
     let creatorId = session.employeeId;
+    if (creatorId === "emp-1") creatorId = undefined;
+
+    if (!creatorId && session.email) {
+      const empMatch: any[] = await db
+        .select({ id: employees.id })
+        .from(employees)
+        .where(eq(employees.email, session.email.toLowerCase().trim()))
+        .limit(1);
+      creatorId = empMatch[0]?.id;
+    }
+
+    if (!creatorId && session.role === "admin") {
+      const adminEmp: any[] = await db
+        .select({ id: employees.id })
+        .from(employees)
+        .where(eq(employees.role, "admin"))
+        .limit(1);
+      creatorId = adminEmp[0]?.id;
+    }
+
     if (!creatorId) {
       const firstEmp: any[] = await db.select().from(employees).limit(1);
       creatorId = firstEmp[0]?.id;
@@ -169,9 +189,29 @@ export async function POST(req: NextRequest) {
       })
       .returning();
 
-    // 2. Add Assignees
+    // 2. Add Assignees (and auto-add to project_members if not yet member)
     if (Array.isArray(assigneeIds) && assigneeIds.length > 0) {
       for (const empId of assigneeIds) {
+        // Ensure assignee is in project_members
+        const existingMember = await db
+          .select()
+          .from(projectMembers)
+          .where(
+            and(
+              eq(projectMembers.projectId, projectId),
+              eq(projectMembers.employeeId, empId)
+            )
+          )
+          .limit(1);
+
+        if (existingMember.length === 0) {
+          await db.insert(projectMembers).values({
+            projectId,
+            employeeId: empId,
+            role: "member",
+          });
+        }
+
         await db.insert(taskAssignees).values({
           taskId: newTask.id,
           employeeId: empId,

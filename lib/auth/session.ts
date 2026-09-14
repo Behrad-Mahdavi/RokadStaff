@@ -46,30 +46,44 @@ export async function getSession(): Promise<SessionPayload | null> {
   if (!sessionToken) {
     if (process.env.NODE_ENV !== "production") {
       return {
-        userId: "admin-dev",
-        employeeId: "emp-1",
-        email: "admin@rotello.ir",
+        userId: "97288189-e0bc-4e32-a013-36062ad36350",
+        employeeId: "1cae01a4-00be-4828-bc72-080f5be11afa",
+        email: "admin@rokad.ir",
         role: "admin",
-        fullName: "مدیر روتلو",
+        fullName: "حامد آرون",
         department: "مدیریت",
       };
     }
     return null;
   }
   const decrypted = await decrypt(sessionToken);
-  if (decrypted && !decrypted.employeeId && decrypted.email) {
+  if (decrypted && (!decrypted.employeeId || decrypted.employeeId === "emp-1")) {
     try {
       const { getDb } = await import("@/lib/db/client");
       const { employees } = await import("@/lib/db/schema");
       const { eq } = await import("drizzle-orm");
       const db = getDb();
-      const emps = await db
-        .select({ id: employees.id })
-        .from(employees)
-        .where(eq(employees.email, decrypted.email.toLowerCase().trim()))
-        .limit(1);
-      if (emps.length > 0) {
-        decrypted.employeeId = emps[0].id;
+
+      if (decrypted.email) {
+        const emps = await db
+          .select({ id: employees.id })
+          .from(employees)
+          .where(eq(employees.email, decrypted.email.toLowerCase().trim()))
+          .limit(1);
+        if (emps.length > 0) {
+          decrypted.employeeId = emps[0].id;
+        }
+      }
+
+      if ((!decrypted.employeeId || decrypted.employeeId === "emp-1") && decrypted.role === "admin") {
+        const adminEmps = await db
+          .select({ id: employees.id })
+          .from(employees)
+          .where(eq(employees.role, "admin"))
+          .limit(1);
+        if (adminEmps.length > 0) {
+          decrypted.employeeId = adminEmps[0].id;
+        }
       }
     } catch {
       // Ignore fallback error if DB offline

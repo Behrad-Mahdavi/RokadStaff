@@ -40,6 +40,19 @@ export async function GET(req: NextRequest) {
       employeeCount: countsMap.get(dept.name) || 0,
     }));
 
+    // Also include any department that has employees but isn't explicitly in departments table
+    const existingNames = new Set(deptList.map((d: any) => d.name));
+    for (const [deptName, count] of countsMap.entries()) {
+      if (deptName && !existingNames.has(deptName)) {
+        result.push({
+          id: `dept-${deptName}`,
+          name: deptName,
+          description: null,
+          employeeCount: count,
+        });
+      }
+    }
+
     return NextResponse.json({ departments: result });
   } catch (error: any) {
     console.error("Fetch departments error:", error);

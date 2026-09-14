@@ -3,7 +3,7 @@ import { getDb } from "@/lib/db/client";
 import { dailyReports, employees } from "@/lib/db/schema";
 import { eq, and, desc, gte, lte } from "drizzle-orm";
 import { getSession } from "@/lib/auth/session";
-import { formatToJalali, formatTehranTime, getTehranDateString } from "@/lib/utils";
+import { formatToJalali, formatTehranTime, getTehranDateString, matchesDepartment } from "@/lib/utils";
 import ExcelJS from "exceljs";
 
 export async function GET(req: NextRequest) {
@@ -64,7 +64,7 @@ export async function GET(req: NextRequest) {
 
     const reports: any[] = await reportsQuery;
     const filteredReports = department && department !== "all"
-      ? reports.filter((r: any) => r.employeeDepartment === department)
+      ? reports.filter((r: any) => matchesDepartment(r.employeeDepartment, department))
       : reports;
 
     // 2. Create Excel Workbook

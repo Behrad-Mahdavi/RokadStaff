@@ -38,6 +38,36 @@ function ReportsContent() {
   const isSelectedFriday = isFriday(selectedDate);
   const [selectedDept, setSelectedDept] = useState("all");
   const [search, setSearch] = useState("");
+  const [departments, setDepartments] = useState<string[]>([]);
+  const [userRole, setUserRole] = useState<string>("admin");
+  const [supervisorDept, setSupervisorDept] = useState<string | null>(null);
+
+  useEffect(() => {
+    // 1. Fetch user session to check supervisor role
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.user) {
+          setUserRole(data.user.role);
+          if (data.user.role === "supervisor" && data.user.assignedDepartment) {
+            setSupervisorDept(data.user.assignedDepartment);
+            setSelectedDept(data.user.assignedDepartment);
+          }
+        }
+      })
+      .catch(() => {});
+
+    // 2. Fetch all departments
+    fetch("/api/departments")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.departments) {
+          const names: string[] = data.departments.map((d: any) => d.name).filter(Boolean);
+          setDepartments(names);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   // Submitted reports state
   const [reports, setReports] = useState<any[]>([]);
@@ -257,16 +287,26 @@ function ReportsContent() {
         </div>
 
         {/* Department Filter */}
-        <div className="w-full md:w-44">
-          <select
-            value={selectedDept}
-            onChange={(e) => setSelectedDept(e.target.value)}
-            className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-xs sm:text-sm bg-[#FAFAFA] dark:bg-[#1C2536] dark:text-white focus:border-primary focus:outline-none font-bold text-sec dark:text-white"
-          >
-            <option value="all">همه دپارتمان‌ها</option>
-            <option value="پسرانه">پسرانه</option>
-            <option value="دخترانه">دخترانه</option>
-          </select>
+        <div className="w-full md:w-48">
+          {userRole === "supervisor" && supervisorDept ? (
+            <div className="w-full px-3 py-2.5 rounded-xl border border-primary/30 bg-ecosystem-light/40 dark:bg-[#1C2536] text-xs sm:text-sm font-bold text-sec dark:text-white flex items-center justify-between">
+              <span>دپارتمان {supervisorDept}</span>
+              <span className="text-[10px] font-black text-primary bg-white dark:bg-gray-800 px-2 py-0.5 rounded-md shadow-xs">راهبر</span>
+            </div>
+          ) : (
+            <select
+              value={selectedDept}
+              onChange={(e) => setSelectedDept(e.target.value)}
+              className="w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-xs sm:text-sm bg-[#FAFAFA] dark:bg-[#1C2536] dark:text-white focus:border-primary focus:outline-none font-bold text-sec dark:text-white"
+            >
+              <option value="all">همه دپارتمان‌ها</option>
+              {departments.map((dept) => (
+                <option key={dept} value={dept}>
+                  {dept}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
 
         {/* Status Filter (Only for submitted reports) */}

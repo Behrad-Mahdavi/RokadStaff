@@ -37,6 +37,36 @@ export default function AnalyticsPage() {
   });
   const [to, setTo] = useState(todayStr);
   const [selectedDept, setSelectedDept] = useState("all");
+  const [departments, setDepartments] = useState<string[]>([]);
+  const [userRole, setUserRole] = useState<string>("admin");
+  const [supervisorDept, setSupervisorDept] = useState<string | null>(null);
+
+  useEffect(() => {
+    // 1. Fetch user session to check supervisor role
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.user) {
+          setUserRole(data.user.role);
+          if (data.user.role === "supervisor" && data.user.assignedDepartment) {
+            setSupervisorDept(data.user.assignedDepartment);
+            setSelectedDept(data.user.assignedDepartment);
+          }
+        }
+      })
+      .catch(() => {});
+
+    // 2. Fetch all departments
+    fetch("/api/departments")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.departments) {
+          const names: string[] = data.departments.map((d: any) => d.name).filter(Boolean);
+          setDepartments(names);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   // Employee history modal
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(null);
@@ -197,15 +227,25 @@ export default function AnalyticsPage() {
             </div>
           </div>
 
-          <select
-            value={selectedDept}
-            onChange={(e) => setSelectedDept(e.target.value)}
-            className="px-3.5 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-xs sm:text-sm bg-gray-50 dark:bg-[#1C2536] dark:text-white focus:border-primary focus:outline-none font-bold text-sec dark:text-white"
-          >
-            <option value="all">تمام دپارتمان‌ها</option>
-            <option value="پسرانه">پسرانه</option>
-            <option value="دخترانه">دخترانه</option>
-          </select>
+          {userRole === "supervisor" && supervisorDept ? (
+            <div className="px-3.5 py-2 rounded-xl border border-primary/30 bg-ecosystem-light/40 dark:bg-[#1C2536] text-xs sm:text-sm font-bold text-sec dark:text-white flex items-center gap-2">
+              <span>دپارتمان {supervisorDept}</span>
+              <span className="text-[10px] font-black text-primary bg-white dark:bg-gray-800 px-2 py-0.5 rounded-md shadow-xs">راهبر</span>
+            </div>
+          ) : (
+            <select
+              value={selectedDept}
+              onChange={(e) => setSelectedDept(e.target.value)}
+              className="px-3.5 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-xs sm:text-sm bg-gray-50 dark:bg-[#1C2536] dark:text-white focus:border-primary focus:outline-none font-bold text-sec dark:text-white"
+            >
+              <option value="all">تمام دپارتمان‌ها</option>
+              {departments.map((dept) => (
+                <option key={dept} value={dept}>
+                  {dept}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
       </div>
 

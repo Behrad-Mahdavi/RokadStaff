@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/client";
 import { dailyStats, dailyReports, employees } from "@/lib/db/schema";
-import { eq, and, gte, lte, isNull } from "drizzle-orm";
+import { eq, and, gte, lte, isNull, inArray } from "drizzle-orm";
 import { getSession } from "@/lib/auth/session";
-import { getTehranDateString, isFriday } from "@/lib/utils";
+import { getTehranDateString, isFriday, matchesDepartment, getDepartmentAliases } from "@/lib/utils";
 
 export async function GET(req: NextRequest) {
   const session = await getSession();
@@ -31,7 +31,12 @@ export async function GET(req: NextRequest) {
     ];
 
     if (department && department !== "all") {
-      conditions.push(eq(dailyStats.department, department));
+      const aliases = getDepartmentAliases(department);
+      if (aliases.length > 1) {
+        conditions.push(inArray(dailyStats.department, aliases));
+      } else {
+        conditions.push(eq(dailyStats.department, department));
+      }
     } else {
       conditions.push(isNull(dailyStats.department));
     }
@@ -47,7 +52,7 @@ export async function GET(req: NextRequest) {
       const allEmployees: any[] = await db.select().from(employees);
       let activeEmployees = allEmployees.filter((e: any) => e.isActive);
       if (department && department !== "all") {
-        activeEmployees = activeEmployees.filter((e: any) => e.department === department);
+        activeEmployees = activeEmployees.filter((e: any) => matchesDepartment(e.department, department));
       }
 
       const todayReportsQuery = db
@@ -63,7 +68,7 @@ export async function GET(req: NextRequest) {
 
       const todayReports: any[] = await todayReportsQuery;
       const filteredReports = department && department !== "all"
-        ? todayReports.filter((r: any) => r.employeeDepartment === department)
+        ? todayReports.filter((r: any) => matchesDepartment(r.employeeDepartment, department))
         : todayReports;
 
       todayLiveStat = {

@@ -718,6 +718,37 @@ export default function ProjectBoardPage() {
                   );
                 })}
               </div>
+
+              {/* Quick select from other colleagues / Senior Admin */}
+              <div className="mt-2">
+                <select
+                  value=""
+                  onChange={(e) => {
+                    const empId = e.target.value;
+                    if (empId && !newTaskAssignees.includes(empId)) {
+                      setNewTaskAssignees((prev) => [...prev, empId]);
+                    }
+                  }}
+                  className="w-full text-xs font-bold p-2.5 rounded-xl border border-dashed border-gray-300 dark:border-gray-700 bg-white dark:bg-[#121824] text-slate-700 dark:text-gray-300 hover:border-primary focus:outline-none transition-colors"
+                >
+                  <option value="">+ افزودن مسئول از سایر همکاران یا راهبر ارشد...</option>
+                  {allEmployees
+                    .filter((e: any) => !newTaskAssignees.includes(e.id))
+                    .map((emp: any) => {
+                      const label =
+                        emp.role === "admin"
+                          ? `${emp.fullName} (راهبر ارشد سیستم)`
+                          : emp.role === "supervisor"
+                          ? `${emp.fullName} (راهبر دپارتمان ${emp.department || ""})`
+                          : `${emp.fullName} (${emp.department || "عضو تیم"})`;
+                      return (
+                        <option key={emp.id} value={emp.id}>
+                          {label}
+                        </option>
+                      );
+                    })}
+                </select>
+              </div>
             </div>
           )}
 

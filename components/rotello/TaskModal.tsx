@@ -80,7 +80,7 @@ export default function TaskModal({
     if (projectMembers && projectMembers.length > 0) {
       setOrganizationEmployees(projectMembers);
     }
-    fetch("/api/employees")
+    fetch("/api/employees?all=true")
       .then((res) => res.json())
       .then((data) => {
         if (data.employees && data.employees.length > 0) {
@@ -89,6 +89,7 @@ export default function TaskModal({
               employeeId: e.id,
               fullName: e.fullName,
               department: e.department,
+              role: e.role,
             }))
           );
         }
@@ -518,7 +519,15 @@ export default function TaskModal({
                                 : "hover:bg-gray-100 dark:hover:bg-gray-800 text-ink-normal/80 dark:text-gray-300"
                             }`}
                           >
-                            <span>{member.fullName} ({member.department || "پسرانه"})</span>
+                            <span>
+                              {member.fullName} (
+                              {member.role === "admin"
+                                ? "راهبر ارشد سیستم"
+                                : member.role === "supervisor"
+                                ? `راهبر دپارتمان ${member.department || ""}`
+                                : member.department || "پسرانه"}
+                              )
+                            </span>
                             {isAssigned && <span>✅</span>}
                           </button>
                         );

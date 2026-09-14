@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/client";
 import { dailyStats } from "@/lib/db/schema";
-import { and, gte, lte, isNull, eq } from "drizzle-orm";
+import { and, gte, lte, isNull, eq, inArray } from "drizzle-orm";
 import { getSession } from "@/lib/auth/session";
-import { getTehranDateString, formatToJalali } from "@/lib/utils";
+import { getTehranDateString, formatToJalali, getDepartmentAliases } from "@/lib/utils";
 
 export async function GET(req: NextRequest) {
   const session = await getSession();
@@ -33,7 +33,12 @@ export async function GET(req: NextRequest) {
     ];
 
     if (department && department !== "all") {
-      conditions.push(eq(dailyStats.department, department));
+      const aliases = getDepartmentAliases(department);
+      if (aliases.length > 1) {
+        conditions.push(inArray(dailyStats.department, aliases));
+      } else {
+        conditions.push(eq(dailyStats.department, department));
+      }
     } else {
       conditions.push(isNull(dailyStats.department));
     }

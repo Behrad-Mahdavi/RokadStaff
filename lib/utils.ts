@@ -167,3 +167,36 @@ export function isSubmissionLate(now: Date = new Date()): boolean {
   return false;
 }
 
+// Check if employee department matches selected filter (handling exact and alias matches)
+export function matchesDepartment(
+  empDept: string | null | undefined,
+  filterDept: string | null | undefined
+): boolean {
+  if (!filterDept || filterDept === "all") return true;
+  if (!empDept) return false;
+  const cleanEmp = empDept.trim();
+  const cleanFilter = filterDept.trim();
+  if (cleanEmp === cleanFilter) return true;
+
+  // Handle aliases between legacy 'پسرانه'/'دخترانه' and full 'هنرستان پسرانه'/'هنرستان دخترانه'
+  if (cleanFilter === "هنرستان پسرانه" && cleanEmp === "پسرانه") return true;
+  if (cleanFilter === "پسرانه" && cleanEmp === "هنرستان پسرانه") return true;
+  if (cleanFilter === "هنرستان دخترانه" && cleanEmp === "دخترانه") return true;
+  if (cleanFilter === "دخترانه" && cleanEmp === "هنرستان دخترانه") return true;
+
+  return false;
+}
+
+// Return array of aliases for a given department
+export function getDepartmentAliases(dept: string): string[] {
+  if (!dept || dept === "all") return [];
+  const clean = dept.trim();
+  if (clean === "هنرستان پسرانه" || clean === "پسرانه") {
+    return ["هنرستان پسرانه", "پسرانه"];
+  }
+  if (clean === "هنرستان دخترانه" || clean === "دخترانه") {
+    return ["هنرستان دخترانه", "دخترانه"];
+  }
+  return [clean];
+}
+

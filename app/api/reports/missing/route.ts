@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/client";
 import { employees, dailyReports } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
-import { getTehranDateString, isFriday } from "@/lib/utils";
+import { getTehranDateString, isFriday, matchesDepartment } from "@/lib/utils";
 import { getSession } from "@/lib/auth/session";
 
 export async function GET(req: NextRequest) {
@@ -52,7 +52,7 @@ export async function GET(req: NextRequest) {
         : department;
 
     if (effectiveDept && effectiveDept !== "all") {
-      missing = missing.filter((emp: any) => emp.department === effectiveDept);
+      missing = missing.filter((emp: any) => matchesDepartment(emp.department, effectiveDept));
     }
 
     const serialized = missing.map((emp: any) => ({
