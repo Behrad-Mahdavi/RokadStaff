@@ -24,21 +24,39 @@ export async function POST(
   }
 
   try {
-    // Check permission (Manager or Admin)
-    if (session.role !== "admin" && session.employeeId) {
+    // Check permission (Manager, Creator, or Admin)
+    if (session.role !== "admin") {
+      let resolvedEmpId = session.employeeId;
+      if (!resolvedEmpId && session.email) {
+        const empMatch = await db
+          .select({ id: employees.id })
+          .from(employees)
+          .where(eq(employees.email, session.email.toLowerCase().trim()))
+          .limit(1);
+        resolvedEmpId = empMatch[0]?.id;
+      }
+
+      if (!resolvedEmpId) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+
+      const { projects } = await import("@/lib/db/schema");
+      const projCheck = await db.select({ createdBy: projects.createdBy }).from(projects).where(eq(projects.id, projectId)).limit(1);
+      const isCreator = projCheck[0]?.createdBy === resolvedEmpId;
+
       const membership = await db
         .select()
         .from(projectMembers)
         .where(
           and(
             eq(projectMembers.projectId, projectId),
-            eq(projectMembers.employeeId, session.employeeId),
+            eq(projectMembers.employeeId, resolvedEmpId),
             eq(projectMembers.role, "manager")
           )
         )
         .limit(1);
 
-      if (membership.length === 0) {
+      if (membership.length === 0 && !isCreator) {
         return NextResponse.json({ error: "فقط مدیر پروژه مجاز به افزودن عضو است." }, { status: 403 });
       }
     }
@@ -115,6 +133,43 @@ export async function DELETE(
 
     if (!employeeId) {
       return NextResponse.json({ error: "شناسه کارمند الزامی است." }, { status: 400 });
+    }
+
+    // Permission check
+    if (session.role !== "admin") {
+      let resolvedEmpId = session.employeeId;
+      if (!resolvedEmpId && session.email) {
+        const empMatch = await db
+          .select({ id: employees.id })
+          .from(employees)
+          .where(eq(employees.email, session.email.toLowerCase().trim()))
+          .limit(1);
+        resolvedEmpId = empMatch[0]?.id;
+      }
+
+      if (!resolvedEmpId) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+
+      const { projects } = await import("@/lib/db/schema");
+      const projCheck = await db.select({ createdBy: projects.createdBy }).from(projects).where(eq(projects.id, projectId)).limit(1);
+      const isCreator = projCheck[0]?.createdBy === resolvedEmpId;
+
+      const membership = await db
+        .select()
+        .from(projectMembers)
+        .where(
+          and(
+            eq(projectMembers.projectId, projectId),
+            eq(projectMembers.employeeId, resolvedEmpId),
+            eq(projectMembers.role, "manager")
+          )
+        )
+        .limit(1);
+
+      if (membership.length === 0 && !isCreator) {
+        return NextResponse.json({ error: "فقط مدیر پروژه مجاز به حذف عضو است." }, { status: 403 });
+      }
     }
 
     try {

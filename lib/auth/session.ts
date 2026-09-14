@@ -57,15 +57,23 @@ export async function getSession(): Promise<SessionPayload | null> {
     return null;
   }
   const decrypted = await decrypt(sessionToken);
-  if (!decrypted && process.env.NODE_ENV !== "production") {
-    return {
-      userId: "admin-dev",
-      employeeId: "emp-1",
-      email: "admin@rotello.ir",
-      role: "admin",
-      fullName: "مدیر روتلو",
-      department: "مدیریت",
-    };
+  if (decrypted && !decrypted.employeeId && decrypted.email) {
+    try {
+      const { getDb } = await import("@/lib/db/client");
+      const { employees } = await import("@/lib/db/schema");
+      const { eq } = await import("drizzle-orm");
+      const db = getDb();
+      const emps = await db
+        .select({ id: employees.id })
+        .from(employees)
+        .where(eq(employees.email, decrypted.email.toLowerCase().trim()))
+        .limit(1);
+      if (emps.length > 0) {
+        decrypted.employeeId = emps[0].id;
+      }
+    } catch {
+      // Ignore fallback error if DB offline
+    }
   }
   return decrypted;
 }

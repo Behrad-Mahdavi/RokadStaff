@@ -189,6 +189,7 @@ export async function PATCH(req: NextRequest) {
     // 5. Update session cookie so UI immediately reflects changes
     await setSessionCookie({
       userId: updatedUser.id,
+      employeeId: session.employeeId,
       email: updatedUser.email,
       role: updatedUser.role,
       fullName: updatedUser.fullName || "مدیر سیستم",

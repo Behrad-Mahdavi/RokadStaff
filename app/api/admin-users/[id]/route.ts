@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/client";
-import { adminUsers } from "@/lib/db/schema";
+import { adminUsers, employees } from "@/lib/db/schema";
 import { eq, and, ne } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { getSession } from "@/lib/auth/session";
@@ -123,6 +123,27 @@ export async function PATCH(
         createdAt: adminUsers.createdAt,
         updatedAt: adminUsers.updatedAt,
       });
+
+    // Sync updates to corresponding employee record
+    try {
+      const empUpdate: Record<string, any> = { updatedAt: new Date() };
+      if (updated.fullName) empUpdate.fullName = updated.fullName;
+      if (updated.email) empUpdate.email = updated.email;
+      if (updated.role) empUpdate.role = updated.role;
+      if (updated.role === "supervisor") {
+        empUpdate.department = updated.assignedDepartment;
+        empUpdate.position = "راهبر دپارتمان";
+      } else if (updated.role === "admin") {
+        empUpdate.position = "راهبر ارشد";
+      }
+
+      await db
+        .update(employees)
+        .set(empUpdate)
+        .where(eq(employees.email, targetUser.email.toLowerCase().trim()));
+    } catch (empErr) {
+      console.warn("Failed to sync updated admin user to employees:", empErr);
+    }
 
     return NextResponse.json({
       success: true,

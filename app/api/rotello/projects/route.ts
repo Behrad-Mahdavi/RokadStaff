@@ -24,17 +24,41 @@ export async function GET(req: NextRequest) {
 
     let accessibleProjectIds: string[] = [];
 
-    // Admin sees all projects; Employee sees projects where they are a member
-    if (session.role === "admin" || session.role === "supervisor") {
+    // Admin sees all projects; Supervisor/Employee only sees projects they created or where they are a member
+    if (session.role === "admin") {
       const allP: any[] = await db.select({ id: projects.id }).from(projects);
       accessibleProjectIds = allP.map((p) => p.id);
-    } else if (session.employeeId) {
-      const memberships: any[] = await db
-        .select({ projectId: projectMembers.projectId })
-        .from(projectMembers)
-        .where(eq(projectMembers.employeeId, session.employeeId));
+    } else {
+      let resolvedEmpId = session.employeeId;
+      if (!resolvedEmpId && session.email) {
+        const empMatch = await db
+          .select({ id: employees.id })
+          .from(employees)
+          .where(eq(employees.email, session.email.toLowerCase().trim()))
+          .limit(1);
+        resolvedEmpId = empMatch[0]?.id;
+      }
 
-      accessibleProjectIds = memberships.map((m) => m.projectId);
+      if (resolvedEmpId) {
+        // 1. Projects where user is a member
+        const memberships: any[] = await db
+          .select({ projectId: projectMembers.projectId })
+          .from(projectMembers)
+          .where(eq(projectMembers.employeeId, resolvedEmpId));
+
+        // 2. Projects created by this user
+        const createdProjs: any[] = await db
+          .select({ id: projects.id })
+          .from(projects)
+          .where(eq(projects.createdBy, resolvedEmpId));
+
+        const memberProjectIds = memberships.map((m) => m.projectId);
+        const createdProjectIds = createdProjs.map((p) => p.id);
+
+        accessibleProjectIds = Array.from(
+          new Set([...memberProjectIds, ...createdProjectIds])
+        );
+      }
     }
 
     if (accessibleProjectIds.length === 0) {
@@ -83,6 +107,8 @@ export async function GET(req: NextRequest) {
           (m) => m.employeeId === session.employeeId
         );
 
+        const isCreator = proj.createdBy === session.employeeId;
+
         return {
           ...proj,
           membersCount: members.length,
@@ -91,7 +117,7 @@ export async function GET(req: NextRequest) {
           userRole:
             session.role === "admin"
               ? "owner"
-              : currentUserMember?.role || "viewer",
+              : currentUserMember?.role || (isCreator ? "manager" : "viewer"),
         };
       })
     );
@@ -102,7 +128,13 @@ export async function GET(req: NextRequest) {
     const { getMockProjects } = await import("@/lib/mockRotello");
     const { searchParams } = new URL(req.url);
     const includeArchived = searchParams.get("archived") === "true";
-    return NextResponse.json({ projects: getMockProjects(includeArchived) });
+    return NextResponse.json({
+      projects: getMockProjects({
+        includeArchived,
+        employeeId: session.employeeId,
+        role: session.role,
+      }),
+    });
   }
 }
 
@@ -130,8 +162,17 @@ export async function POST(req: NextRequest) {
 
       // Determine creator employee id
       let creatorId = session.employeeId;
+      if (!creatorId && session.email) {
+        const empMatch: any[] = await db
+          .select({ id: employees.id })
+          .from(employees)
+          .where(eq(employees.email, session.email.toLowerCase().trim()))
+          .limit(1);
+        creatorId = empMatch[0]?.id;
+      }
+
       if (!creatorId) {
-        // If admin created without employee record, find default admin employee
+        // If created without employee record, find default admin employee
         const firstEmp: any[] = await db.select().from(employees).limit(1);
         creatorId = firstEmp[0]?.id;
       }

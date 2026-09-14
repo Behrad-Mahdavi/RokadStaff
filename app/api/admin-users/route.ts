@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/client";
-import { adminUsers } from "@/lib/db/schema";
+import { adminUsers, employees } from "@/lib/db/schema";
 import { asc, eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { getSession } from "@/lib/auth/session";
@@ -113,6 +113,38 @@ export async function POST(req: NextRequest) {
         createdAt: adminUsers.createdAt,
         updatedAt: adminUsers.updatedAt,
       });
+
+    // Also synchronize with employees table so user appears across Rotello projects/calendar
+    try {
+      const existingEmp = await db
+        .select()
+        .from(employees)
+        .where(eq(employees.email, cleanEmail))
+        .limit(1);
+
+      if (existingEmp.length === 0) {
+        await db.insert(employees).values({
+          fullName: cleanName,
+          email: cleanEmail,
+          role: cleanRole,
+          department: cleanDept || "مدیریت",
+          position: cleanRole === "admin" ? "راهبر ارشد" : "راهبر دپارتمان",
+          isActive: true,
+        });
+      } else {
+        await db
+          .update(employees)
+          .set({
+            fullName: cleanName,
+            role: cleanRole,
+            department: cleanDept || existingEmp[0].department,
+            updatedAt: new Date(),
+          })
+          .where(eq(employees.id, existingEmp[0].id));
+      }
+    } catch (empSyncErr) {
+      console.warn("Failed to sync new admin user to employees:", empSyncErr);
+    }
 
     return NextResponse.json({
       success: true,

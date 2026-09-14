@@ -21,8 +21,10 @@ export async function GET(req: NextRequest) {
     const db = getDb();
     const conditions = [];
 
-    // Scope for supervisor: only see their assigned department
-    if (session.role === "supervisor" && session.assignedDepartment) {
+    const allParam = searchParams.get("all") === "true";
+
+    // Scope for supervisor: only see their assigned department in reporting unless requesting all (e.g. for projects / task assignment)
+    if (!allParam && session.role === "supervisor" && session.assignedDepartment) {
       conditions.push(eq(employees.department, session.assignedDepartment));
     } else if (department && department !== "all") {
       conditions.push(eq(employees.department, department));

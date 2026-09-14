@@ -49,22 +49,38 @@ export async function GET(
     let userRole = "member";
     if (session.role === "admin") {
       userRole = "owner";
-    } else if (session.employeeId) {
+    } else {
+      let resolvedEmpId = session.employeeId;
+      if (!resolvedEmpId && session.email) {
+        const empMatch = await db
+          .select({ id: employees.id })
+          .from(employees)
+          .where(eq(employees.email, session.email.toLowerCase().trim()))
+          .limit(1);
+        resolvedEmpId = empMatch[0]?.id;
+      }
+
+      if (!resolvedEmpId) {
+        return NextResponse.json({ error: "شما به این پروژه دسترسی ندارید." }, { status: 403 });
+      }
+
+      const isCreator = project.createdBy === resolvedEmpId;
+
       const membership = await db
         .select()
         .from(projectMembers)
         .where(
           and(
             eq(projectMembers.projectId, projectId),
-            eq(projectMembers.employeeId, session.employeeId)
+            eq(projectMembers.employeeId, resolvedEmpId)
           )
         )
         .limit(1);
 
-      if (membership.length === 0) {
-        return NextResponse.json({ error: "شما عضو این پروژه نیستید." }, { status: 403 });
+      if (membership.length === 0 && !isCreator) {
+        return NextResponse.json({ error: "شما به این پروژه دسترسی ندارید." }, { status: 403 });
       }
-      userRole = membership[0].role;
+      userRole = membership[0]?.role || (isCreator ? "manager" : "member");
     }
 
     // 3. Fetch project members
@@ -76,6 +92,7 @@ export async function GET(
         fullName: employees.fullName,
         department: employees.department,
         position: employees.position,
+        employeeRole: employees.role,
       })
       .from(projectMembers)
       .innerJoin(employees, eq(projectMembers.employeeId, employees.id))
@@ -223,21 +240,38 @@ export async function PATCH(
   const db = getDb();
 
   try {
-    if (session.role !== "admin" && session.employeeId) {
+    if (session.role !== "admin") {
+      let resolvedEmpId = session.employeeId;
+      if (!resolvedEmpId && session.email) {
+        const empMatch = await db
+          .select({ id: employees.id })
+          .from(employees)
+          .where(eq(employees.email, session.email.toLowerCase().trim()))
+          .limit(1);
+        resolvedEmpId = empMatch[0]?.id;
+      }
+
+      if (!resolvedEmpId) {
+        return NextResponse.json({ error: "فقط مدیر یا سازنده پروژه مجاز به ویرایش است." }, { status: 403 });
+      }
+
+      const projCheck = await db.select({ createdBy: projects.createdBy }).from(projects).where(eq(projects.id, projectId)).limit(1);
+      const isCreator = projCheck[0]?.createdBy === resolvedEmpId;
+
       const membership = await db
         .select()
         .from(projectMembers)
         .where(
           and(
             eq(projectMembers.projectId, projectId),
-            eq(projectMembers.employeeId, session.employeeId),
+            eq(projectMembers.employeeId, resolvedEmpId),
             eq(projectMembers.role, "manager")
           )
         )
         .limit(1);
 
-      if (membership.length === 0) {
-        return NextResponse.json({ error: "فقط مدیر پروژه مجاز به ویرایش است." }, { status: 403 });
+      if (membership.length === 0 && !isCreator) {
+        return NextResponse.json({ error: "فقط مدیر یا سازنده پروژه مجاز به ویرایش است." }, { status: 403 });
       }
     }
 
@@ -289,22 +323,39 @@ export async function DELETE(
   const db = getDb();
 
   try {
-    // Only admin or project manager can delete
-    if (session.role !== "admin" && session.employeeId) {
+    // Only admin or project manager / creator can delete
+    if (session.role !== "admin") {
+      let resolvedEmpId = session.employeeId;
+      if (!resolvedEmpId && session.email) {
+        const empMatch = await db
+          .select({ id: employees.id })
+          .from(employees)
+          .where(eq(employees.email, session.email.toLowerCase().trim()))
+          .limit(1);
+        resolvedEmpId = empMatch[0]?.id;
+      }
+
+      if (!resolvedEmpId) {
+        return NextResponse.json({ error: "تنها مدیر یا سازنده پروژه مجاز به حذف است." }, { status: 403 });
+      }
+
+      const projCheck = await db.select({ createdBy: projects.createdBy }).from(projects).where(eq(projects.id, projectId)).limit(1);
+      const isCreator = projCheck[0]?.createdBy === resolvedEmpId;
+
       const membership = await db
         .select()
         .from(projectMembers)
         .where(
           and(
             eq(projectMembers.projectId, projectId),
-            eq(projectMembers.employeeId, session.employeeId),
+            eq(projectMembers.employeeId, resolvedEmpId),
             eq(projectMembers.role, "manager")
           )
         )
         .limit(1);
 
-      if (membership.length === 0) {
-        return NextResponse.json({ error: "تنها مدیر یا مالک پروژه مجاز به حذف است." }, { status: 403 });
+      if (membership.length === 0 && !isCreator) {
+        return NextResponse.json({ error: "تنها مدیر یا سازنده پروژه مجاز به حذف است." }, { status: 403 });
       }
     }
 

@@ -50,10 +50,27 @@ globalStore.__rotelloProjects = [];
 globalStore.__rotelloColumns = [];
 globalStore.__rotelloTasks = [];
 
-export function getMockProjects(includeArchived = false): MockProject[] {
-  const all: MockProject[] = globalStore.__rotelloProjects || [];
-  if (includeArchived) return all;
-  return all.filter((p) => !p.isArchived);
+export function getMockProjects(
+  options: boolean | { includeArchived?: boolean; employeeId?: string; role?: string } = false
+): MockProject[] {
+  const includeArchived = typeof options === "boolean" ? options : Boolean(options?.includeArchived);
+  const employeeId = typeof options === "object" ? options?.employeeId : undefined;
+  const role = typeof options === "object" ? options?.role : undefined;
+
+  let all: MockProject[] = globalStore.__rotelloProjects || [];
+  if (!includeArchived) {
+    all = all.filter((p) => !p.isArchived);
+  }
+
+  if (role && role !== "admin" && employeeId) {
+    all = all.filter(
+      (p) =>
+        p.createdBy === employeeId ||
+        (p.members && p.members.some((m: any) => m.employeeId === employeeId))
+    );
+  }
+
+  return all;
 }
 
 export function updateMockProject(

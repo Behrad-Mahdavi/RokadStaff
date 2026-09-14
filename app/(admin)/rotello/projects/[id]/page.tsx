@@ -91,7 +91,7 @@ export default function ProjectBoardPage() {
 
   const fetchAllEmployees = async () => {
     try {
-      const res = await fetch("/api/employees");
+      const res = await fetch("/api/employees?all=true");
       if (res.ok) {
         const json = await res.json();
         setAllEmployees(json.employees || []);
@@ -465,15 +465,6 @@ export default function ProjectBoardPage() {
               <div className="flex items-center justify-between pb-3 mb-3 border-b border-gray-200 dark:border-gray-800 px-1">
                 <div className="flex items-center gap-2">
                   <span className="font-black text-sm text-sec dark:text-white">{column.name}</span>
-                  {column.isDoneColumn && (
-                    <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-accent-green/10 text-accent-green border border-accent-green/20">
-                      <span>✅</span>
-                      <span>تکمیل‌شده</span>
-                      {!boardData?.isAdmin && (
-                        <span className="text-ink-normal/50 dark:text-gray-400 text-[9px] mr-0.5">(فقط مدیر)</span>
-                      )}
-                    </span>
-                  )}
                   <span className="w-5 h-5 rounded-full bg-gray-200 dark:bg-gray-700 text-ink-normal/70 dark:text-gray-300 text-[11px] font-bold flex items-center justify-center">
                     {toPersianDigits(colTasks.length)}
                   </span>
@@ -853,15 +844,25 @@ export default function ProjectBoardPage() {
                       className="w-full text-xs font-bold p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#121824] text-slate-900 dark:text-white focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-colors"
                     >
                       <option value="" className="bg-white dark:bg-[#121824] text-slate-900 dark:text-white">انتخاب همکار...</option>
-                      {allEmployees.map((emp: any) => (
-                        <option
-                          key={emp.id}
-                          value={emp.id}
-                          className="bg-white dark:bg-[#121824] text-slate-900 dark:text-white"
-                        >
-                          {emp.fullName} ({emp.department || "پسرانه"})
-                        </option>
-                      ))}
+                      {allEmployees.map((emp: any) => {
+                        const isSupervisor = emp.role === "supervisor";
+                        const isAdmin = emp.role === "admin";
+                        const labelText = isAdmin
+                          ? `${emp.fullName} (راهبر ارشد سیستم)`
+                          : isSupervisor
+                          ? `${emp.fullName} (راهبر دپارتمان ${emp.department || ""})`
+                          : `${emp.fullName} (${emp.department || "عضو تیم"})`;
+
+                        return (
+                          <option
+                            key={emp.id}
+                            value={emp.id}
+                            className="bg-white dark:bg-[#121824] text-slate-900 dark:text-white"
+                          >
+                            {labelText}
+                          </option>
+                        );
+                      })}
                     </select>
                   </div>
 
@@ -942,7 +943,11 @@ export default function ProjectBoardPage() {
                             )}
                           </div>
                           <div className="text-[11px] text-ink-normal/50 dark:text-gray-400 mt-0.5 font-medium">
-                            بخش: {m.department || "پسرانه"}
+                            {m.employeeRole === "supervisor"
+                              ? `راهبر دپارتمان ${m.department || ""}`
+                              : m.employeeRole === "admin"
+                              ? "راهبر ارشد سیستم"
+                              : `بخش: ${m.department || "پسرانه"}`}
                           </div>
                         </div>
                       </div>

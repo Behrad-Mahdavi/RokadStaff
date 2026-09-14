@@ -47,6 +47,7 @@ async function main() {
       await sql`
         UPDATE employees
         SET role = ${admin.role},
+            department = COALESCE(${admin.assigned_department}, department),
             email = ${admin.email.toLowerCase().trim()},
             updated_at = NOW()
         WHERE id = ${existingEmp[0].id};

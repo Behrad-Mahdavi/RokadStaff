@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/client";
-import { adminUsers } from "@/lib/db/schema";
+import { adminUsers, employees } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { setSessionCookie } from "@/lib/auth/session";
@@ -66,9 +66,40 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Ensure corresponding employee record exists and obtain employeeId
+    let employeeId: string | undefined = undefined;
+    try {
+      const db = getDb();
+      const empRes = await db
+        .select()
+        .from(employees)
+        .where(eq(employees.email, cleanEmail))
+        .limit(1);
+
+      if (empRes.length > 0) {
+        employeeId = empRes[0].id;
+      } else {
+        const [newEmp] = await db
+          .insert(employees)
+          .values({
+            fullName: user.fullName || "کاربر سیستم",
+            email: cleanEmail,
+            role: user.role || "employee",
+            department: user.assignedDepartment || "مدیریت",
+            position: user.role === "admin" ? "راهبر ارشد" : "راهبر دپارتمان",
+            isActive: true,
+          })
+          .returning();
+        employeeId = newEmp.id;
+      }
+    } catch (empErr) {
+      console.warn("Could not find or sync employee for user login:", empErr);
+    }
+
     // Set session cookie
     await setSessionCookie({
       userId: user.id,
+      employeeId: employeeId,
       email: user.email,
       role: user.role,
       fullName: user.fullName || "مدیر سیستم",
@@ -80,6 +111,7 @@ export async function POST(req: NextRequest) {
       success: true,
       user: {
         id: user.id,
+        employeeId: employeeId || null,
         email: user.email,
         fullName: user.fullName,
         role: user.role,
