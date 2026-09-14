@@ -4,6 +4,9 @@ import React from "react";
 import {
   CalendarGridDay,
   PERSIAN_WEEKDAYS_ORDERED,
+  TIMELINE_HOURS,
+  TIMELINE_START_HOUR,
+  layoutEventsForDay,
 } from "@/lib/calendarUtils";
 import { toPersianDigits } from "@/lib/utils";
 import { cn } from "@/lib/utils";
@@ -16,21 +19,7 @@ interface WeekViewProps {
   onNewEventForSlot: (dateIso: string, timeStr?: string) => void;
 }
 
-const HOURS = [
-  "08:00",
-  "09:00",
-  "10:00",
-  "11:00",
-  "12:00",
-  "13:00",
-  "14:00",
-  "15:00",
-  "16:00",
-  "17:00",
-  "18:00",
-  "19:00",
-  "20:00",
-];
+const SLOT_HEIGHT = 64;
 
 export default function WeekView({
   weekDays,
@@ -131,94 +120,112 @@ export default function WeekView({
             })}
           </div>
 
-          {/* 3. Hourly Grid Rows */}
-          {HOURS.map((hour, hIdx) => {
-            const hourNum = parseInt(hour.split(":")[0], 10);
-
-            return (
-              <div
-                key={hour}
-                className={cn(
-                  gridColumnsStyle,
-                  "min-h-[64px]",
-                  hIdx < HOURS.length - 1 ? "border-b border-gray-200 dark:border-gray-800" : ""
-                )}
-              >
-                {/* Hour Label */}
-                <div className="py-2 px-1 border-l border-gray-200 dark:border-gray-800 text-center font-black text-xs text-ink-normal/60 dark:text-gray-400 flex items-start justify-center pt-2.5 select-none bg-gray-50/20 dark:bg-gray-900/10">
+          {/* 3. Timetable Grid: 1 column for hours, 7 columns for days */}
+          <div className={cn(gridColumnsStyle, "relative")}>
+            {/* Left Column: Hourly Labels */}
+            <div className="border-l border-gray-200 dark:border-gray-800 bg-gray-50/30 dark:bg-gray-900/10 select-none">
+              {TIMELINE_HOURS.map((hour) => (
+                <div
+                  key={hour}
+                  style={{ height: `${SLOT_HEIGHT}px` }}
+                  className="border-b border-gray-200 dark:border-gray-800 text-center font-black text-xs text-ink-normal/60 dark:text-gray-400 flex items-start justify-center pt-2.5"
+                >
                   {toPersianDigits(hour)}
                 </div>
+              ))}
+            </div>
 
-                {/* 7 Day Slots for this Hour */}
-                {weekDays.map((day) => {
-                  const dayHourly = eventsByDay[day.dateIso]?.hourly || [];
-                  const slotEvents = dayHourly.filter((evt) => {
-                    if (!evt.startTime) return false;
-                    const evtHour = parseInt(evt.startTime.split(":")[0], 10);
-                    return evtHour === hourNum;
-                  });
+            {/* 7 Day Columns with Stretched Events */}
+            {weekDays.map((day) => {
+              const dayHourly = eventsByDay[day.dateIso]?.hourly || [];
+              const positionedEvents = layoutEventsForDay(dayHourly, TIMELINE_START_HOUR, SLOT_HEIGHT);
 
-                  return (
+              return (
+                <div
+                  key={day.dateIso}
+                  className="relative border-l last:border-l-0 border-gray-200 dark:border-gray-800"
+                >
+                  {/* Background Hour Slots (Clickable) */}
+                  {TIMELINE_HOURS.map((hour) => (
                     <div
-                      key={`${day.dateIso}-${hour}`}
+                      key={hour}
                       onClick={() => onNewEventForSlot(day.dateIso, hour)}
-                      className="p-1 border-l last:border-l-0 border-gray-200 dark:border-gray-800 relative hover:bg-ecosystem-light/20 dark:hover:bg-gray-800/40 transition-colors group cursor-pointer"
+                      style={{ height: `${SLOT_HEIGHT}px` }}
+                      className="border-b border-gray-200/80 dark:border-gray-800/80 hover:bg-ecosystem-light/20 dark:hover:bg-gray-800/40 transition-colors group cursor-pointer relative"
                     >
-                      {/* Slot Events */}
-                      <div className="space-y-1 h-full">
-                        {slotEvents.map((evt) => {
-                          const eventColor = evt.color || "#59BBAF";
-
-                          return (
-                            <div
-                              key={evt.id}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onSelectEvent(evt);
-                              }}
-                              style={{
-                                borderRightColor: eventColor,
-                                backgroundColor: `${eventColor}15`,
-                              }}
-                              className="p-1.5 rounded-xl border-r-4 shadow-xs text-right cursor-pointer hover:shadow-sm transition-all text-sec dark:text-white"
-                            >
-                              <div className="flex items-center justify-between text-[10px] font-black text-ink-normal/60 dark:text-gray-300">
-                                <span>{toPersianDigits(evt.startTime || "")}</span>
-                                <span
-                                  className="px-1 py-0.2 rounded text-[9px] font-black"
-                                  style={{ color: eventColor }}
-                                >
-                                  {evt.department}
-                                </span>
-                              </div>
-                              <div className="text-xs font-black truncate mt-0.5">
-                                {evt.title}
-                              </div>
-                              {evt.location && (
-                                <div className="text-[10px] text-ink-normal/50 dark:text-gray-400 truncate flex items-center gap-1 mt-0.5 font-medium">
-                                  <MapPin className="w-2.5 h-2.5 shrink-0" />
-                                  <span>{evt.location}</span>
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-
-                      {/* Hover Plus Icon */}
                       <button
                         type="button"
-                        className="opacity-0 group-hover:opacity-100 absolute bottom-1 left-1 p-1 rounded-md bg-primary/20 text-primary text-[10px] hover:bg-primary hover:text-white transition-all cursor-pointer"
+                        className="opacity-0 group-hover:opacity-100 absolute bottom-1 left-1 p-1 rounded-md bg-primary/20 text-primary text-[10px] hover:bg-primary hover:text-white transition-all cursor-pointer pointer-events-none"
                         title="افزودن در این ساعت"
                       >
                         <Plus className="w-3 h-3 stroke-[3]" />
                       </button>
                     </div>
-                  );
-                })}
-              </div>
-            );
-          })}
+                  ))}
+
+                  {/* Absolute Stretched Events Layer */}
+                  <div className="absolute inset-0 pointer-events-none p-1">
+                    {positionedEvents.map(({ evt, top, height, column, totalColumns }) => {
+                      const eventColor = evt.color || "#59BBAF";
+                      const widthPercent = 100 / totalColumns;
+                      const rightOffsetPercent = column * widthPercent;
+
+                      return (
+                        <div
+                          key={evt.id}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onSelectEvent(evt);
+                          }}
+                          style={{
+                            top: `${top}px`,
+                            height: `${Math.max(height - 4, 28)}px`,
+                            right: `${rightOffsetPercent}%`,
+                            width: `calc(${widthPercent}% - 4px)`,
+                            borderRightColor: eventColor,
+                            backgroundColor: `${eventColor}18`,
+                          }}
+                          className="absolute pointer-events-auto p-1.5 rounded-xl border-r-4 border border-gray-200/90 dark:border-gray-700/90 shadow-xs hover:shadow-md transition-all cursor-pointer overflow-hidden flex flex-col justify-between text-right text-sec dark:text-white hover:brightness-95 dark:hover:brightness-110 z-10"
+                          title={`${evt.title} (${toPersianDigits(evt.startTime || "")} تا ${toPersianDigits(evt.endTime || "")})`}
+                        >
+                          <div>
+                            <div className="flex items-center justify-between text-[10px] font-black leading-tight gap-1 mb-0.5">
+                              <span className="text-sec dark:text-gray-200 truncate">
+                                {toPersianDigits(evt.startTime || "")} {evt.endTime ? `- ${toPersianDigits(evt.endTime)}` : ""}
+                              </span>
+                              <span
+                                className="px-1 py-0.2 rounded text-[9px] font-black shrink-0"
+                                style={{ color: eventColor }}
+                              >
+                                {evt.department}
+                              </span>
+                            </div>
+
+                            <div className="text-xs font-black truncate leading-tight mt-0.5">
+                              {evt.title}
+                            </div>
+
+                            {evt.location && height > 55 && (
+                              <div className="text-[10px] text-ink-normal/60 dark:text-gray-400 truncate flex items-center gap-0.5 mt-0.5 font-medium">
+                                <MapPin className="w-2.5 h-2.5 shrink-0" />
+                                <span className="truncate">{evt.location}</span>
+                              </div>
+                            )}
+                          </div>
+
+                          {evt.description && height > 90 && (
+                            <div className="text-[10px] text-ink-normal/50 dark:text-gray-400 line-clamp-2 mt-1 font-normal leading-relaxed">
+                              {evt.description}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

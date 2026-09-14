@@ -31,20 +31,29 @@ interface EventModalProps {
   onDelete?: (eventId: string) => Promise<void>;
 }
 
-// Persian hours & minutes for reliable selection
-const HOUR_OPTIONS = Array.from({ length: 24 }, (_, i) => {
-  const val = String(i).padStart(2, "0");
-  return { val, label: toPersianDigits(val) };
-});
-
-const BASE_MINUTE_OPTIONS = [
-  "00", "05", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55",
+// Focused meeting hours: 07:00 to 22:00 (concise list for fast UX)
+const BASE_HOUR_OPTIONS = [
+  "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22",
 ];
 
+const getHourOptions = (currentVal: string) => {
+  let list = [...BASE_HOUR_OPTIONS];
+  if (currentVal && !list.includes(currentVal)) {
+    list.push(currentVal);
+    list.sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
+  }
+  return list.map((val) => ({ val, label: toPersianDigits(val) }));
+};
+
+// Standard 15-minute meeting intervals: 00, 15, 30, 45 (short & instant selection)
+const BASE_MINUTE_OPTIONS = ["00", "15", "30", "45"];
+
 const getMinuteOptions = (currentVal: string) => {
-  const list = BASE_MINUTE_OPTIONS.includes(currentVal) || !currentVal
-    ? BASE_MINUTE_OPTIONS
-    : [...BASE_MINUTE_OPTIONS, currentVal].sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
+  let list = [...BASE_MINUTE_OPTIONS];
+  if (currentVal && !list.includes(currentVal)) {
+    list.push(currentVal);
+    list.sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
+  }
   return list.map((val) => ({ val, label: toPersianDigits(val) }));
 };
 
@@ -224,6 +233,8 @@ export default function EventModal({
     }
   };
 
+  const startHourOptions = getHourOptions(startHour);
+  const endHourOptions = getHourOptions(endHour);
   const startMinuteOptions = getMinuteOptions(startMinute);
   const endMinuteOptions = getMinuteOptions(endMinute);
 
@@ -307,20 +318,20 @@ export default function EventModal({
       onClick={onClose}
     >
       <div
-        className="bg-white dark:bg-[#151C28] rounded-3xl border-2 border-primary/30 shadow-[4px_4px_0_#202A5A] dark:shadow-[4px_4px_0_#59BBAF] w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden text-right"
+        className="bg-white dark:bg-[#151C28] rounded-3xl border-2 border-primary/30 shadow-[4px_4px_0_#202A5A] dark:shadow-[4px_4px_0_#59BBAF] w-full max-w-xl max-h-[92vh] flex flex-col overflow-hidden text-right"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-800 bg-gray-50/70 dark:bg-[#1A2333]">
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100 dark:border-gray-800 bg-gray-50/70 dark:bg-[#1A2333]">
           <div className="flex items-center gap-3">
             <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-sm shrink-0"
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-sm shrink-0"
               style={{ backgroundColor: color }}
             >
-              <Calendar className="w-5 h-5" />
+              <Calendar className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-lg font-black text-sec dark:text-white">
+              <h2 className="text-base font-black text-sec dark:text-white">
                 {isEditMode
                   ? canEdit
                     ? "ویرایش جلسه یا رویداد"
@@ -328,7 +339,7 @@ export default function EventModal({
                   : "تعریف جلسه یا رویداد جدید"}
               </h2>
               {eventToEdit?.createdByName && (
-                <div className="text-xs text-ink-normal/60 dark:text-gray-400 font-medium mt-0.5">
+                <div className="text-[11px] text-ink-normal/60 dark:text-gray-400 font-medium">
                   ثبت شده توسط: {eventToEdit.createdByName}
                 </div>
               )}
@@ -338,15 +349,15 @@ export default function EventModal({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-xl text-ink-normal/40 dark:text-gray-400 hover:text-sec dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
+            className="p-1.5 rounded-xl text-ink-normal/40 dark:text-gray-400 hover:text-sec dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Read-only notification if user cannot edit */}
         {!canEdit && (
-          <div className="mx-6 mt-4 p-3 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 flex items-center gap-2.5 text-xs font-bold text-amber-800 dark:text-amber-300">
+          <div className="mx-5 mt-3 p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 flex items-center gap-2 text-xs font-bold text-amber-800 dark:text-amber-300">
             <Info className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400" />
             <span>
               شما تنها دسترسی مشاهده این مورد را دارید و امکان ویرایش آن برای شما مجاز نیست.
@@ -355,55 +366,49 @@ export default function EventModal({
         )}
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-4 flex-1">
+        <form onSubmit={handleSubmit} className="p-5 overflow-y-auto space-y-3.5 flex-1">
           {errorMessage && (
-            <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-xs font-bold text-rose-700 dark:text-rose-300 flex items-center gap-2">
+            <div className="p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-xs font-bold text-rose-700 dark:text-rose-300 flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 shrink-0" />
               <span>{errorMessage}</span>
             </div>
           )}
 
           {/* Row 1: Type Switcher (جلسه کاری vs رویداد سازمانی) */}
-          <div>
-            <label className="block text-xs font-black text-sec dark:text-gray-200 mb-1.5">
-              نوع
-            </label>
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                disabled={!canEdit}
-                onClick={() => setType("meeting")}
-                className={cn(
-                  "p-3 rounded-2xl border-2 font-black text-xs flex items-center justify-center gap-2 transition-all cursor-pointer",
-                  type === "meeting"
-                    ? "border-primary bg-ecosystem-light dark:bg-ecosystem-normal/20 text-primary shadow-xs"
-                    : "border-gray-200 dark:border-gray-700 text-ink-normal/60 dark:text-gray-400 hover:border-gray-300"
-                )}
-              >
-                <Users className="w-4 h-4" />
-                <span>جلسه کاری</span>
-              </button>
-
-              <button
-                type="button"
-                disabled={!canEdit}
-                onClick={() => setType("event")}
-                className={cn(
-                  "p-3 rounded-2xl border-2 font-black text-xs flex items-center justify-center gap-2 transition-all cursor-pointer",
-                  type === "event"
-                    ? "border-primary bg-ecosystem-light dark:bg-ecosystem-normal/20 text-primary shadow-xs"
-                    : "border-gray-200 dark:border-gray-700 text-ink-normal/60 dark:text-gray-400 hover:border-gray-300"
-                )}
-              >
-                <Calendar className="w-4 h-4" />
-                <span>رویداد سازمانی</span>
-              </button>
-            </div>
+          <div className="flex bg-gray-100 dark:bg-gray-800/80 p-1 rounded-xl">
+            <button
+              type="button"
+              disabled={!canEdit}
+              onClick={() => setType("meeting")}
+              className={cn(
+                "flex-1 py-1.5 rounded-lg font-black text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer",
+                type === "meeting"
+                  ? "bg-white dark:bg-[#151C28] text-primary shadow-xs"
+                  : "text-ink-normal/60 dark:text-gray-400 hover:text-sec dark:hover:text-white"
+              )}
+            >
+              <Users className="w-3.5 h-3.5" />
+              <span>جلسه کاری</span>
+            </button>
+            <button
+              type="button"
+              disabled={!canEdit}
+              onClick={() => setType("event")}
+              className={cn(
+                "flex-1 py-1.5 rounded-lg font-black text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer",
+                type === "event"
+                  ? "bg-white dark:bg-[#151C28] text-primary shadow-xs"
+                  : "text-ink-normal/60 dark:text-gray-400 hover:text-sec dark:hover:text-white"
+              )}
+            >
+              <Calendar className="w-3.5 h-3.5" />
+              <span>رویداد سازمانی</span>
+            </button>
           </div>
 
           {/* Row 2: Title */}
           <div>
-            <label className="block text-xs font-black text-sec dark:text-gray-200 mb-1.5">
+            <label className="block text-xs font-black text-sec dark:text-gray-200 mb-1">
               عنوان {type === "meeting" ? "جلسه" : "رویداد"} <span className="text-female-normal">*</span>
             </label>
             <input
@@ -417,21 +422,21 @@ export default function EventModal({
                   ? "مثال: جلسه هماهنگی هفتگی واحد پسرانه..."
                   : "مثال: گردهمایی فصلی تیم‌های روتلو..."
               }
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1C2536] text-sec dark:text-white text-xs sm:text-sm font-bold focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:cursor-not-allowed"
+              className="w-full px-3.5 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1C2536] text-sec dark:text-white text-xs sm:text-sm font-bold focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:cursor-not-allowed"
             />
           </div>
 
           {/* Row 3: Department & Color Picker */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-black text-sec dark:text-gray-200 mb-1.5">
+              <label className="block text-xs font-black text-sec dark:text-gray-200 mb-1">
                 دپارتمان مربوطه <span className="text-female-normal">*</span>
               </label>
               <select
                 disabled={!canEdit}
                 value={department}
                 onChange={(e) => handleDepartmentChange(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1C2536] text-sec dark:text-white text-xs sm:text-sm font-bold focus:border-primary outline-none transition-all disabled:bg-gray-100 dark:disabled:bg-gray-800 cursor-pointer"
+                className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1C2536] text-sec dark:text-white text-xs sm:text-sm font-bold focus:border-primary outline-none transition-all disabled:bg-gray-100 dark:disabled:bg-gray-800 cursor-pointer"
               >
                 {departments.map((d) => (
                   <option key={d.id} value={d.name}>
@@ -442,10 +447,10 @@ export default function EventModal({
             </div>
 
             <div>
-              <label className="block text-xs font-black text-sec dark:text-gray-200 mb-1.5">
+              <label className="block text-xs font-black text-sec dark:text-gray-200 mb-1">
                 رنگ شاخص
               </label>
-              <div className="flex items-center gap-2 pt-1">
+              <div className="flex items-center gap-2 h-[38px]">
                 {CALENDAR_COLORS.map((c) => (
                   <button
                     key={c.hex}
@@ -454,14 +459,14 @@ export default function EventModal({
                     onClick={() => setColor(c.hex)}
                     style={{ backgroundColor: c.hex }}
                     className={cn(
-                      "w-7 h-7 rounded-full transition-transform flex items-center justify-center cursor-pointer",
+                      "w-6 h-6 rounded-full transition-transform flex items-center justify-center cursor-pointer",
                       color === c.hex
                         ? "scale-110 ring-2 ring-offset-2 ring-primary dark:ring-offset-[#151C28]"
                         : "hover:scale-105 opacity-80"
                     )}
                     title={c.name}
                   >
-                    {color === c.hex && <Check className="w-3.5 h-3.5 text-white stroke-[3]" />}
+                    {color === c.hex && <Check className="w-3 h-3 text-white stroke-[3]" />}
                   </button>
                 ))}
               </div>
@@ -469,9 +474,9 @@ export default function EventModal({
           </div>
 
           {/* Row 4: Date & Reliable Time Selection */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-black text-sec dark:text-gray-200 mb-1.5">
+              <label className="block text-xs font-black text-sec dark:text-gray-200 mb-1">
                 تاریخ برگزاری (شمسی) <span className="text-female-normal">*</span>
               </label>
               <PersianDatePicker
@@ -482,11 +487,11 @@ export default function EventModal({
             </div>
 
             <div>
-              <div className="flex items-center justify-between mb-1.5">
+              <div className="flex items-center justify-between mb-1">
                 <label className="text-xs font-black text-sec dark:text-gray-200">
                   زمان برگزاری
                 </label>
-                <label className="flex items-center gap-1.5 text-[11px] font-bold text-ink-normal/70 dark:text-gray-400 cursor-pointer select-none">
+                <label className="flex items-center gap-1 text-[11px] font-bold text-ink-normal/60 dark:text-gray-400 cursor-pointer select-none">
                   <input
                     type="checkbox"
                     disabled={!canEdit}
@@ -499,140 +504,100 @@ export default function EventModal({
               </div>
 
               {!isAllDay ? (
-                <div className="grid grid-cols-2 gap-2.5">
-                  {/* Start Time Selectors */}
-                  <div className="p-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/70 dark:bg-[#1C2536] focus-within:border-primary/60 focus-within:ring-2 focus-within:ring-primary/10 transition-all">
-                    <div className="flex items-center justify-between text-[11px] font-bold text-ink-normal/70 dark:text-gray-300 mb-1 px-0.5">
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-3 h-3 text-primary" />
-                        <span>ساعت شروع:</span>
-                      </span>
-                    </div>
-
-                    <div
-                      className="flex items-center justify-center gap-1 bg-white dark:bg-[#151C28] rounded-lg p-1 border border-gray-200/80 dark:border-gray-700/80 shadow-2xs"
-                      dir="ltr"
-                    >
-                      {/* Hour (LTR: Left) */}
-                      <div className="flex-1 flex flex-col items-center">
-                        <select
-                          disabled={!canEdit}
-                          value={startHour}
-                          onChange={(e) => handleStartHourChange(e.target.value)}
-                          className="w-full py-0.5 text-xs sm:text-sm font-black text-center text-sec dark:text-white bg-transparent outline-none cursor-pointer appearance-none"
-                          title="انتخاب ساعت شروع"
-                        >
-                          {HOUR_OPTIONS.map((h) => (
-                            <option
-                              key={`sh-${h.val}`}
-                              value={h.val}
-                              className="bg-white dark:bg-gray-800 text-sec dark:text-white"
-                            >
-                              {h.label}
-                            </option>
-                          ))}
-                        </select>
-                        <span className="text-[9px] font-bold text-ink-normal/40 dark:text-gray-500 select-none">
-                          ساعت
-                        </span>
-                      </div>
-
-                      <span className="font-black text-sec dark:text-white text-xs pb-3.5 select-none">:</span>
-
-                      {/* Minute (LTR: Right) */}
-                      <div className="flex-1 flex flex-col items-center">
-                        <select
-                          disabled={!canEdit}
-                          value={startMinute}
-                          onChange={(e) => setStartMinute(e.target.value)}
-                          className="w-full py-0.5 text-xs sm:text-sm font-black text-center text-sec dark:text-white bg-transparent outline-none cursor-pointer appearance-none"
-                          title="انتخاب دقیقه شروع"
-                        >
-                          {startMinuteOptions.map((m) => (
-                            <option
-                              key={`sm-${m.val}`}
-                              value={m.val}
-                              className="bg-white dark:bg-gray-800 text-sec dark:text-white"
-                            >
-                              {m.label}
-                            </option>
-                          ))}
-                        </select>
-                        <span className="text-[9px] font-bold text-ink-normal/40 dark:text-gray-500 select-none">
-                          دقیقه
-                        </span>
-                      </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {/* Start Time Box */}
+                  <div className="flex items-center justify-between px-2.5 py-1.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1C2536] focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all h-[42px]">
+                    <span className="text-[11px] font-bold text-ink-normal/60 dark:text-gray-400 select-none shrink-0 flex items-center gap-1">
+                      <Clock className="w-3 h-3 text-primary" />
+                      <span>شروع:</span>
+                    </span>
+                    <div className="flex items-center gap-0.5" dir="ltr">
+                      <select
+                        disabled={!canEdit}
+                        value={startHour}
+                        onChange={(e) => handleStartHourChange(e.target.value)}
+                        className="py-0.5 px-0.5 text-xs font-black text-center text-sec dark:text-white bg-transparent outline-none cursor-pointer appearance-none hover:text-primary transition-colors"
+                        title="ساعت شروع"
+                      >
+                        {startHourOptions.map((h) => (
+                          <option
+                            key={`sh-${h.val}`}
+                            value={h.val}
+                            className="bg-white dark:bg-gray-800 text-sec dark:text-white"
+                          >
+                            {h.label}
+                          </option>
+                        ))}
+                      </select>
+                      <span className="font-black text-sec/40 dark:text-white/40 text-xs select-none">:</span>
+                      <select
+                        disabled={!canEdit}
+                        value={startMinute}
+                        onChange={(e) => setStartMinute(e.target.value)}
+                        className="py-0.5 px-0.5 text-xs font-black text-center text-sec dark:text-white bg-transparent outline-none cursor-pointer appearance-none hover:text-primary transition-colors"
+                        title="دقیقه شروع"
+                      >
+                        {startMinuteOptions.map((m) => (
+                          <option
+                            key={`sm-${m.val}`}
+                            value={m.val}
+                            className="bg-white dark:bg-gray-800 text-sec dark:text-white"
+                          >
+                            {m.label}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   </div>
 
-                  {/* End Time Selectors */}
-                  <div className="p-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/70 dark:bg-[#1C2536] focus-within:border-primary/60 focus-within:ring-2 focus-within:ring-primary/10 transition-all">
-                    <div className="flex items-center justify-between text-[11px] font-bold text-ink-normal/70 dark:text-gray-300 mb-1 px-0.5">
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-3 h-3 text-ink-normal/40 dark:text-gray-400" />
-                        <span>ساعت پایان:</span>
-                      </span>
-                    </div>
-
-                    <div
-                      className="flex items-center justify-center gap-1 bg-white dark:bg-[#151C28] rounded-lg p-1 border border-gray-200/80 dark:border-gray-700/80 shadow-2xs"
-                      dir="ltr"
-                    >
-                      {/* Hour (LTR: Left) */}
-                      <div className="flex-1 flex flex-col items-center">
-                        <select
-                          disabled={!canEdit}
-                          value={endHour}
-                          onChange={(e) => setEndHour(e.target.value)}
-                          className="w-full py-0.5 text-xs sm:text-sm font-black text-center text-sec dark:text-white bg-transparent outline-none cursor-pointer appearance-none"
-                          title="انتخاب ساعت پایان"
-                        >
-                          {HOUR_OPTIONS.map((h) => (
-                            <option
-                              key={`eh-${h.val}`}
-                              value={h.val}
-                              className="bg-white dark:bg-gray-800 text-sec dark:text-white"
-                            >
-                              {h.label}
-                            </option>
-                          ))}
-                        </select>
-                        <span className="text-[9px] font-bold text-ink-normal/40 dark:text-gray-500 select-none">
-                          ساعت
-                        </span>
-                      </div>
-
-                      <span className="font-black text-sec dark:text-white text-xs pb-3.5 select-none">:</span>
-
-                      {/* Minute (LTR: Right) */}
-                      <div className="flex-1 flex flex-col items-center">
-                        <select
-                          disabled={!canEdit}
-                          value={endMinute}
-                          onChange={(e) => setEndMinute(e.target.value)}
-                          className="w-full py-0.5 text-xs sm:text-sm font-black text-center text-sec dark:text-white bg-transparent outline-none cursor-pointer appearance-none"
-                          title="انتخاب دقیقه پایان"
-                        >
-                          {endMinuteOptions.map((m) => (
-                            <option
-                              key={`em-${m.val}`}
-                              value={m.val}
-                              className="bg-white dark:bg-gray-800 text-sec dark:text-white"
-                            >
-                              {m.label}
-                            </option>
-                          ))}
-                        </select>
-                        <span className="text-[9px] font-bold text-ink-normal/40 dark:text-gray-500 select-none">
-                          دقیقه
-                        </span>
-                      </div>
+                  {/* End Time Box */}
+                  <div className="flex items-center justify-between px-2.5 py-1.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1C2536] focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all h-[42px]">
+                    <span className="text-[11px] font-bold text-ink-normal/60 dark:text-gray-400 select-none shrink-0 flex items-center gap-1">
+                      <Clock className="w-3 h-3 text-ink-normal/40 dark:text-gray-500" />
+                      <span>پایان:</span>
+                    </span>
+                    <div className="flex items-center gap-0.5" dir="ltr">
+                      <select
+                        disabled={!canEdit}
+                        value={endHour}
+                        onChange={(e) => setEndHour(e.target.value)}
+                        className="py-0.5 px-0.5 text-xs font-black text-center text-sec dark:text-white bg-transparent outline-none cursor-pointer appearance-none hover:text-primary transition-colors"
+                        title="ساعت پایان"
+                      >
+                        {endHourOptions.map((h) => (
+                          <option
+                            key={`eh-${h.val}`}
+                            value={h.val}
+                            className="bg-white dark:bg-gray-800 text-sec dark:text-white"
+                          >
+                            {h.label}
+                          </option>
+                        ))}
+                      </select>
+                      <span className="font-black text-sec/40 dark:text-white/40 text-xs select-none">:</span>
+                      <select
+                        disabled={!canEdit}
+                        value={endMinute}
+                        onChange={(e) => setEndMinute(e.target.value)}
+                        className="py-0.5 px-0.5 text-xs font-black text-center text-sec dark:text-white bg-transparent outline-none cursor-pointer appearance-none hover:text-primary transition-colors"
+                        title="دقیقه پایان"
+                      >
+                        {endMinuteOptions.map((m) => (
+                          <option
+                            key={`em-${m.val}`}
+                            value={m.val}
+                            className="bg-white dark:bg-gray-800 text-sec dark:text-white"
+                          >
+                            {m.label}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   </div>
                 </div>
               ) : (
-                <div className="h-[68px] flex items-center justify-center rounded-xl bg-gray-50 dark:bg-[#1C2536] border border-dashed border-gray-200 dark:border-gray-700 text-xs font-bold text-ink-normal/60 dark:text-gray-400 px-3 text-center">
-                  <span>برنامه‌ریزی در کل ساعات روز (تمام‌وقت)</span>
+                <div className="h-[42px] flex items-center justify-center rounded-xl bg-gray-50 dark:bg-[#1C2536] border border-dashed border-gray-200 dark:border-gray-700 text-xs font-bold text-ink-normal/50 dark:text-gray-400 text-center">
+                  برنامه‌ریزی در تمام ساعات روز
                 </div>
               )}
             </div>
@@ -640,10 +605,10 @@ export default function EventModal({
 
           {/* Row 5: Participants / Attendees */}
           <div>
-            <div className="flex items-center justify-between mb-1.5">
+            <div className="flex items-center justify-between mb-1">
               <label className="text-xs font-black text-sec dark:text-gray-200 flex items-center gap-1.5">
                 <Users className="w-3.5 h-3.5 text-primary" />
-                <span>حاضرین و مدعوین ({toPersianDigits(selectedAttendeeIds.length)} نفر)</span>
+                <span>حاضرین ({toPersianDigits(selectedAttendeeIds.length)} نفر)</span>
               </label>
 
               {canEdit && (
@@ -652,16 +617,16 @@ export default function EventModal({
                   onClick={() => setIsAttendeeDropdownOpen(!isAttendeeDropdownOpen)}
                   className="text-xs font-bold text-primary hover:underline cursor-pointer"
                 >
-                  {isAttendeeDropdownOpen ? "بستن فهرست" : "+ انتخاب از بین همکاران"}
+                  {isAttendeeDropdownOpen ? "بستن فهرست" : "+ انتخاب همکاران"}
                 </button>
               )}
             </div>
 
             {/* Selected Attendees Chips */}
-            <div className="flex flex-wrap gap-1.5 p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/60 dark:bg-[#1C2536]/60 min-h-[44px] items-center">
+            <div className="flex flex-wrap gap-1.5 p-1.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-[#1C2536]/50 min-h-[38px] items-center">
               {selectedAttendeeIds.length === 0 ? (
-                <span className="text-xs text-ink-normal/40 dark:text-gray-500 font-medium">
-                  فردی تخصیص داده نشده است (از گزینه بالا برای افزودن استفاده کنید)
+                <span className="text-[11px] text-ink-normal/40 dark:text-gray-500 font-medium px-1.5">
+                  فردی انتخاب نشده است
                 </span>
               ) : (
                 selectedAttendeeIds.map((empId) => {
@@ -669,12 +634,12 @@ export default function EventModal({
                   return (
                     <div
                       key={empId}
-                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-xs font-bold text-sec dark:text-gray-200 shadow-2xs"
+                      className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-xs font-bold text-sec dark:text-gray-200 shadow-2xs"
                     >
-                      <div className="w-4 h-4 rounded-full bg-primary/20 text-primary flex items-center justify-center text-[10px] font-black">
+                      <div className="w-3.5 h-3.5 rounded-full bg-primary/20 text-primary flex items-center justify-center text-[9px] font-black">
                         {emp?.fullName ? emp.fullName[0] : "ع"}
                       </div>
-                      <span>{emp?.fullName || "همکار"}</span>
+                      <span className="text-[11px]">{emp?.fullName || "همکار"}</span>
                       {canEdit && (
                         <button
                           type="button"
@@ -692,16 +657,16 @@ export default function EventModal({
 
             {/* Attendee Selection Dropdown list */}
             {isAttendeeDropdownOpen && canEdit && (
-              <div className="mt-2 p-3 rounded-2xl border-2 border-primary/20 bg-white dark:bg-[#1A2333] shadow-lg space-y-2 animate-in fade-in zoom-in-95 duration-150">
+              <div className="mt-2 p-2.5 rounded-2xl border-2 border-primary/20 bg-white dark:bg-[#1A2333] shadow-lg space-y-2 animate-in fade-in zoom-in-95 duration-150">
                 <input
                   type="text"
                   placeholder="جستجوی نام همکار، دپارتمان یا سمت..."
                   value={attendeeSearch}
                   onChange={(e) => setAttendeeSearch(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-xs text-sec dark:text-white font-bold outline-none"
+                  className="w-full px-3 py-1.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-xs text-sec dark:text-white font-bold outline-none"
                 />
 
-                <div className="max-h-44 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-800">
+                <div className="max-h-36 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-800">
                   {filteredEmployees.map((emp) => {
                     const isSelected = selectedAttendeeIds.includes(emp.id);
                     return (
@@ -709,19 +674,19 @@ export default function EventModal({
                         key={emp.id}
                         onClick={() => toggleAttendee(emp.id)}
                         className={cn(
-                          "py-2 px-2.5 rounded-xl flex items-center justify-between cursor-pointer text-xs font-bold transition-colors",
+                          "py-1.5 px-2 rounded-xl flex items-center justify-between cursor-pointer text-xs font-bold transition-colors",
                           isSelected
                             ? "bg-ecosystem-light dark:bg-ecosystem-normal/20 text-primary"
                             : "hover:bg-gray-50 dark:hover:bg-gray-800 text-sec dark:text-gray-300"
                         )}
                       >
                         <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-[10px]">
+                          <div className="w-5 h-5 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-[9px]">
                             {emp.fullName[0]}
                           </div>
                           <div>
-                            <div>{emp.fullName}</div>
-                            <div className="text-[10px] text-ink-normal/50 dark:text-gray-400 font-normal">
+                            <div className="text-xs">{emp.fullName}</div>
+                            <div className="text-[9px] text-ink-normal/50 dark:text-gray-400 font-normal">
                               {emp.department ? `${emp.department} • ` : ""}{emp.position || "کارشناس"}
                             </div>
                           </div>
@@ -729,13 +694,13 @@ export default function EventModal({
 
                         <div
                           className={cn(
-                            "w-5 h-5 rounded-md border flex items-center justify-center transition-colors",
+                            "w-4 h-4 rounded-md border flex items-center justify-center transition-colors",
                             isSelected
                               ? "bg-primary border-primary text-white"
                               : "border-gray-300 dark:border-gray-600"
                           )}
                         >
-                          {isSelected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                          {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
                         </div>
                       </div>
                     );
@@ -747,39 +712,40 @@ export default function EventModal({
 
           {/* Row 6: Format & Location / Link */}
           <div>
-            <label className="block text-xs font-black text-sec dark:text-gray-200 mb-1.5">
-              محل برگزاری یا لینک جلسه
-            </label>
-            <div className="flex items-center gap-2 mb-2">
-              <button
-                type="button"
-                disabled={!canEdit}
-                onClick={() => setFormatType("in_person")}
-                className={cn(
-                  "px-3.5 py-1.5 rounded-xl text-xs font-bold border transition-all flex items-center gap-1.5 cursor-pointer",
-                  formatType === "in_person"
-                    ? "bg-primary text-white border-primary shadow-xs"
-                    : "border-gray-200 dark:border-gray-700 text-ink-normal/60 dark:text-gray-400 hover:bg-gray-50"
-                )}
-              >
-                <MapPin className="w-3.5 h-3.5" />
-                <span>حضوری</span>
-              </button>
-
-              <button
-                type="button"
-                disabled={!canEdit}
-                onClick={() => setFormatType("online")}
-                className={cn(
-                  "px-3.5 py-1.5 rounded-xl text-xs font-bold border transition-all flex items-center gap-1.5 cursor-pointer",
-                  formatType === "online"
-                    ? "bg-primary text-white border-primary shadow-xs"
-                    : "border-gray-200 dark:border-gray-700 text-ink-normal/60 dark:text-gray-400 hover:bg-gray-50"
-                )}
-              >
-                <Video className="w-3.5 h-3.5" />
-                <span>آنلاین</span>
-              </button>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-xs font-black text-sec dark:text-gray-200">
+                محل برگزاری یا لینک جلسه
+              </label>
+              <div className="flex items-center gap-1 bg-gray-100 dark:bg-gray-800/80 p-0.5 rounded-lg">
+                <button
+                  type="button"
+                  disabled={!canEdit}
+                  onClick={() => setFormatType("in_person")}
+                  className={cn(
+                    "px-2.5 py-0.5 rounded-md text-[11px] font-bold transition-all flex items-center gap-1 cursor-pointer",
+                    formatType === "in_person"
+                      ? "bg-white dark:bg-[#151C28] text-primary shadow-2xs"
+                      : "text-ink-normal/60 dark:text-gray-400"
+                  )}
+                >
+                  <MapPin className="w-3 h-3" />
+                  <span>حضوری</span>
+                </button>
+                <button
+                  type="button"
+                  disabled={!canEdit}
+                  onClick={() => setFormatType("online")}
+                  className={cn(
+                    "px-2.5 py-0.5 rounded-md text-[11px] font-bold transition-all flex items-center gap-1 cursor-pointer",
+                    formatType === "online"
+                      ? "bg-white dark:bg-[#151C28] text-primary shadow-2xs"
+                      : "text-ink-normal/60 dark:text-gray-400"
+                  )}
+                >
+                  <Video className="w-3 h-3" />
+                  <span>آنلاین</span>
+                </button>
+              </div>
             </div>
 
             <input
@@ -792,36 +758,36 @@ export default function EventModal({
                   ? "لینک جلسه آنلاین (مثلاً گوگل میت، قرار، اسکایپ...)"
                   : "اتاق جلسات، سالن کنفرانس یا آدرس..."
               }
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1C2536] text-sec dark:text-white text-xs sm:text-sm font-bold focus:border-primary outline-none transition-all disabled:bg-gray-100 dark:disabled:bg-gray-800"
+              className="w-full px-3.5 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1C2536] text-sec dark:text-white text-xs sm:text-sm font-bold focus:border-primary outline-none transition-all disabled:bg-gray-100 dark:disabled:bg-gray-800"
             />
           </div>
 
           {/* Row 7: Description / Agenda */}
           <div>
-            <label className="block text-xs font-black text-sec dark:text-gray-200 mb-1.5">
+            <label className="block text-xs font-black text-sec dark:text-gray-200 mb-1">
               دستور جلسه و توضیحات تکمیلی
             </label>
             <textarea
-              rows={3}
+              rows={2}
               disabled={!canEdit}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="سرفصل‌ها، پیش‌نیازها و نکات مد نظر..."
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1C2536] text-sec dark:text-white text-xs font-medium focus:border-primary outline-none transition-all disabled:bg-gray-100 dark:disabled:bg-gray-800 resize-none"
+              className="w-full px-3.5 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1C2536] text-sec dark:text-white text-xs font-medium focus:border-primary outline-none transition-all disabled:bg-gray-100 dark:disabled:bg-gray-800 resize-none"
             />
           </div>
 
-          {/* Row 8: Status & Reminder (بدون کلمات انگلیسی) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Row 8: Status & Reminder */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-black text-sec dark:text-gray-200 mb-1.5">
+              <label className="block text-xs font-black text-sec dark:text-gray-200 mb-1">
                 وضعیت برگزاری
               </label>
               <select
                 disabled={!canEdit}
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1C2536] text-sec dark:text-white text-xs font-bold focus:border-primary outline-none cursor-pointer"
+                className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1C2536] text-sec dark:text-white text-xs font-bold focus:border-primary outline-none cursor-pointer"
               >
                 <option value="scheduled">برنامه‌ریزی شده</option>
                 <option value="in_progress">در حال برگزاری</option>
@@ -831,14 +797,14 @@ export default function EventModal({
             </div>
 
             <div>
-              <label className="block text-xs font-black text-sec dark:text-gray-200 mb-1.5">
+              <label className="block text-xs font-black text-sec dark:text-gray-200 mb-1">
                 یادآوری قبل از موعد
               </label>
               <select
                 disabled={!canEdit}
                 value={reminder}
                 onChange={(e) => setReminder(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1C2536] text-sec dark:text-white text-xs font-bold focus:border-primary outline-none cursor-pointer"
+                className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1C2536] text-sec dark:text-white text-xs font-bold focus:border-primary outline-none cursor-pointer"
               >
                 <option value="none">بدون یادآوری</option>
                 <option value="15m">۱۵ دقیقه قبل</option>
@@ -851,16 +817,16 @@ export default function EventModal({
         </form>
 
         {/* Footer Actions */}
-        <div className="px-6 py-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50/70 dark:bg-[#1A2333] flex items-center justify-between gap-3">
+        <div className="px-5 py-3 border-t border-gray-100 dark:border-gray-800 bg-gray-50/70 dark:bg-[#1A2333] flex items-center justify-between gap-3">
           <div>
             {isEditMode && canEdit && onDelete && (
               <button
                 type="button"
                 disabled={isDeleting}
                 onClick={handleDelete}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-rose-200 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 hover:bg-rose-100 font-bold text-xs transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-rose-200 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 hover:bg-rose-100 font-bold text-xs transition-colors cursor-pointer"
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="w-3.5 h-3.5" />
                 <span>{isDeleting ? "در حال حذف..." : "حذف"}</span>
               </button>
             )}
@@ -870,7 +836,7 @@ export default function EventModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sec dark:text-gray-300 hover:bg-gray-50 font-bold text-xs transition-colors cursor-pointer"
+              className="px-4 py-1.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sec dark:text-gray-300 hover:bg-gray-50 font-bold text-xs transition-colors cursor-pointer"
             >
               {canEdit ? "انصراف" : "بستن"}
             </button>
@@ -880,9 +846,9 @@ export default function EventModal({
                 type="button"
                 disabled={isSubmitting}
                 onClick={handleSubmit}
-                className="inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-ecosystem-normal hover:bg-ecosystem-darker text-white font-bold text-xs shadow-[2px_2px_0_#202A5A] dark:shadow-[2px_2px_0_#59BBAF] transition-all cursor-pointer disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-ecosystem-normal hover:bg-ecosystem-darker text-white font-bold text-xs shadow-[2px_2px_0_#202A5A] dark:shadow-[2px_2px_0_#59BBAF] transition-all cursor-pointer disabled:opacity-50"
               >
-                <Check className="w-4 h-4 stroke-[3]" />
+                <Check className="w-3.5 h-3.5 stroke-[3]" />
                 <span>
                   {isSubmitting
                     ? "در حال ذخیره..."

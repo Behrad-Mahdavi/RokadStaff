@@ -187,3 +187,122 @@ export function formatFullJalaliDate(isoStr: string): string {
   const weekday = PERSIAN_WEEKDAYS_ORDERED[(d.getDay() + 1) % 7].name;
   return `${weekday} ${toPersianDigits(j.jd)} ${PERSIAN_MONTH_NAMES[j.jm - 1]} ${toPersianDigits(j.jy)}`;
 }
+
+// Timeline configuration and event positioning
+export const TIMELINE_START_HOUR = 7;
+export const TIMELINE_END_HOUR = 22;
+export const TIMELINE_HOURS = Array.from(
+  { length: TIMELINE_END_HOUR - TIMELINE_START_HOUR + 1 },
+  (_, i) => `${String(TIMELINE_START_HOUR + i).padStart(2, "0")}:00`
+);
+
+export interface PositionedEvent {
+  evt: any;
+  top: number;
+  height: number;
+  column: number;
+  totalColumns: number;
+}
+
+export function getEventPosition(
+  startTime: string | null | undefined,
+  endTime: string | null | undefined,
+  startHourOffset: number = TIMELINE_START_HOUR,
+  slotHeight: number = 64
+): { top: number; height: number } {
+  if (!startTime) {
+    return { top: 0, height: slotHeight };
+  }
+
+  const [sH, sM] = startTime.split(":").map((v) => parseInt(v, 10) || 0);
+  let [eH, eM] = endTime ? endTime.split(":").map((v) => parseInt(v, 10) || 0) : [sH + 1, sM];
+
+  const startTotalMinutes = (sH - startHourOffset) * 60 + sM;
+  let endTotalMinutes = (eH - startHourOffset) * 60 + eM;
+
+  if (endTotalMinutes <= startTotalMinutes) {
+    endTotalMinutes = startTotalMinutes + 60;
+  }
+
+  const durationMinutes = Math.max(endTotalMinutes - startTotalMinutes, 20);
+
+  const top = Math.max(0, (startTotalMinutes / 60) * slotHeight);
+  const height = Math.max(28, (durationMinutes / 60) * slotHeight);
+
+  return { top, height };
+}
+
+export function layoutEventsForDay(
+  events: any[],
+  startHourOffset: number = TIMELINE_START_HOUR,
+  slotHeight: number = 64
+): PositionedEvent[] {
+  if (!events || !events.length) return [];
+
+  const items = events.map((evt) => {
+    const { top, height } = getEventPosition(evt.startTime, evt.endTime, startHourOffset, slotHeight);
+    return {
+      evt,
+      top,
+      height,
+      start: top,
+      end: top + height,
+    };
+  });
+
+  items.sort((a, b) => a.start - b.start || (b.end - b.start) - (a.end - a.start));
+
+  const groups: (typeof items)[] = [];
+  let currentGroup: typeof items = [];
+  let currentGroupEnd = -1;
+
+  for (const item of items) {
+    if (currentGroup.length === 0 || item.start < currentGroupEnd) {
+      currentGroup.push(item);
+      currentGroupEnd = Math.max(currentGroupEnd, item.end);
+    } else {
+      groups.push(currentGroup);
+      currentGroup = [item];
+      currentGroupEnd = item.end;
+    }
+  }
+  if (currentGroup.length) {
+    groups.push(currentGroup);
+  }
+
+  const results: PositionedEvent[] = [];
+
+  for (const group of groups) {
+    const columnEnds: number[] = [];
+    const groupPlaced: { item: typeof items[0]; col: number }[] = [];
+
+    for (const item of group) {
+      let placedCol = -1;
+      for (let c = 0; c < columnEnds.length; c++) {
+        if (columnEnds[c] <= item.start) {
+          placedCol = c;
+          columnEnds[c] = item.end;
+          break;
+        }
+      }
+      if (placedCol === -1) {
+        placedCol = columnEnds.length;
+        columnEnds.push(item.end);
+      }
+      groupPlaced.push({ item, col: placedCol });
+    }
+
+    const totalColumns = columnEnds.length;
+    for (const { item, col } of groupPlaced) {
+      results.push({
+        evt: item.evt,
+        top: item.top,
+        height: item.height,
+        column: col,
+        totalColumns,
+      });
+    }
+  }
+
+  return results;
+}
