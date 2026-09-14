@@ -19,85 +19,7 @@ export interface AppNotification {
 }
 
 // In-memory fallback notification store for offline/demo operation
-let fallbackNotifications: AppNotification[] = [
-  {
-    id: "notif-sys-welcome",
-    title: "خوش‌آمدید به سامانه جامع رُکاد",
-    message: "تمام بخش‌های مدیریت وظایف روتلو، تقویم و گزارش‌های روزانه فعال هستند.",
-    category: "system",
-    type: "announcement",
-    link: "/dashboard",
-    isRead: false,
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
-    senderName: "مدیر سیستم",
-  },
-  {
-    id: "notif-cal-meeting",
-    title: "جلسه اجرایی هماهنگی هفتگی",
-    message: "جلسه هماهنگی تیم ساعت ۱۰:۰۰ در سالن اجتماعات برگزار می‌شود.",
-    category: "calendar",
-    type: "meeting_reminder",
-    link: "/calendar",
-    isRead: false,
-    createdAt: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
-    senderName: "تقویم سازمانی",
-  },
-  {
-    id: "notif-task-assigned",
-    title: "وظیفه جدید در روتلو",
-    message: "وظیفه «بررسی و تست نهایی ماژول تقویم» به شما واگذار شد.",
-    category: "task",
-    type: "task_assigned",
-    link: "/rotello/my-tasks",
-    isRead: false,
-    createdAt: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
-    senderName: "سیستم روتلو",
-  },
-  {
-    id: "notif-report-daily",
-    title: "ثبت گزارش عملکرد روزانه",
-    message: "یادآوری: لطفاً گزارش فعالیت‌های کاری امروز خود را ثبت فرمایید.",
-    category: "report",
-    type: "daily_report_reminder",
-    link: "/rotello/my-reports",
-    isRead: false,
-    createdAt: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
-    senderName: "سامانه گزارش‌دهی",
-  },
-];
-
-/**
- * Generate dynamic, context-aware notifications based on current date & calendar/tasks
- */
-function getContextAwareNotifications(): AppNotification[] {
-  const now = new Date();
-  const todayIso = now.toISOString().split("T")[0];
-  const dynamicItems: AppNotification[] = [];
-
-  // Check today's calendar events
-  try {
-    const events = getMockCalendarEvents();
-    const todayEvents = events.filter((e) => e.startDate === todayIso);
-    for (const evt of todayEvents) {
-      dynamicItems.push({
-        id: `dyn-cal-${evt.id}`,
-        title: `رویداد امروز: ${evt.title}`,
-        message: `${evt.type === "meeting" ? "جلسه" : "برنامه"} ساعت ${evt.startTime || "صبح"} (${evt.location || "حضوری"})`,
-        category: "calendar",
-        type: "meeting_reminder",
-        link: "/calendar",
-        isRead: false,
-        createdAt: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
-        senderName: "تقویم هوشمند",
-        metadata: { eventId: evt.id },
-      });
-    }
-  } catch (err) {
-    // Ignore error
-  }
-
-  return dynamicItems;
-}
+let fallbackNotifications: AppNotification[] = [];
 
 /**
  * Fetch notifications for an employee or admin
@@ -160,19 +82,8 @@ export async function getNotificationsForUser(
     console.warn("Could not query DB notifications table, using fallback store:", err);
   }
 
-  // Fallback to in-memory store + dynamic contextual notifications
-  const dynamic = getContextAwareNotifications();
-  const allFallback = [...dynamic, ...fallbackNotifications];
-
-  // De-duplicate by ID
-  const uniqueMap = new Map<string, AppNotification>();
-  for (const item of allFallback) {
-    if (!uniqueMap.has(item.id)) {
-      uniqueMap.set(item.id, item);
-    }
-  }
-
-  let list = Array.from(uniqueMap.values()).sort(
+  // Fallback to in-memory store
+  let list = [...fallbackNotifications].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
 
