@@ -37,12 +37,16 @@ const HOUR_OPTIONS = Array.from({ length: 24 }, (_, i) => {
   return { val, label: toPersianDigits(val) };
 });
 
-const MINUTE_OPTIONS = [
-  { val: "00", label: "۰۰" },
-  { val: "15", label: "۱۵" },
-  { val: "30", label: "۳۰" },
-  { val: "45", label: "۴۵" },
+const BASE_MINUTE_OPTIONS = [
+  "00", "05", "10", "15", "20", "25", "30", "35", "40", "45", "50", "55",
 ];
+
+const getMinuteOptions = (currentVal: string) => {
+  const list = BASE_MINUTE_OPTIONS.includes(currentVal) || !currentVal
+    ? BASE_MINUTE_OPTIONS
+    : [...BASE_MINUTE_OPTIONS, currentVal].sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
+  return list.map((val) => ({ val, label: toPersianDigits(val) }));
+};
 
 export default function EventModal({
   isOpen,
@@ -210,6 +214,19 @@ export default function EventModal({
     emp.position?.toLowerCase().includes(attendeeSearch.toLowerCase())
   );
 
+  const handleStartHourChange = (newVal: string) => {
+    setStartHour(newVal);
+    const sH = parseInt(newVal, 10);
+    const eH = parseInt(endHour, 10);
+    if (eH < sH || (eH === sH && parseInt(endMinute, 10) <= parseInt(startMinute, 10))) {
+      const nextH = (sH + 1) % 24;
+      setEndHour(String(nextH).padStart(2, "0"));
+    }
+  };
+
+  const startMinuteOptions = getMinuteOptions(startMinute);
+  const endMinuteOptions = getMinuteOptions(endMinute);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!canEdit) return;
@@ -221,6 +238,17 @@ export default function EventModal({
     if (!startDate) {
       setErrorMessage("لطفاً تاریخ برگزاری را مشخص نمایید.");
       return;
+    }
+
+    if (!isAllDay) {
+      const sH = parseInt(startHour, 10);
+      const sM = parseInt(startMinute, 10);
+      const eH = parseInt(endHour, 10);
+      const eM = parseInt(endMinute, 10);
+      if (eH < sH || (eH === sH && eM <= sM)) {
+        setErrorMessage("ساعت پایان جلسه/رویداد باید بعد از ساعت شروع باشد.");
+        return;
+      }
     }
 
     const computedStartTime = `${startHour}:${startMinute}`;
@@ -473,76 +501,138 @@ export default function EventModal({
               {!isAllDay ? (
                 <div className="grid grid-cols-2 gap-2.5">
                   {/* Start Time Selectors */}
-                  <div className="p-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-[#1C2536]">
-                    <div className="text-[10px] font-bold text-ink-normal/60 dark:text-gray-400 mb-1">
-                      ساعت شروع:
+                  <div className="p-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/70 dark:bg-[#1C2536] focus-within:border-primary/60 focus-within:ring-2 focus-within:ring-primary/10 transition-all">
+                    <div className="flex items-center justify-between text-[11px] font-bold text-ink-normal/70 dark:text-gray-300 mb-1 px-0.5">
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-3 h-3 text-primary" />
+                        <span>ساعت شروع:</span>
+                      </span>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <select
-                        disabled={!canEdit}
-                        value={startHour}
-                        onChange={(e) => setStartHour(e.target.value)}
-                        className="flex-1 py-1 px-1 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-xs font-black text-center text-sec dark:text-white outline-none cursor-pointer"
-                      >
-                        {HOUR_OPTIONS.map((h) => (
-                          <option key={`sh-${h.val}`} value={h.val}>
-                            {h.label}
-                          </option>
-                        ))}
-                      </select>
-                      <span className="font-bold text-sec dark:text-white">:</span>
-                      <select
-                        disabled={!canEdit}
-                        value={startMinute}
-                        onChange={(e) => setStartMinute(e.target.value)}
-                        className="flex-1 py-1 px-1 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-xs font-black text-center text-sec dark:text-white outline-none cursor-pointer"
-                      >
-                        {MINUTE_OPTIONS.map((m) => (
-                          <option key={`sm-${m.val}`} value={m.val}>
-                            {m.label}
-                          </option>
-                        ))}
-                      </select>
+
+                    <div
+                      className="flex items-center justify-center gap-1 bg-white dark:bg-[#151C28] rounded-lg p-1 border border-gray-200/80 dark:border-gray-700/80 shadow-2xs"
+                      dir="ltr"
+                    >
+                      {/* Hour (LTR: Left) */}
+                      <div className="flex-1 flex flex-col items-center">
+                        <select
+                          disabled={!canEdit}
+                          value={startHour}
+                          onChange={(e) => handleStartHourChange(e.target.value)}
+                          className="w-full py-0.5 text-xs sm:text-sm font-black text-center text-sec dark:text-white bg-transparent outline-none cursor-pointer appearance-none"
+                          title="انتخاب ساعت شروع"
+                        >
+                          {HOUR_OPTIONS.map((h) => (
+                            <option
+                              key={`sh-${h.val}`}
+                              value={h.val}
+                              className="bg-white dark:bg-gray-800 text-sec dark:text-white"
+                            >
+                              {h.label}
+                            </option>
+                          ))}
+                        </select>
+                        <span className="text-[9px] font-bold text-ink-normal/40 dark:text-gray-500 select-none">
+                          ساعت
+                        </span>
+                      </div>
+
+                      <span className="font-black text-sec dark:text-white text-xs pb-3.5 select-none">:</span>
+
+                      {/* Minute (LTR: Right) */}
+                      <div className="flex-1 flex flex-col items-center">
+                        <select
+                          disabled={!canEdit}
+                          value={startMinute}
+                          onChange={(e) => setStartMinute(e.target.value)}
+                          className="w-full py-0.5 text-xs sm:text-sm font-black text-center text-sec dark:text-white bg-transparent outline-none cursor-pointer appearance-none"
+                          title="انتخاب دقیقه شروع"
+                        >
+                          {startMinuteOptions.map((m) => (
+                            <option
+                              key={`sm-${m.val}`}
+                              value={m.val}
+                              className="bg-white dark:bg-gray-800 text-sec dark:text-white"
+                            >
+                              {m.label}
+                            </option>
+                          ))}
+                        </select>
+                        <span className="text-[9px] font-bold text-ink-normal/40 dark:text-gray-500 select-none">
+                          دقیقه
+                        </span>
+                      </div>
                     </div>
                   </div>
 
                   {/* End Time Selectors */}
-                  <div className="p-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-[#1C2536]">
-                    <div className="text-[10px] font-bold text-ink-normal/60 dark:text-gray-400 mb-1">
-                      ساعت پایان:
+                  <div className="p-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/70 dark:bg-[#1C2536] focus-within:border-primary/60 focus-within:ring-2 focus-within:ring-primary/10 transition-all">
+                    <div className="flex items-center justify-between text-[11px] font-bold text-ink-normal/70 dark:text-gray-300 mb-1 px-0.5">
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-3 h-3 text-ink-normal/40 dark:text-gray-400" />
+                        <span>ساعت پایان:</span>
+                      </span>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <select
-                        disabled={!canEdit}
-                        value={endHour}
-                        onChange={(e) => setEndHour(e.target.value)}
-                        className="flex-1 py-1 px-1 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-xs font-black text-center text-sec dark:text-white outline-none cursor-pointer"
-                      >
-                        {HOUR_OPTIONS.map((h) => (
-                          <option key={`eh-${h.val}`} value={h.val}>
-                            {h.label}
-                          </option>
-                        ))}
-                      </select>
-                      <span className="font-bold text-sec dark:text-white">:</span>
-                      <select
-                        disabled={!canEdit}
-                        value={endMinute}
-                        onChange={(e) => setEndMinute(e.target.value)}
-                        className="flex-1 py-1 px-1 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-xs font-black text-center text-sec dark:text-white outline-none cursor-pointer"
-                      >
-                        {MINUTE_OPTIONS.map((m) => (
-                          <option key={`em-${m.val}`} value={m.val}>
-                            {m.label}
-                          </option>
-                        ))}
-                      </select>
+
+                    <div
+                      className="flex items-center justify-center gap-1 bg-white dark:bg-[#151C28] rounded-lg p-1 border border-gray-200/80 dark:border-gray-700/80 shadow-2xs"
+                      dir="ltr"
+                    >
+                      {/* Hour (LTR: Left) */}
+                      <div className="flex-1 flex flex-col items-center">
+                        <select
+                          disabled={!canEdit}
+                          value={endHour}
+                          onChange={(e) => setEndHour(e.target.value)}
+                          className="w-full py-0.5 text-xs sm:text-sm font-black text-center text-sec dark:text-white bg-transparent outline-none cursor-pointer appearance-none"
+                          title="انتخاب ساعت پایان"
+                        >
+                          {HOUR_OPTIONS.map((h) => (
+                            <option
+                              key={`eh-${h.val}`}
+                              value={h.val}
+                              className="bg-white dark:bg-gray-800 text-sec dark:text-white"
+                            >
+                              {h.label}
+                            </option>
+                          ))}
+                        </select>
+                        <span className="text-[9px] font-bold text-ink-normal/40 dark:text-gray-500 select-none">
+                          ساعت
+                        </span>
+                      </div>
+
+                      <span className="font-black text-sec dark:text-white text-xs pb-3.5 select-none">:</span>
+
+                      {/* Minute (LTR: Right) */}
+                      <div className="flex-1 flex flex-col items-center">
+                        <select
+                          disabled={!canEdit}
+                          value={endMinute}
+                          onChange={(e) => setEndMinute(e.target.value)}
+                          className="w-full py-0.5 text-xs sm:text-sm font-black text-center text-sec dark:text-white bg-transparent outline-none cursor-pointer appearance-none"
+                          title="انتخاب دقیقه پایان"
+                        >
+                          {endMinuteOptions.map((m) => (
+                            <option
+                              key={`em-${m.val}`}
+                              value={m.val}
+                              className="bg-white dark:bg-gray-800 text-sec dark:text-white"
+                            >
+                              {m.label}
+                            </option>
+                          ))}
+                        </select>
+                        <span className="text-[9px] font-bold text-ink-normal/40 dark:text-gray-500 select-none">
+                          دقیقه
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
               ) : (
-                <div className="py-3 px-3 rounded-xl bg-gray-100 dark:bg-gray-800 text-xs font-bold text-ink-normal/50 dark:text-gray-400 text-center">
-                  رویداد در کل ساعات روز برنامه‌ریزی شده است
+                <div className="h-[68px] flex items-center justify-center rounded-xl bg-gray-50 dark:bg-[#1C2536] border border-dashed border-gray-200 dark:border-gray-700 text-xs font-bold text-ink-normal/60 dark:text-gray-400 px-3 text-center">
+                  <span>برنامه‌ریزی در کل ساعات روز (تمام‌وقت)</span>
                 </div>
               )}
             </div>
