@@ -408,6 +408,33 @@ export const calendarEventAttendees = pgTable(
 );
 
 // ==========================================
+// 5. Unified Notification System
+// ==========================================
+
+export const notifications = pgTable(
+  "notifications",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    recipientId: uuid("recipient_id").references(() => employees.id, { onDelete: "cascade" }),
+    senderId: uuid("sender_id").references(() => employees.id, { onDelete: "set null" }),
+    title: text("title").notNull(),
+    message: text("message").notNull(),
+    category: text("category").notNull(), // 'task' | 'calendar' | 'report' | 'system'
+    type: text("type").notNull(), // 'task_assigned' | 'task_status_changed' | 'task_comment' | 'task_deadline' | 'meeting_invite' | 'meeting_reminder' | 'daily_report_reminder' | 'daily_report_submitted' | 'announcement'
+    link: text("link"),
+    isRead: boolean("is_read").default(false).notNull(),
+    metadata: jsonb("metadata"),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => ({
+    recipientIdx: index("idx_notifications_recipient").on(table.recipientId),
+    isReadIdx: index("idx_notifications_is_read").on(table.isRead),
+    createdAtIdx: index("idx_notifications_created_at").on(table.createdAt),
+    categoryIdx: index("idx_notifications_category").on(table.category),
+  })
+);
+
+// ==========================================
 // Relations
 // ==========================================
 
@@ -423,6 +450,7 @@ export const employeesRelations = relations(employees, ({ many }) => ({
   activities: many(taskActivityLog),
   calendarEvents: many(calendarEvents),
   calendarAttendances: many(calendarEventAttendees),
+  notifications: many(notifications, { relationName: "recipientNotifications" }),
 }));
 
 export const projectsRelations = relations(projects, ({ one, many }) => ({
@@ -548,6 +576,19 @@ export const calendarEventAttendeesRelations = relations(calendarEventAttendees,
   }),
 }));
 
+export const notificationsRelations = relations(notifications, ({ one }) => ({
+  recipient: one(employees, {
+    fields: [notifications.recipientId],
+    references: [employees.id],
+    relationName: "recipientNotifications",
+  }),
+  sender: one(employees, {
+    fields: [notifications.senderId],
+    references: [employees.id],
+    relationName: "senderNotifications",
+  }),
+}));
+
 // ==========================================
 // Types
 // ==========================================
@@ -585,3 +626,7 @@ export type CalendarEvent = typeof calendarEvents.$inferSelect;
 export type NewCalendarEvent = typeof calendarEvents.$inferInsert;
 export type CalendarEventAttendee = typeof calendarEventAttendees.$inferSelect;
 export type NewCalendarEventAttendee = typeof calendarEventAttendees.$inferInsert;
+
+export type Notification = typeof notifications.$inferSelect;
+export type NewNotification = typeof notifications.$inferInsert;
+

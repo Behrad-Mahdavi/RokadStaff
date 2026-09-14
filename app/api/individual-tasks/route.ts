@@ -12,6 +12,7 @@ import { eq, and, desc, inArray, isNull, or, ilike } from "drizzle-orm";
 import { getSession } from "@/lib/auth/session";
 import { notifyService } from "@/lib/telegram/notify";
 import { formatToJalali } from "@/lib/utils";
+import { createNotification } from "@/lib/notifications";
 
 // GET /api/individual-tasks - List individual standalone tasks
 export async function GET(req: NextRequest) {
@@ -206,6 +207,17 @@ export async function POST(req: NextRequest) {
           deadlineJalali
         );
       }
+
+      // Send in-app notification
+      createNotification({
+        recipientId: empId,
+        title: "وظیفه جدید به شما واگذار شد",
+        message: `وظیفه «${newTask.title}» توسط ${creatorName} به شما محول شد.`,
+        category: "task",
+        type: "task_assigned",
+        link: "/rotello/my-tasks",
+        metadata: { taskId: newTask.id },
+      }).catch(() => {});
     }
 
     // 3. Log activity

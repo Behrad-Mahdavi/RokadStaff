@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import QuickTaskModal from "@/components/QuickTaskModal";
 import ProfileModal from "@/components/ProfileModal";
+import NotificationDropdown from "@/components/notifications/NotificationDropdown";
 
 interface NavbarProps {
   onToggleMobileMenu?: () => void;
@@ -165,10 +166,13 @@ export default function Navbar({
 
         {/* Action Controls & User Profile (Left side in RTL) */}
         <div className="flex items-center gap-2.5 sm:gap-3">
+          {/* Notifications Center */}
+          <NotificationDropdown />
+
           {/* Dark Mode Toggle Button */}
           <button
             onClick={toggleTheme}
-            className="p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-ink-normal/70 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex items-center justify-center"
+            className="p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-ink-normal/70 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex items-center justify-center cursor-pointer"
             title={isDarkMode ? "تغییر به تم روز" : "تغییر به تم شب"}
           >
             {isDarkMode ? (

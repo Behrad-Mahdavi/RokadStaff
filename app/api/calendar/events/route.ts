@@ -11,6 +11,7 @@ import {
   getMockCalendarEvents,
   addMockCalendarEvent,
 } from "@/lib/mockCalendar";
+import { createNotification } from "@/lib/notifications";
 
 export async function GET(req: NextRequest) {
   const session = await getSession();
@@ -239,6 +240,21 @@ export async function POST(req: NextRequest) {
 
       // Also sync to mock store
       addMockCalendarEvent(responseEvent);
+
+      // Notify attendees
+      if (Array.isArray(attendeeIds) && attendeeIds.length > 0) {
+        for (const attendeeId of attendeeIds) {
+          createNotification({
+            recipientId: attendeeId,
+            title: type === "meeting" ? `دعوت به جلسه: ${title}` : `رویداد جدید: ${title}`,
+            message: `${type === "meeting" ? "جلسه" : "برنامه"} در تاریخ ${startDate}${startTime ? ` ساعت ${startTime}` : ""} برگزار می‌شود.`,
+            category: "calendar",
+            type: "meeting_invite",
+            link: "/calendar",
+            metadata: { eventId: responseEvent.id },
+          }).catch(() => {});
+        }
+      }
 
       return NextResponse.json({
         success: true,
